@@ -1,0 +1,205 @@
+import { component$, useSignal } from "@builder.io/qwik";
+
+export default component$(() => {
+  const token = useSignal("");
+  const email = useSignal("admin@example.com");
+  const password = useSignal("admin123");
+  const sessionId = useSignal("");
+  const openingCash = useSignal("");
+  const closingCash = useSignal("");
+  const notes = useSignal("");
+  const status = useSignal("");
+  const sessionData = useSignal<any>(null);
+  const loading = useSignal(false);
+
+  const getHeaders = () => {
+    const h: Record<string, string> = { "Content-Type": "application/json" };
+    if (token.value) h["Authorization"] = `Bearer ${token.value}`;
+    return h;
+  };
+
+  return (
+    <div class="flex items-center justify-center h-full p-4">
+      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-lg space-y-6">
+        <h1 class="text-xl font-bold">Register Session</h1>
+
+        {/* Login */}
+        <div class="space-y-2 bg-gray-700 p-4 rounded-lg">
+          <h2 class="text-sm font-medium text-gray-300">Admin Login</h2>
+          <input
+            type="email"
+            class="w-full bg-gray-600 text-white px-3 py-2 rounded text-sm"
+            placeholder="Email"
+            value={email.value}
+            onInput$={(e) =>
+              (email.value = (e.target as HTMLInputElement).value)
+            }
+          />
+          <input
+            type="password"
+            class="w-full bg-gray-600 text-white px-3 py-2 rounded text-sm"
+            placeholder="Password"
+            value={password.value}
+            onInput$={(e) =>
+              (password.value = (e.target as HTMLInputElement).value)
+            }
+          />
+          <button
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm"
+            onClick$={async () => {
+              loading.value = true;
+              try {
+                const res = await fetch(
+                  "http://localhost:9000/auth/user/emailpass",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email: email.value,
+                      password: password.value,
+                    }),
+                    credentials: "include",
+                  }
+                );
+                if (!res.ok) throw new Error("Login failed");
+                const data = await res.json();
+                token.value = data.token;
+                status.value = "Logged in successfully";
+              } catch (err: any) {
+                status.value = `Login failed: ${err.message}`;
+              }
+              loading.value = false;
+            }}
+          >
+            Login
+          </button>
+          {token.value && (
+            <p class="text-xs text-green-400 break-all">
+              Token: {token.value.substring(0, 30)}...
+            </p>
+          )}
+        </div>
+
+        {/* Open Session */}
+        <div class="space-y-2 bg-gray-700 p-4 rounded-lg">
+          <h2 class="text-sm font-medium text-gray-300">Open Session</h2>
+          <input
+            type="number"
+            class="w-full bg-gray-600 text-white px-3 py-2 rounded text-sm"
+            placeholder="Opening cash (e.g. 200.00)"
+            value={openingCash.value}
+            onInput$={(e) =>
+              (openingCash.value = (e.target as HTMLInputElement).value)
+            }
+          />
+          <button
+            class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm disabled:opacity-50"
+            disabled={!token.value || loading.value}
+            onClick$={async () => {
+              loading.value = true;
+              try {
+                const res = await fetch(
+                  "http://localhost:9000/admin/pos/sessions",
+                  {
+                    method: "POST",
+                    headers: getHeaders(),
+                    credentials: "include",
+                    body: JSON.stringify({
+                      opening_cash: Math.round(
+                        parseFloat(openingCash.value || "0") * 100
+                      ),
+                    }),
+                  }
+                );
+                if (!res.ok) throw new Error(await res.text());
+                const data = await res.json();
+                sessionId.value = data.session.id;
+                sessionData.value = data.session;
+                status.value = `Session opened: ${data.session.id}`;
+              } catch (err: any) {
+                status.value = `Error: ${err.message}`;
+              }
+              loading.value = false;
+            }}
+          >
+            Open Register
+          </button>
+        </div>
+
+        {/* Close Session */}
+        {sessionId.value && (
+          <div class="space-y-2 bg-gray-700 p-4 rounded-lg">
+            <h2 class="text-sm font-medium text-gray-300">Close Session</h2>
+            <p class="text-xs text-gray-400">
+              Session: {sessionId.value}
+            </p>
+            <input
+              type="number"
+              class="w-full bg-gray-600 text-white px-3 py-2 rounded text-sm"
+              placeholder="Closing cash count (e.g. 350.00)"
+              value={closingCash.value}
+              onInput$={(e) =>
+                (closingCash.value = (e.target as HTMLInputElement).value)
+              }
+            />
+            <input
+              type="text"
+              class="w-full bg-gray-600 text-white px-3 py-2 rounded text-sm"
+              placeholder="Notes (optional)"
+              value={notes.value}
+              onInput$={(e) =>
+                (notes.value = (e.target as HTMLInputElement).value)
+              }
+            />
+            <button
+              class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded text-sm disabled:opacity-50"
+              disabled={!token.value || loading.value}
+              onClick$={async () => {
+                loading.value = true;
+                try {
+                  const res = await fetch(
+                    `http://localhost:9000/admin/pos/sessions/${sessionId.value}/close`,
+                    {
+                      method: "POST",
+                      headers: getHeaders(),
+                      credentials: "include",
+                      body: JSON.stringify({
+                        closing_cash: Math.round(
+                          parseFloat(closingCash.value || "0") * 100
+                        ),
+                        notes: notes.value || undefined,
+                      }),
+                    }
+                  );
+                  if (!res.ok) throw new Error(await res.text());
+                  const data = await res.json();
+                  sessionData.value = data.session;
+                  status.value = `Session closed. Discrepancy: ${((data.session.discrepancy || 0) / 100).toFixed(2)} EUR`;
+                } catch (err: any) {
+                  status.value = `Error: ${err.message}`;
+                }
+                loading.value = false;
+              }}
+            >
+              Close Register
+            </button>
+          </div>
+        )}
+
+        {/* Status */}
+        {status.value && (
+          <div class="bg-gray-700 p-3 rounded-lg">
+            <p class="text-sm text-yellow-300">{status.value}</p>
+          </div>
+        )}
+
+        <a
+          href="/pos"
+          class="block text-center text-blue-400 hover:text-blue-300 text-sm"
+        >
+          Go to POS Terminal
+        </a>
+      </div>
+    </div>
+  );
+});

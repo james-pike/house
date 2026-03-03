@@ -59,7 +59,8 @@ const closeSessionStep = createStep(
       Number(session.opening_cash) + cashSalesTotal - cashChangeTotal
     const discrepancy = input.closing_cash - expectedCash
 
-    const updated = await posService.updatePosSessions(input.session_id, {
+    const updated = await posService.updatePosSessions({
+      id: input.session_id,
       status: "closed",
       closing_cash: input.closing_cash,
       expected_cash: expectedCash,
@@ -76,7 +77,8 @@ const closeSessionStep = createStep(
   async (compensationData, { container }) => {
     if (!compensationData) return
     const posService = container.resolve(POS_MODULE)
-    await posService.updatePosSessions(compensationData.session_id, {
+    await posService.updatePosSessions({
+      id: compensationData.session_id,
       status: "open",
       closing_cash: null,
       expected_cash: null,

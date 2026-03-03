@@ -58,8 +58,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       title,
       handle,
       status: ProductStatus.PUBLISHED,
-      shipping_profile_id: shippingProfileId || undefined,
-      category_ids: category_id ? [category_id] : undefined,
+      categories: category_id ? [{ id: category_id }] : undefined,
       options: [{ title: "Default", values: ["Default"] }],
       variants: [
         {

@@ -1,4 +1,4 @@
-import { component$, useSignal, useStore, $ } from "@builder.io/qwik";
+import { component$, useSignal, useStore, useVisibleTask$, $ } from "@builder.io/qwik";
 import BarcodeInput from "~/components/pos/barcode-input";
 import PosCart from "~/components/pos/pos-cart";
 import ProductLookup from "~/components/pos/product-lookup";
@@ -23,6 +23,15 @@ export default component$(() => {
   const processing = useSignal(false);
   const error = useSignal("");
   const token = useSignal("");
+
+  // Auto-load auth token and session from localStorage
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const savedToken = localStorage.getItem("pos_token");
+    const savedSession = localStorage.getItem("pos_session_id");
+    if (savedToken) token.value = savedToken;
+    if (savedSession) sessionId.value = savedSession;
+  });
 
   const total = items.reduce(
     (sum, item) => sum + item.unit_price * item.quantity,
@@ -133,16 +142,24 @@ export default component$(() => {
     processing.value = false;
   });
 
+  const showCart = useSignal(false);
+
   return (
-    <div class="flex h-full">
+    <div class="flex h-full relative overflow-hidden">
       {/* Left: Product search / scanner */}
-      <div class="flex-1 flex flex-col p-4 overflow-auto">
-        <div class="mb-4">
+      <div class="flex-1 min-w-0 flex flex-col p-4 overflow-auto">
+        <div class="flex items-center justify-between mb-4">
           <BarcodeInput
             token={token.value}
             onScan$={(variant: any) => addItem(variant)}
             onError$={(msg: string) => (error.value = msg)}
           />
+          <button
+            class="lg:hidden bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-sm ml-3 shrink-0"
+            onClick$={() => (showCart.value = !showCart.value)}
+          >
+            Cart ({items.length})
+          </button>
         </div>
         <ProductLookup
           token={token.value}
@@ -151,32 +168,22 @@ export default component$(() => {
       </div>
 
       {/* Right: Cart + Payment */}
-      <div class="w-[420px] bg-gray-800 flex flex-col border-l border-gray-700">
+      <div class={`${showCart.value ? "fixed inset-0 z-40" : "hidden"} lg:relative lg:block lg:z-auto w-full lg:w-[420px] bg-gray-800 flex flex-col border-l border-gray-700`}>
         <div class="flex-1 overflow-auto p-4">
-          <div class="mb-3">
-            <label class="block text-xs text-gray-400 mb-1">Session ID</label>
-            <input
-              type="text"
-              class="w-full bg-gray-700 text-white text-sm px-2 py-1 rounded"
-              placeholder="Enter session ID"
-              value={sessionId.value}
-              onInput$={(e) =>
-                (sessionId.value = (e.target as HTMLInputElement).value)
-              }
-            />
+          <div class="flex items-center justify-between mb-3 lg:hidden">
+            <h2 class="font-bold text-sm uppercase tracking-wide text-gray-400">Cart</h2>
+            <button
+              class="text-gray-400 hover:text-white text-sm"
+              onClick$={() => (showCart.value = false)}
+            >
+              Close
+            </button>
           </div>
-          <div class="mb-3">
-            <label class="block text-xs text-gray-400 mb-1">Auth Token</label>
-            <input
-              type="password"
-              class="w-full bg-gray-700 text-white text-sm px-2 py-1 rounded"
-              placeholder="Admin JWT token"
-              value={token.value}
-              onInput$={(e) =>
-                (token.value = (e.target as HTMLInputElement).value)
-              }
-            />
-          </div>
+          {!token.value && (
+            <p class="text-yellow-400 text-xs mb-3">
+              Not logged in — <a href="/pos/session" class="underline">open a session</a> first
+            </p>
+          )}
 
           <PosCart
             items={items}

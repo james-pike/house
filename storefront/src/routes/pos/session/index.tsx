@@ -1,4 +1,4 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
 
 export default component$(() => {
   const token = useSignal("");
@@ -9,14 +9,101 @@ export default component$(() => {
   const closingCash = useSignal("");
   const notes = useSignal("");
   const status = useSignal("");
-  const sessionData = useSignal<any>(null);
   const loading = useSignal(false);
 
-  const getHeaders = () => {
-    const h: Record<string, string> = { "Content-Type": "application/json" };
-    if (token.value) h["Authorization"] = `Bearer ${token.value}`;
-    return h;
-  };
+  // Load saved auth from localStorage on mount
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const savedToken = localStorage.getItem("pos_token");
+    const savedSession = localStorage.getItem("pos_session_id");
+    if (savedToken) token.value = savedToken;
+    if (savedSession) sessionId.value = savedSession;
+  });
+
+  const login = $(async () => {
+    loading.value = true;
+    try {
+      const res = await fetch("http://localhost:9000/auth/user/emailpass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.value,
+          password: password.value,
+        }),
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Login failed");
+      const data = await res.json();
+      token.value = data.token;
+      localStorage.setItem("pos_token", data.token);
+      status.value = "Logged in successfully";
+    } catch (err: any) {
+      status.value = `Login failed: ${err.message}`;
+    }
+    loading.value = false;
+  });
+
+  const openSession = $(async () => {
+    loading.value = true;
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token.value) headers["Authorization"] = `Bearer ${token.value}`;
+
+      const res = await fetch("http://localhost:9000/admin/pos/sessions", {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({
+          opening_cash: Math.round(
+            parseFloat(openingCash.value || "0") * 100
+          ),
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      sessionId.value = data.session.id;
+      localStorage.setItem("pos_session_id", data.session.id);
+      status.value = `Session opened: ${data.session.id}`;
+    } catch (err: any) {
+      status.value = `Error: ${err.message}`;
+    }
+    loading.value = false;
+  });
+
+  const closeSession = $(async () => {
+    loading.value = true;
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token.value) headers["Authorization"] = `Bearer ${token.value}`;
+
+      const res = await fetch(
+        `http://localhost:9000/admin/pos/sessions/${sessionId.value}/close`,
+        {
+          method: "POST",
+          headers,
+          credentials: "include",
+          body: JSON.stringify({
+            closing_cash: Math.round(
+              parseFloat(closingCash.value || "0") * 100
+            ),
+            notes: notes.value || undefined,
+          }),
+        }
+      );
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      localStorage.removeItem("pos_session_id");
+      sessionId.value = "";
+      status.value = `Session closed. Discrepancy: ${((data.session.discrepancy || 0) / 100).toFixed(2)} CAD`;
+    } catch (err: any) {
+      status.value = `Error: ${err.message}`;
+    }
+    loading.value = false;
+  });
 
   return (
     <div class="flex items-center justify-center h-full p-4">
@@ -46,30 +133,7 @@ export default component$(() => {
           />
           <button
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm"
-            onClick$={async () => {
-              loading.value = true;
-              try {
-                const res = await fetch(
-                  "http://localhost:9000/auth/user/emailpass",
-                  {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      email: email.value,
-                      password: password.value,
-                    }),
-                    credentials: "include",
-                  }
-                );
-                if (!res.ok) throw new Error("Login failed");
-                const data = await res.json();
-                token.value = data.token;
-                status.value = "Logged in successfully";
-              } catch (err: any) {
-                status.value = `Login failed: ${err.message}`;
-              }
-              loading.value = false;
-            }}
+            onClick$={login}
           >
             Login
           </button>
@@ -95,32 +159,7 @@ export default component$(() => {
           <button
             class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm disabled:opacity-50"
             disabled={!token.value || loading.value}
-            onClick$={async () => {
-              loading.value = true;
-              try {
-                const res = await fetch(
-                  "http://localhost:9000/admin/pos/sessions",
-                  {
-                    method: "POST",
-                    headers: getHeaders(),
-                    credentials: "include",
-                    body: JSON.stringify({
-                      opening_cash: Math.round(
-                        parseFloat(openingCash.value || "0") * 100
-                      ),
-                    }),
-                  }
-                );
-                if (!res.ok) throw new Error(await res.text());
-                const data = await res.json();
-                sessionId.value = data.session.id;
-                sessionData.value = data.session;
-                status.value = `Session opened: ${data.session.id}`;
-              } catch (err: any) {
-                status.value = `Error: ${err.message}`;
-              }
-              loading.value = false;
-            }}
+            onClick$={openSession}
           >
             Open Register
           </button>
@@ -154,32 +193,7 @@ export default component$(() => {
             <button
               class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded text-sm disabled:opacity-50"
               disabled={!token.value || loading.value}
-              onClick$={async () => {
-                loading.value = true;
-                try {
-                  const res = await fetch(
-                    `http://localhost:9000/admin/pos/sessions/${sessionId.value}/close`,
-                    {
-                      method: "POST",
-                      headers: getHeaders(),
-                      credentials: "include",
-                      body: JSON.stringify({
-                        closing_cash: Math.round(
-                          parseFloat(closingCash.value || "0") * 100
-                        ),
-                        notes: notes.value || undefined,
-                      }),
-                    }
-                  );
-                  if (!res.ok) throw new Error(await res.text());
-                  const data = await res.json();
-                  sessionData.value = data.session;
-                  status.value = `Session closed. Discrepancy: ${((data.session.discrepancy || 0) / 100).toFixed(2)} EUR`;
-                } catch (err: any) {
-                  status.value = `Error: ${err.message}`;
-                }
-                loading.value = false;
-              }}
+              onClick$={closeSession}
             >
               Close Register
             </button>

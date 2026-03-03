@@ -53,24 +53,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const handle = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
   const generatedSku = sku || (barcode ? `SKU-${barcode}` : `SKU-${Date.now()}`)
 
-  const [product] = await productService.createProducts([
-    {
-      title,
-      handle,
-      status: ProductStatus.PUBLISHED,
-      categories: category_id ? [{ id: category_id }] : undefined,
-      options: [{ title: "Default", values: ["Default"] }],
-      variants: [
-        {
-          title: "Default",
-          sku: generatedSku,
-          barcode: barcode || undefined,
-          options: { Default: "Default" },
-          manage_inventory: true,
-        },
-      ],
-    },
-  ])
+  const product = await productService.createProducts({
+    title,
+    handle,
+    status: ProductStatus.PUBLISHED,
+    category_ids: category_id ? [category_id] : undefined,
+    options: [{ title: "Default", values: ["Default"] }],
+    variants: [
+      {
+        title: "Default",
+        sku: generatedSku,
+        barcode: barcode || undefined,
+        options: { Default: "Default" },
+        manage_inventory: true,
+      },
+    ],
+  })
 
   const variant = product.variants[0]
 

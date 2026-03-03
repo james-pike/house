@@ -1,3 +1,4 @@
+// POS Terminal
 import { component$, useSignal, useStore, useVisibleTask$, $ } from "@builder.io/qwik";
 import BarcodeInput from "~/components/pos/barcode-input";
 import PosCart from "~/components/pos/pos-cart";

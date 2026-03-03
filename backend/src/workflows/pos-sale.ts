@@ -132,7 +132,7 @@ const recordPosTransactionStep = createStep(
         ? input.amount_tendered - input.total
         : 0
 
-    const transaction = await posService.createPosTransaction({
+    const transaction = await posService.createPosTransactions({
       session_id: input.session_id,
       order_id: input.order_id,
       payment_method: input.payment_method,
@@ -148,7 +148,7 @@ const recordPosTransactionStep = createStep(
   async (transactionId, { container }) => {
     if (!transactionId) return
     const posService = container.resolve(POS_MODULE)
-    await posService.deletePosTransaction(transactionId)
+    await posService.deletePosTransactions(transactionId)
   }
 )
 

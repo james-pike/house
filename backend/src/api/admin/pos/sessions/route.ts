@@ -3,7 +3,7 @@ import { openPosSessionWorkflow } from "../../../../workflows/pos-session"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { opening_cash } = req.body as { opening_cash: number }
-  const cashier_id = req.auth_context?.actor_id
+  const cashier_id = (req as any).auth_context?.actor_id
 
   if (!cashier_id) {
     return res.status(401).json({ message: "Unauthorized" })

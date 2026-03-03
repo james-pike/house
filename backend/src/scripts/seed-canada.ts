@@ -160,10 +160,10 @@ export default async function seedCanadaData({ container }: ExecArgs) {
   logger.info(`Found fulfillment set: ${fulfillmentSet.id} - ${fulfillmentSet.name}`)
 
   // Update fulfillment set name
-  await fulfillmentService.updateFulfillmentSets(
-    { id: fulfillmentSet.id },
-    { name: "Canada Retail Store Shipping" }
-  )
+  await fulfillmentService.updateFulfillmentSets({
+    id: fulfillmentSet.id,
+    name: "Canada Retail Store Shipping",
+  })
 
   // Delete old European service zones
   if (fulfillmentSet.service_zones?.length) {
@@ -189,8 +189,7 @@ export default async function seedCanadaData({ container }: ExecArgs) {
     let name = so.name
     if (name.includes("Standard")) name = "Standard Shipping (5-7 business days)"
     if (name.includes("Express")) name = "Express Shipping (1-2 business days)"
-    await fulfillmentService.updateShippingOptions({
-      id: so.id,
+    await fulfillmentService.updateShippingOptions(so.id, {
       name,
       service_zone_id: canadaZone.id,
     })

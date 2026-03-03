@@ -15,7 +15,7 @@ const openSessionStep = createStep(
   "open-pos-session",
   async (input: OpenSessionInput, { container }) => {
     const posService = container.resolve(POS_MODULE)
-    const session = await posService.createPosSession({
+    const session = await posService.createPosSessions({
       cashier_id: input.cashier_id,
       opening_cash: input.opening_cash,
       opened_at: new Date(),
@@ -26,7 +26,7 @@ const openSessionStep = createStep(
   async (sessionId, { container }) => {
     if (!sessionId) return
     const posService = container.resolve(POS_MODULE)
-    await posService.deletePosSession(sessionId)
+    await posService.deletePosSessions(sessionId)
   }
 )
 
@@ -59,7 +59,7 @@ const closeSessionStep = createStep(
       Number(session.opening_cash) + cashSalesTotal - cashChangeTotal
     const discrepancy = input.closing_cash - expectedCash
 
-    const updated = await posService.updatePosSession(input.session_id, {
+    const updated = await posService.updatePosSessions(input.session_id, {
       status: "closed",
       closing_cash: input.closing_cash,
       expected_cash: expectedCash,
@@ -76,7 +76,7 @@ const closeSessionStep = createStep(
   async (compensationData, { container }) => {
     if (!compensationData) return
     const posService = container.resolve(POS_MODULE)
-    await posService.updatePosSession(compensationData.session_id, {
+    await posService.updatePosSessions(compensationData.session_id, {
       status: "open",
       closing_cash: null,
       expected_cash: null,

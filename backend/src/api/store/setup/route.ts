@@ -10,7 +10,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const userService = req.scope.resolve(Modules.USER)
   const authService = req.scope.resolve(Modules.AUTH)
-  const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
 
   // Check for existing auth identity for this email
   let authIdentity: any = null
@@ -42,18 +41,17 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     user = await userService.createUsers({ email })
   }
 
-  // Link auth identity to user (ignore if already linked)
-  try {
-    await link.create({
-      [Modules.AUTH]: { auth_identity_id: authIdentity.id },
-      [Modules.USER]: { user_id: user.id },
-    })
-  } catch {
-    // Link may already exist
-  }
+  // Link the auth identity to the user via app_metadata
+  // This is how Medusa v2 auth resolves the actor_id in JWT tokens
+  await authService.updateAuthIdentities({
+    id: authIdentity.id,
+    app_metadata: {
+      user_id: user.id,
+    },
+  })
 
   res.status(201).json({
-    message: "Admin user set up",
+    message: "Admin user set up and linked",
     user: { id: user.id, email },
     auth_identity_id: authIdentity.id,
   })

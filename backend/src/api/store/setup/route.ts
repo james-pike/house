@@ -43,7 +43,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (allUsers.length > 0) {
       // Update the first user's email to match
       user = allUsers[0]
-      await userService.updateUsers(user.id, { email })
+      await userService.updateUsers({ id: user.id, email })
     } else {
       // Create new user
       user = await userService.createUsers({ email })

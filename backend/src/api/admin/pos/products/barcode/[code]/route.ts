@@ -30,35 +30,60 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   const variant = variants[0] as any
 
-  // If prices weren't resolved through query graph, fetch via price_set link
-  if (!variant.prices || variant.prices.length === 0) {
-    try {
-      const pricingService = req.scope.resolve(Modules.PRICING)
-      const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
+  // Always try to resolve prices via the variant-price_set link
+  // This handles both seeded and POS-created products reliably
+  let resolvedPrices = variant.prices || []
 
-      // Find the price set linked to this variant
-      const links = await link.list({
-        [Modules.PRODUCT]: { product_variant_id: variant.id },
-        [Modules.PRICING]: {},
+  if (!resolvedPrices.length) {
+    try {
+      // Query the link table directly to find the price_set_id for this variant
+      const { data: variantPriceLinks } = await query.graph({
+        entity: "product_variant_price_set",
+        fields: ["variant_id", "price_set_id"],
+        filters: { variant_id: variant.id },
       })
 
-      if (links?.length > 0) {
-        const priceSetId = (links[0] as any)?.price_set_id ?? (links[0] as any)?.[Modules.PRICING]?.price_set_id
-        if (priceSetId) {
+      const priceSetId = variantPriceLinks?.[0]?.price_set_id
+      if (priceSetId) {
+        const { data: priceSets } = await query.graph({
+          entity: "price_set",
+          fields: ["prices.*"],
+          filters: { id: priceSetId },
+        })
+        resolvedPrices = priceSets?.[0]?.prices || []
+      }
+    } catch {
+      // Try alternative: query price_set through the link module
+      try {
+        const pricingService = req.scope.resolve(Modules.PRICING)
+        // List all price sets and find one linked to our variant
+        const { data: allLinks } = await query.graph({
+          entity: "product_variant",
+          fields: ["id", "price_set_link.price_set_id"],
+          filters: { id: variant.id },
+        })
+        const psId = (allLinks?.[0] as any)?.price_set_link?.price_set_id
+        if (psId) {
           const { data: priceSets } = await query.graph({
             entity: "price_set",
             fields: ["prices.*"],
-            filters: { id: priceSetId },
+            filters: { id: psId },
           })
-          if (priceSets?.[0]?.prices?.length) {
-            variant.prices = priceSets[0].prices
-          }
+          resolvedPrices = priceSets?.[0]?.prices || []
         }
+      } catch {
+        // prices stay empty
       }
-    } catch {
-      // prices stay empty — non-fatal
     }
   }
+
+  variant.prices = resolvedPrices
+
+  // Add a flat "price" field for easy frontend consumption (amount in smallest currency unit)
+  const cadPrice = resolvedPrices.find((p: any) => p.currency_code === "cad")
+  const firstPrice = cadPrice || resolvedPrices[0]
+  variant.price = firstPrice?.amount ?? null
+  variant.currency_code = firstPrice?.currency_code ?? "cad"
 
   res.status(200).json({ variant })
 }

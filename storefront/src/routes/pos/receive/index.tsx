@@ -178,7 +178,9 @@ export default component$(() => {
   return (
     <div class="flex h-full relative overflow-hidden max-w-[100vw]">
       {/* Left: Scanner + action */}
-      <div class="flex-1 min-w-0 p-3 pb-20 overflow-y-auto overflow-x-hidden">
+      <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
+        {/* Scrollable content */}
+        <div class="flex-1 overflow-y-auto overflow-x-hidden p-3">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <img src="/logo.png" alt="Safety House" class="h-7" />
@@ -197,17 +199,6 @@ export default component$(() => {
             Not logged in — <a href="/pos/session" class="underline font-medium">open session</a>
           </div>
         )}
-
-        {/* Barcode scanner */}
-        <div class="mb-3">
-          <BarcodeInput
-            token={token.value}
-            backendUrl={posConfig.backendUrl}
-            onScan$={handleScan}
-            onNotFound$={handleNotFound}
-            onError$={handleError}
-          />
-        </div>
 
         {/* Messages */}
         {error.value && (
@@ -379,6 +370,18 @@ export default component$(() => {
             </div>
           </div>
         )}
+        </div>
+
+        {/* Bottom: Scanner input pinned above tabs */}
+        <div class="shrink-0 border-t border-gray-800 bg-gray-900 p-2">
+          <BarcodeInput
+            token={token.value}
+            backendUrl={posConfig.backendUrl}
+            onScan$={handleScan}
+            onNotFound$={handleNotFound}
+            onError$={handleError}
+          />
+        </div>
       </div>
 
       {/* Right: Receive log */}

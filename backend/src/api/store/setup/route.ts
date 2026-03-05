@@ -32,22 +32,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
   }
 
-  // Check for existing user
+  // Check for existing user with this email
   let user: any = null
   const existingUsers = await userService.listUsers({ email })
   user = existingUsers[0] || null
 
-  // If no user, try to find any user to link to (from seed)
+  // If no user with this email, create one
   if (!user) {
-    const allUsers = await userService.listUsers({})
-    if (allUsers.length > 0) {
-      // Update the first user's email to match
-      user = allUsers[0]
-      await userService.updateUsers({ id: user.id, email })
-    } else {
-      // Create new user
-      user = await userService.createUsers({ email })
-    }
+    user = await userService.createUsers({ email })
   }
 
   // Link auth identity to user (ignore if already linked)

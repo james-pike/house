@@ -7,7 +7,7 @@ import {
 
 // POST /admin/pos/receive/new-product - Create a new product from a scanned barcode
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const {
+  let {
     title,
     barcode,
     sku,
@@ -24,14 +24,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     price: number
     currency_code: string
     quantity: number
-    location_id: string
+    location_id?: string
     sales_channel_id?: string
     category_id?: string
   }
 
-  if (!title || !price || !location_id) {
+  if (!title || !price) {
     return res.status(400).json({
-      message: "title, price, and location_id are required",
+      message: "title and price are required",
     })
   }
 
@@ -41,13 +41,28 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const pricingService = req.scope.resolve(Modules.PRICING)
   const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
 
-  // Get a shipping profile
-  const { data: shippingProfiles } = await query.graph({
-    entity: "shipping_profile",
-    fields: ["id"],
-    filters: { type: "default" },
-  })
-  const shippingProfileId = shippingProfiles?.[0]?.id
+  // Auto-resolve location_id if not provided
+  if (!location_id) {
+    const { data: locations } = await query.graph({
+      entity: "stock_location",
+      fields: ["id"],
+    })
+    location_id = locations?.[0]?.id
+    if (!location_id) {
+      return res.status(400).json({ message: "No stock location found. Create one in Medusa admin." })
+    }
+  }
+
+  // Auto-resolve sales_channel_id if not provided
+  if (!sales_channel_id) {
+    try {
+      const { data: channels } = await query.graph({
+        entity: "sales_channel",
+        fields: ["id"],
+      })
+      sales_channel_id = channels?.[0]?.id
+    } catch { /* optional */ }
+  }
 
   // Create the product with a single variant
   const handle = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
@@ -89,7 +104,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     [Modules.PRICING]: { price_set_id: priceSet[0].id },
   })
 
-  // Link product to sales channel if provided
+  // Link product to sales channel
   if (sales_channel_id) {
     await link.create({
       [Modules.PRODUCT]: { product_id: product.id },
@@ -106,6 +121,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     [Modules.PRODUCT]: { product_variant_id: variant.id },
     [Modules.INVENTORY]: { inventory_item_id: inventoryItem.id },
   })
+
+  // Link inventory to stock location (required for fulfillment)
+  try {
+    await link.create({
+      [Modules.STOCK_LOCATION]: { stock_location_id: location_id },
+      [Modules.FULFILLMENT]: { fulfillment_set_id: undefined },
+    })
+  } catch { /* non-fatal */ }
 
   await inventoryService.createInventoryLevels([
     {

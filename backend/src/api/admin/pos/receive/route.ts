@@ -6,22 +6,31 @@ import {
 
 // POST /admin/pos/receive - Receive inventory (increase stock for existing product)
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const { variant_id, barcode, quantity, location_id } = req.body as {
+  let { variant_id, barcode, quantity, location_id } = req.body as {
     variant_id?: string
     barcode?: string
     quantity: number
-    location_id: string
+    location_id?: string
   }
 
   if (!quantity || quantity <= 0) {
     return res.status(400).json({ message: "quantity must be a positive number" })
   }
-  if (!location_id) {
-    return res.status(400).json({ message: "location_id is required" })
-  }
 
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const inventoryService = req.scope.resolve(Modules.INVENTORY)
+
+  // Auto-resolve location_id if not provided
+  if (!location_id) {
+    const { data: locations } = await query.graph({
+      entity: "stock_location",
+      fields: ["id"],
+    })
+    location_id = locations?.[0]?.id
+    if (!location_id) {
+      return res.status(400).json({ message: "No stock location found. Create one in Medusa admin." })
+    }
+  }
 
   // Find the variant
   let variantData: any = null
@@ -56,9 +65,19 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Find the inventory item for this variant
-  const inventoryItemId = variantData.inventory_items?.[0]?.inventory?.id
+  let inventoryItemId = variantData.inventory_items?.[0]?.inventory?.id
+
+  // If no inventory item linked, try to find or create one
   if (!inventoryItemId) {
-    return res.status(400).json({ message: "No inventory item linked to this variant" })
+    const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
+    const [inventoryItem] = await inventoryService.createInventoryItems([
+      { sku: variantData.sku || `INV-${variantData.id}` },
+    ])
+    await link.create({
+      [Modules.PRODUCT]: { product_variant_id: variantData.id },
+      [Modules.INVENTORY]: { inventory_item_id: inventoryItem.id },
+    })
+    inventoryItemId = inventoryItem.id
   }
 
   // Check if inventory level exists at this location

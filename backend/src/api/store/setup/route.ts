@@ -12,34 +12,57 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const authService = req.scope.resolve(Modules.AUTH)
   const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
 
-  // Only allow if no admin users exist (one-time setup)
-  const existingUsers = await userService.listUsers({})
-  if (existingUsers.length > 0) {
-    return res.status(403).json({ message: "Admin user already exists. Setup is locked." })
+  // Check for existing auth identity for this email
+  let authIdentity: any = null
+  const existingIdentities = await authService.listAuthIdentities({
+    provider_identities: { entity_id: email },
+  })
+  authIdentity = existingIdentities[0] || null
+
+  // If no auth identity, create one
+  if (!authIdentity) {
+    authIdentity = await authService.createAuthIdentities({
+      provider_identities: [
+        {
+          provider: "emailpass",
+          entity_id: email,
+          provider_metadata: { password },
+        },
+      ],
+    })
   }
 
-  // Create auth identity with emailpass provider
-  const authIdentity = await authService.createAuthIdentities({
-    provider_identities: [
-      {
-        provider: "emailpass",
-        entity_id: email,
-        provider_metadata: { password },
-      },
-    ],
-  })
+  // Check for existing user
+  let user: any = null
+  const existingUsers = await userService.listUsers({ email })
+  user = existingUsers[0] || null
 
-  // Create user
-  const user = await userService.createUsers({ email })
+  // If no user, try to find any user to link to (from seed)
+  if (!user) {
+    const allUsers = await userService.listUsers({})
+    if (allUsers.length > 0) {
+      // Update the first user's email to match
+      user = allUsers[0]
+      await userService.updateUsers(user.id, { email })
+    } else {
+      // Create new user
+      user = await userService.createUsers({ email })
+    }
+  }
 
-  // Link auth identity to user
-  await link.create({
-    [Modules.AUTH]: { auth_identity_id: authIdentity.id },
-    [Modules.USER]: { user_id: user.id },
-  })
+  // Link auth identity to user (ignore if already linked)
+  try {
+    await link.create({
+      [Modules.AUTH]: { auth_identity_id: authIdentity.id },
+      [Modules.USER]: { user_id: user.id },
+    })
+  } catch {
+    // Link may already exist
+  }
 
   res.status(201).json({
-    message: "Admin user created",
+    message: "Admin user set up",
     user: { id: user.id, email },
+    auth_identity_id: authIdentity.id,
   })
 }

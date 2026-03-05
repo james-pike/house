@@ -41,7 +41,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const pricingService = req.scope.resolve(Modules.PRICING)
   const link = req.scope.resolve(ContainerRegistrationKeys.LINK)
 
-  // Auto-resolve location_id if not provided
+  // Auto-resolve location_id — create a default stock location if none exists
   if (!location_id) {
     const { data: locations } = await query.graph({
       entity: "stock_location",
@@ -49,7 +49,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
     location_id = locations?.[0]?.id
     if (!location_id) {
-      return res.status(400).json({ message: "No stock location found. Create one in Medusa admin." })
+      const stockLocationService = req.scope.resolve(Modules.STOCK_LOCATION)
+      const newLocation = await stockLocationService.createStockLocations({
+        name: "Default Store",
+      })
+      location_id = newLocation.id
     }
   }
 

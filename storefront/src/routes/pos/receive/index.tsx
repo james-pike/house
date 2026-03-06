@@ -436,107 +436,35 @@ export default component$(() => {
               </div>
             )}
 
-            {/* Mode toggle */}
-            <div class="flex gap-1.5 mb-3">
-              <button
-                class={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${newMode.value === "new" ? "bg-amber-600 text-white" : "bg-gray-800 text-gray-400"}`}
-                onClick$={() => { newMode.value = "new"; selectedProduct.value = null; }}
-              >
-                New Product
-              </button>
-              <button
-                class={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${newMode.value === "add-size" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400"}`}
-                onClick$={() => { newMode.value = "add-size"; }}
-              >
-                New Size of Existing
-              </button>
-            </div>
-
             <div class="space-y-2">
-              {/* Add-size mode: product search */}
-              {newMode.value === "add-size" && (
-                <>
-                  {!selectedProduct.value ? (
-                    <div>
-                      <label class="block text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">Search Product *</label>
-                      <input
-                        type="text"
-                        class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-700 focus:border-blue-500 focus:outline-none"
-                        placeholder="Search by name..."
-                        value={productSearch.value}
-                        onInput$={(e) => {
-                          productSearch.value = (e.target as HTMLInputElement).value;
-                          searchProducts((e.target as HTMLInputElement).value);
-                        }}
-                      />
-                      {searchingProducts.value && (
-                        <p class="text-[10px] text-gray-500 mt-1">Searching...</p>
-                      )}
-                      {productResults.value.length > 0 && (
-                        <div class="mt-1 max-h-32 overflow-auto rounded-lg border border-gray-700">
-                          {productResults.value.map((p) => (
-                            <button
-                              key={p.id}
-                              class="w-full text-left px-3 py-2 text-xs hover:bg-gray-700 transition-colors border-b border-gray-800 last:border-0"
-                              onClick$={() => {
-                                selectedProduct.value = p;
-                                productResults.value = [];
-                                productSearch.value = "";
-                              }}
-                            >
-                              {p.title}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div class="flex items-center justify-between bg-blue-600/10 border border-blue-600/30 rounded-lg px-3 py-2">
-                      <span class="text-sm font-medium">{selectedProduct.value.title}</span>
-                      <button
-                        class="text-[10px] text-gray-400 hover:text-white"
-                        onClick$={() => { selectedProduct.value = null; }}
-                      >
-                        Change
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* New product mode: title + category */}
-              {newMode.value === "new" && (
-                <>
-                  <div>
-                    <label class="block text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">Product Name *</label>
-                    <input
-                      type="text"
-                      class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-700 focus:border-amber-500 focus:outline-none"
-                      placeholder="e.g. Carhartt Rugged Flex Boot"
-                      value={newTitle.value}
-                      onInput$={(e) => (newTitle.value = (e.target as HTMLInputElement).value)}
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">Category</label>
-                    <select
-                      class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-700 focus:border-amber-500 focus:outline-none"
-                      value={newCategoryId.value}
-                      onChange$={(e) => (newCategoryId.value = (e.target as HTMLSelectElement).value)}
-                    >
-                      <option value="">— No Category —</option>
-                      {categories.value.map((cat) => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
+              <div>
+                <label class="block text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">Product Name *</label>
+                <input
+                  type="text"
+                  class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-700 focus:border-amber-500 focus:outline-none"
+                  placeholder="e.g. Carhartt Rugged Flex Boot"
+                  value={newTitle.value}
+                  onInput$={(e) => (newTitle.value = (e.target as HTMLInputElement).value)}
+                />
+              </div>
+              <div>
+                <label class="block text-[10px] text-gray-500 mb-0.5 uppercase tracking-wide">Category</label>
+                <select
+                  class="w-full bg-gray-800 text-white px-3 py-2 rounded-lg text-sm border border-gray-700 focus:border-amber-500 focus:outline-none"
+                  value={newCategoryId.value}
+                  onChange$={(e) => (newCategoryId.value = (e.target as HTMLSelectElement).value)}
+                >
+                  <option value="">— No Category —</option>
+                  {categories.value.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Size selector — shows based on selected category */}
               {(() => {
                 const catHandle = categories.value.find((c) => c.id === newCategoryId.value)?.handle;
-                const showSizes = newMode.value === "add-size" || catHandle;
+                const showSizes = !!catHandle;
                 if (!showSizes) return null;
 
                 const isFootwear = catHandle === "safety-footwear";
@@ -602,15 +530,11 @@ export default component$(() => {
               </div>
               <div class="flex gap-2 pt-1">
                 <button
-                  class={`flex-1 ${newMode.value === "add-size" ? "bg-blue-600 hover:bg-blue-500" : "bg-amber-600 hover:bg-amber-500"} text-white py-2.5 rounded-xl font-bold text-sm disabled:opacity-40 transition-colors`}
+                  class="flex-1 bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-xl font-bold text-sm disabled:opacity-40 transition-colors"
                   disabled={loading.value}
-                  onClick$={newMode.value === "add-size" ? addVariantToProduct : createNewProduct}
+                  onClick$={createNewProduct}
                 >
-                  {loading.value
-                    ? "Creating..."
-                    : newMode.value === "add-size"
-                      ? `Add Size${newSize.value ? ` ${newSize.value}` : ""}`
-                      : "Create & Receive"}
+                  {loading.value ? "Creating..." : "Create & Receive"}
                 </button>
                 <button
                   class="bg-gray-800 hover:bg-gray-700 text-gray-400 px-4 py-2.5 rounded-xl text-sm"

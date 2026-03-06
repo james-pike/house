@@ -68,33 +68,31 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Find or note the "Size" option
-  let sizeOption = product.options?.find(
+  let sizeOptionTitle = "Size"
+  const existingSizeOption = product.options?.find(
     (o: any) => o.title.toLowerCase() === "size"
   )
 
   const productService = req.scope.resolve(Modules.PRODUCT)
 
   // If no Size option exists, create one
-  if (!sizeOption) {
-    // Check if there's a "Default" option we should replace
+  if (!existingSizeOption) {
     const defaultOption = product.options?.find(
       (o: any) => o.title === "Default"
     )
     if (defaultOption) {
-      // Update the Default option to be "Size"
       await productService.updateProductOptions(defaultOption.id, {
         title: "Size",
       })
-      sizeOption = { id: defaultOption.id, title: "Size" }
     } else {
-      // Create a new Size option
-      const newOption = await productService.createProductOptions({
+      await productService.createProductOptions({
         product_id,
         title: "Size",
         values: [size],
-      })
-      sizeOption = newOption
+      } as any)
     }
+  } else {
+    sizeOptionTitle = existingSizeOption.title
   }
 
   const generatedSku = sku || (barcode ? `SKU-${barcode}` : `SKU-${product_id.slice(-6)}-${size}`)
@@ -108,7 +106,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             title: size,
             sku: generatedSku,
             barcode: barcode || undefined,
-            options: { [sizeOption.title]: size },
+            options: { [sizeOptionTitle]: size },
             manage_inventory: true,
             prices: [
               {

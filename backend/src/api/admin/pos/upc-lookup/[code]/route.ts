@@ -8,19 +8,13 @@ interface UpcEntry {
   material_number: string
   title: string
   brand: string
-  department: string
-  gender: string
-  subcategory: string
   category_handle: string
-  color_code: string
-  color_name: string
+  color: string
   size: string
   width: string
-  size_scale: string
   wholesale_price: number
 }
 
-// Load once at module init — file lives at backend/data/upc-lookup.json
 let lookup: Record<string, UpcEntry> | null = null
 function getLookup(): Record<string, UpcEntry> {
   if (!lookup) {
@@ -53,13 +47,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     // category resolution is optional
   }
 
+  // Build a clean title: "PRODUCT NAME - Color" or just "PRODUCT NAME"
+  const suggested_title = entry.color
+    ? `${entry.title} - ${entry.color}`
+    : entry.title
+
   res.json({
     upc_data: {
       ...entry,
       category_id,
-      suggested_title: entry.color_name
-        ? `${entry.title} - ${entry.color_name}`
-        : entry.title,
+      suggested_title,
       suggested_price_cents: Math.round(entry.wholesale_price * 100),
     },
   })

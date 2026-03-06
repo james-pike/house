@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // ── Timberland PRO ──────────────────────────────────────────────────────
 const tblPath = path.resolve(
   __dirname,
-  "../../../storefront/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
+  "../../../pos/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
 )
 
 const tblCategoryMap = {
@@ -87,7 +87,7 @@ function parseTimberland(lookup) {
 // ── Carhartt ────────────────────────────────────────────────────────────
 const carharttPath = path.resolve(
   __dirname,
-  "../../../storefront/public/S26 UPC List US 2.25.26.xlsx"
+  "../../../pos/public/S26 UPC List US 2.25.26.xlsx"
 )
 
 function carharttCategory(row) {
@@ -100,15 +100,15 @@ function carharttCategory(row) {
   const subCat = (row["Sub-Category"] || "").toString().toLowerCase()
   const division = (row["Division"] || "").toString().toLowerCase()
 
-  // PPE / Personal Protective → safety-supplies
-  if (dept.includes("personal protective") || division.includes("ppe")) {
-    return "safety-supplies"
-  }
   // Footwear
   if (cat.includes("footwear") || subCat.includes("boot") || subCat.includes("shoe")) {
     return "safety-footwear"
   }
-  // Default workwear for Carhartt apparel
+  // Accessories (headwear, aprons, misc) → safety-supplies
+  if (cat.includes("accessories")) {
+    return "safety-supplies"
+  }
+  // Everything else (including PPE non-FR) → work-wear
   return "work-wear"
 }
 

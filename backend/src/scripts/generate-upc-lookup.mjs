@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // ── Timberland PRO ──────────────────────────────────────────────────────
 const tblPath = path.resolve(
   __dirname,
-  "../../../pos/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
+  "../../../storefront/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
 )
 
 const tblCategoryMap = {
@@ -87,7 +87,7 @@ function parseTimberland(lookup) {
 // ── Carhartt ────────────────────────────────────────────────────────────
 const carharttPath = path.resolve(
   __dirname,
-  "../../../pos/public/S26 UPC List US 2.25.26.xlsx"
+  "../../../storefront/public/S26 UPC List US 2.25.26.xlsx"
 )
 
 function carharttCategory(row) {

@@ -122,7 +122,7 @@ export default component$<Props>(({ token, backendUrl, onScan$, onError$, onNotF
           stopCamera();
         }
       }, 45000);
-    } catch (err: any) {
+    } catch {
       await stopCamera();
       onError$("Camera not available. Type barcode manually.");
     }

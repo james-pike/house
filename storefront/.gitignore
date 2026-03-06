@@ -3,6 +3,7 @@
 /lib
 /lib-types
 /server
+/.vercel
 
 # Development
 node_modules

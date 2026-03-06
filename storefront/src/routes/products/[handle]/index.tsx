@@ -1,11 +1,5 @@
-import {
-  component$,
-  useContext,
-  useSignal,
-  useVisibleTask$,
-} from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { CartContext } from "~/routes/layout";
 
 export const useProduct = routeLoader$(async ({ params, env }) => {
   const backendUrl = env.get("MEDUSA_BACKEND_URL") || "http://localhost:9000";
@@ -17,7 +11,7 @@ export const useProduct = routeLoader$(async ({ params, env }) => {
     if (key) headers["x-publishable-api-key"] = key;
 
     const res = await fetch(
-      `${backendUrl}/store/products?handle=${params.handle}`,
+      `${backendUrl}/store/products?handle=${params.handle}&fields=%2Bvariants.calculated_price,%2Bvariants.inventory_quantity&region_id=reg_01KJV8N6A5Y58TTVRAP5R75SC7`,
       { headers }
     );
     if (!res.ok) return null;
@@ -30,10 +24,7 @@ export const useProduct = routeLoader$(async ({ params, env }) => {
 
 export default component$(() => {
   const product = useProduct();
-  const cart = useContext(CartContext);
   const selectedVariant = useSignal(0);
-  const adding = useSignal(false);
-  const message = useSignal("");
 
   if (!product.value) {
     return (
@@ -45,17 +36,16 @@ export default component$(() => {
 
   const p = product.value;
   const variant = p.variants?.[selectedVariant.value];
+  const calcPrice = variant?.calculated_price;
   const price = variant?.prices?.[0];
   const thumbnail = p.thumbnail || p.images?.[0]?.url;
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
-    track(() => message.value);
-    if (message.value) {
-      const timer = setTimeout(() => (message.value = ""), 3000);
-      return () => clearTimeout(timer);
-    }
-  });
+  let formattedPrice = "";
+  if (calcPrice?.calculated_amount != null) {
+    formattedPrice = `$${(calcPrice.calculated_amount / 100).toFixed(2)} ${calcPrice.currency_code?.toUpperCase() || ""}`;
+  } else if (price) {
+    formattedPrice = `$${(price.amount / 100).toFixed(2)} ${price.currency_code?.toUpperCase() || ""}`;
+  }
 
   return (
     <div class="max-w-6xl mx-auto px-4 py-8">
@@ -80,10 +70,9 @@ export default component$(() => {
         </div>
         <div>
           <h1 class="text-3xl font-bold text-gray-900">{p.title}</h1>
-          {price && (
+          {formattedPrice && (
             <p class="mt-2 text-2xl font-semibold text-gray-900">
-              {(price.amount / 100).toFixed(2)}{" "}
-              {price.currency_code?.toUpperCase()}
+              {formattedPrice}
             </p>
           )}
           <p class="mt-4 text-gray-600">{p.description}</p>
@@ -111,58 +100,90 @@ export default component$(() => {
             </div>
           )}
 
-          <button
-            class="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
-            disabled={adding.value}
-            onClick$={async () => {
-              if (!variant) return;
-              adding.value = true;
-              try {
-                const backendUrl = "http://localhost:9000";
-                const headers: Record<string, string> = {
-                  "Content-Type": "application/json",
-                };
+          {/* Product details */}
+          <div class="mt-6 border-t pt-4">
+            <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Details</h2>
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              {variant?.sku && (
+                <>
+                  <dt class="text-gray-500">SKU</dt>
+                  <dd class="text-gray-900 font-mono">{variant.sku}</dd>
+                </>
+              )}
+              {variant?.barcode && (
+                <>
+                  <dt class="text-gray-500">Barcode</dt>
+                  <dd class="text-gray-900 font-mono">{variant.barcode}</dd>
+                </>
+              )}
+              <dt class="text-gray-500">Stock</dt>
+              <dd class={variant?.inventory_quantity > 0 ? "text-green-600 font-medium" : "text-red-500 font-medium"}>
+                {variant?.inventory_quantity != null
+                  ? `${variant.inventory_quantity.toLocaleString()} units`
+                  : "—"}
+              </dd>
+              {p.weight && (
+                <>
+                  <dt class="text-gray-500">Weight</dt>
+                  <dd class="text-gray-900">{p.weight}g</dd>
+                </>
+              )}
+              {variant?.material && (
+                <>
+                  <dt class="text-gray-500">Material</dt>
+                  <dd class="text-gray-900">{variant.material}</dd>
+                </>
+              )}
+              {variant?.origin_country && (
+                <>
+                  <dt class="text-gray-500">Origin</dt>
+                  <dd class="text-gray-900">{variant.origin_country}</dd>
+                </>
+              )}
+              {variant?.hs_code && (
+                <>
+                  <dt class="text-gray-500">HS Code</dt>
+                  <dd class="text-gray-900 font-mono">{variant.hs_code}</dd>
+                </>
+              )}
+            </dl>
+          </div>
 
-                if (!cart.cartId) {
-                  const res = await fetch(`${backendUrl}/store/carts`, {
-                    method: "POST",
-                    headers,
-                    body: JSON.stringify({}),
-                  });
-                  const data = await res.json();
-                  cart.cartId = data.cart.id;
-                }
-
-                const res = await fetch(
-                  `${backendUrl}/store/carts/${cart.cartId}/line-items`,
-                  {
-                    method: "POST",
-                    headers,
-                    body: JSON.stringify({
-                      variant_id: variant.id,
-                      quantity: 1,
-                    }),
-                  }
-                );
-                const data = await res.json();
-                cart.items = data.cart.items || [];
-                cart.count = cart.items.reduce(
-                  (s: number, i: any) => s + i.quantity,
-                  0
-                );
-                cart.total = data.cart.total || 0;
-                message.value = "Added to cart!";
-              } catch (err) {
-                message.value = "Failed to add to cart";
-              }
-              adding.value = false;
-            }}
-          >
-            {adding.value ? "Adding..." : "Add to Cart"}
-          </button>
-
-          {message.value && (
-            <p class="mt-3 text-green-600 font-medium">{message.value}</p>
+          {/* All variants table */}
+          {p.variants?.length > 1 && (
+            <div class="mt-6 border-t pt-4">
+              <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">All Variants</h2>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-left text-gray-500 border-b">
+                      <th class="pb-2 pr-4">Variant</th>
+                      <th class="pb-2 pr-4">SKU</th>
+                      <th class="pb-2 pr-4">Price</th>
+                      <th class="pb-2">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {p.variants.map((v: any) => {
+                      const vPrice = v.calculated_price?.calculated_amount;
+                      const vCurrency = v.calculated_price?.currency_code?.toUpperCase() || "";
+                      return (
+                        <tr key={v.id} class="border-b last:border-0">
+                          <td class="py-2 pr-4 text-gray-900">{v.title}</td>
+                          <td class="py-2 pr-4 text-gray-600 font-mono text-xs">{v.sku || "—"}</td>
+                          <td class="py-2 pr-4 text-gray-900">
+                            {vPrice != null ? `$${(vPrice / 100).toFixed(2)} ${vCurrency}` : "—"}
+                          </td>
+                          <td class={`py-2 ${(v.inventory_quantity ?? 0) > 0 ? "text-green-600" : "text-red-500"}`}>
+                            {v.inventory_quantity?.toLocaleString() ?? "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           )}
         </div>
       </div>

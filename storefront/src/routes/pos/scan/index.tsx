@@ -1,6 +1,8 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useContext } from "@builder.io/qwik";
+import { PosConfigContext } from "../layout";
 
 export default component$(() => {
+  const posConfig = useContext(PosConfigContext);
   const code = useSignal("");
   const result = useSignal<any>(null);
   const error = useSignal("");
@@ -55,7 +57,7 @@ export default component$(() => {
                   headers["Authorization"] = `Bearer ${token.value}`;
                 }
                 const res = await fetch(
-                  `http://localhost:9000/admin/pos/products/barcode/${encodeURIComponent(code.value.trim())}`,
+                  `${posConfig.backendUrl}/admin/pos/products/barcode/${encodeURIComponent(code.value.trim())}`,
                   { headers, credentials: "include" }
                 );
                 if (!res.ok) {

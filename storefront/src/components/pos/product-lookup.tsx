@@ -2,16 +2,17 @@ import { component$, useSignal, type QRL } from "@builder.io/qwik";
 
 interface Props {
   token: string;
+  backendUrl: string;
   onSelect$: QRL<(variant: any) => void>;
 }
 
-export default component$<Props>(({ token, onSelect$ }) => {
+export default component$<Props>(({ token, backendUrl, onSelect$ }) => {
   const query = useSignal("");
   const results = useSignal<any[]>([]);
   const loading = useSignal(false);
 
   return (
-    <div>
+    <div class="min-w-0">
       <label class="block text-sm text-gray-400 mb-1">Product Search</label>
       <input
         type="text"
@@ -32,14 +33,14 @@ export default component$<Props>(({ token, onSelect$ }) => {
               headers["Authorization"] = `Bearer ${token}`;
             }
             const res = await fetch(
-              `http://localhost:9000/admin/products?q=${encodeURIComponent(query.value)}&limit=10`,
+              `${backendUrl}/admin/products?q=${encodeURIComponent(query.value)}&limit=10`,
               { headers, credentials: "include" }
             );
             if (res.ok) {
               const data = await res.json();
               results.value = data.products || [];
             }
-          } catch {}
+          } catch { /* ignore */ }
           loading.value = false;
         }}
       />

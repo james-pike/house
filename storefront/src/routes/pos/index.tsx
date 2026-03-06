@@ -164,7 +164,7 @@ export default component$(() => {
           {/* Header */}
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
-              <img src="/logo.png" alt="Safety House" class="h-7" />
+              <img src="/logo.png" alt="Safety House" class="h-7 invert" />
               <span class="text-sm font-bold text-gray-400 uppercase tracking-wider hidden sm:inline">POS</span>
             </div>
             <button

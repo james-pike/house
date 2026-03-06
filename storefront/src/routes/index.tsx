@@ -12,7 +12,7 @@ export const useProducts = routeLoader$(async ({ env }) => {
     };
     if (key) headers["x-publishable-api-key"] = key;
 
-    const res = await fetch(`${backendUrl}/store/products?limit=20`, {
+    const res = await fetch(`${backendUrl}/store/products?limit=100&fields=%2Bvariants.calculated_price,%2Bvariants.inventory_quantity&region_id=reg_01KJV8N6A5Y58TTVRAP5R75SC7`, {
       headers,
     });
     if (!res.ok) return [];

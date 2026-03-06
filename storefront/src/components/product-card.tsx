@@ -6,10 +6,23 @@ interface Props {
 
 export default component$<Props>(({ product }) => {
   const thumbnail = product.thumbnail || product.images?.[0]?.url;
-  const price = product.variants?.[0]?.prices?.[0];
-  const formattedPrice = price
-    ? `${(price.amount / 100).toFixed(2)} ${price.currency_code?.toUpperCase()}`
-    : "";
+
+  // Try calculated_price first (from Store API with region), then fall back to variant prices
+  const variant = product.variants?.[0];
+  const calcPrice = variant?.calculated_price;
+  let formattedPrice = "";
+  if (calcPrice?.calculated_amount != null) {
+    formattedPrice = `$${(calcPrice.calculated_amount / 100).toFixed(2)} ${calcPrice.currency_code?.toUpperCase() || ""}`;
+  } else if (variant?.prices?.[0]) {
+    const p = variant.prices[0];
+    formattedPrice = `$${(p.amount / 100).toFixed(2)} ${p.currency_code?.toUpperCase() || ""}`;
+  }
+
+  // Sum inventory across all variants
+  const totalStock = product.variants?.reduce(
+    (sum: number, v: any) => sum + (v.inventory_quantity ?? 0),
+    0
+  ) ?? 0;
 
   return (
     <a
@@ -40,6 +53,9 @@ export default component$<Props>(({ product }) => {
             {formattedPrice}
           </p>
         )}
+        <p class={`mt-1 text-sm ${totalStock > 0 ? "text-green-600" : "text-red-500"}`}>
+          {totalStock > 0 ? `${totalStock.toLocaleString()} in stock` : "Out of stock"}
+        </p>
       </div>
     </a>
   );

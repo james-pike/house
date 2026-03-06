@@ -1,9 +1,11 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$, $, useContext } from "@builder.io/qwik";
+import { PosConfigContext } from "../layout";
 
 export default component$(() => {
+  const posConfig = useContext(PosConfigContext);
   const token = useSignal("");
-  const email = useSignal("admin@example.com");
-  const password = useSignal("admin123");
+  const email = useSignal("");
+  const password = useSignal("");
   const sessionId = useSignal("");
   const openingCash = useSignal("");
   const closingCash = useSignal("");
@@ -23,7 +25,7 @@ export default component$(() => {
   const login = $(async () => {
     loading.value = true;
     try {
-      const res = await fetch("http://localhost:9000/auth/user/emailpass", {
+      const res = await fetch(`${posConfig.backendUrl}/auth/user/emailpass`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -51,7 +53,7 @@ export default component$(() => {
       };
       if (token.value) headers["Authorization"] = `Bearer ${token.value}`;
 
-      const res = await fetch("http://localhost:9000/admin/pos/sessions", {
+      const res = await fetch(`${posConfig.backendUrl}/admin/pos/sessions`, {
         method: "POST",
         headers,
         credentials: "include",
@@ -81,7 +83,7 @@ export default component$(() => {
       if (token.value) headers["Authorization"] = `Bearer ${token.value}`;
 
       const res = await fetch(
-        `http://localhost:9000/admin/pos/sessions/${sessionId.value}/close`,
+        `${posConfig.backendUrl}/admin/pos/sessions/${sessionId.value}/close`,
         {
           method: "POST",
           headers,
@@ -106,8 +108,8 @@ export default component$(() => {
   });
 
   return (
-    <div class="flex items-center justify-center h-full p-4">
-      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-lg space-y-6">
+    <div class="flex items-center justify-center h-full p-4 overflow-y-auto overflow-x-hidden">
+      <div class="bg-gray-800 rounded-xl p-6 w-full max-w-lg space-y-6 min-w-0">
         <h1 class="text-xl font-bold">Register Session</h1>
 
         {/* Login */}

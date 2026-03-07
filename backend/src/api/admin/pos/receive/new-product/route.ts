@@ -23,6 +23,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     category_id,
     size,
     brand,
+    color,
+    material_number,
+    width,
   } = req.body as {
     title: string
     barcode?: string
@@ -35,6 +38,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     category_id?: string
     size?: string
     brand?: string
+    color?: string
+    material_number?: string
+    width?: string
   }
 
   if (!title || price == null) {
@@ -93,8 +99,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             title,
             handle,
             subtitle: brand || undefined,
+            description: [brand, color, material_number].filter(Boolean).join(" · ") || undefined,
             status: ProductStatus.PUBLISHED,
-            ...(brand ? { metadata: { brand } } : {}),
+            metadata: {
+              ...(brand ? { brand } : {}),
+              ...(color ? { color } : {}),
+              ...(material_number ? { material_number } : {}),
+              ...(width ? { width } : {}),
+            },
             category_ids: category_id ? [category_id] : undefined,
             ...(shippingProfileId ? { shipping_profile_id: shippingProfileId } : {}),
             options: size

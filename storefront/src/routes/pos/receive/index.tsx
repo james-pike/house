@@ -182,6 +182,9 @@ export default component$(() => {
             category_id: newCategoryId.value || undefined,
             size: newSize.value || undefined,
             brand: upcData.value?.brand || undefined,
+            color: upcData.value?.color || undefined,
+            material_number: upcData.value?.material_number || undefined,
+            width: upcData.value?.width || undefined,
           }),
         }
       );

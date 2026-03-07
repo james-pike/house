@@ -185,6 +185,14 @@ export default component$(() => {
             color: upcData.value?.color || undefined,
             material_number: upcData.value?.material_number || undefined,
             width: upcData.value?.width || undefined,
+            description: upcData.value?.description || undefined,
+            features: upcData.value?.features || undefined,
+            care_instructions: upcData.value?.care_instructions || undefined,
+            fabric: upcData.value?.fabric || undefined,
+            fit: upcData.value?.fit || undefined,
+            origin: upcData.value?.origin || undefined,
+            fr: upcData.value?.fr || undefined,
+            hi_vis: upcData.value?.hi_vis || undefined,
           }),
         }
       );

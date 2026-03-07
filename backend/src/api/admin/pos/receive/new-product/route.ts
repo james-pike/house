@@ -94,15 +94,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   // Check if a product with this handle already exists — if so, add a variant
   try {
-    const { data: existing } = await query.graph({
-      entity: "product",
-      fields: ["id", "title", "options.*"],
-      filters: { handle },
-    })
+    const productService = req.scope.resolve(Modules.PRODUCT)
+    const [existing] = await productService.listProducts(
+      { handle },
+      { select: ["id", "title"], relations: ["options", "options.values"] }
+    )
 
-    if (existing?.length > 0) {
-      const product = existing[0]
-      const productService = req.scope.resolve(Modules.PRODUCT)
+    if (existing) {
+      const product = existing
 
       // Build variant options from size and/or color
       const variantOptions: Record<string, string> = {}

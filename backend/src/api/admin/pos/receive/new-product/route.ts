@@ -133,14 +133,21 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       if (size) {
         variantOptions["Size"] = size
         variantTitleParts.push(size)
-        // Ensure Size option exists on product
         const sizeOpt = product.options?.find((o: any) => o.title === "Size")
         if (!sizeOpt) {
           const defaultOpt = product.options?.find((o: any) => o.title === "Default")
           if (defaultOpt) {
-            await productService.updateProductOptions(defaultOpt.id, { title: "Size" })
+            await productService.updateProductOptions(defaultOpt.id, { title: "Size", values: [{ value: size }] } as any)
           } else {
             await productService.createProductOptions({ product_id: product.id, title: "Size", values: [size] } as any)
+          }
+        } else {
+          // Option exists — ensure this value is in it
+          const hasValue = sizeOpt.values?.some((v: any) => v.value === size)
+          if (!hasValue) {
+            await productService.updateProductOptions(sizeOpt.id, {
+              values: [...(sizeOpt.values || []).map((v: any) => ({ value: v.value })), { value: size }],
+            } as any)
           }
         }
       }
@@ -148,10 +155,16 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       if (color) {
         variantOptions["Color"] = color
         variantTitleParts.push(color)
-        // Ensure Color option exists on product
         const colorOpt = product.options?.find((o: any) => o.title === "Color")
         if (!colorOpt) {
           await productService.createProductOptions({ product_id: product.id, title: "Color", values: [color] } as any)
+        } else {
+          const hasValue = colorOpt.values?.some((v: any) => v.value === color)
+          if (!hasValue) {
+            await productService.updateProductOptions(colorOpt.id, {
+              values: [...(colorOpt.values || []).map((v: any) => ({ value: v.value })), { value: color }],
+            } as any)
+          }
         }
       }
 

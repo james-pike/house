@@ -1,4 +1,4 @@
-import { component$, Slot, createContextId, useContextProvider, useStore } from "@builder.io/qwik";
+import { component$, Slot, createContextId, useContextProvider, useStore, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import { routeLoader$, useLocation } from "@builder.io/qwik-city";
 
 export interface PosConfig {
@@ -21,6 +21,12 @@ export default component$(() => {
   useContextProvider(PosConfigContext, posConfig);
   const loc = useLocation();
   const path = loc.url.pathname;
+  const loggedIn = useSignal(false);
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    loggedIn.value = !!localStorage.getItem("pos_token");
+  });
 
   const isActive = (href: string) => {
     if (href === "/pos/") return path === "/pos/" || path === "/pos";
@@ -63,16 +69,29 @@ export default component$(() => {
           <span class="text-[10px] font-semibold uppercase tracking-wide">Receive</span>
         </a>
         <a
-          href="/pos/session"
+          href="/pos/stock"
           class={`flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-colors ${
-            isActive("/pos/session") ? "text-emerald-400" : "text-gray-500 hover:text-gray-300"
+            isActive("/pos/stock") ? "text-emerald-400" : "text-gray-500 hover:text-gray-300"
+          }`}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+          <span class="text-[10px] font-semibold uppercase tracking-wide">Stock</span>
+        </a>
+        <a
+          href="/pos/session"
+          class={`flex flex-col items-center justify-center py-2.5 px-4 gap-0.5 transition-colors ${
+            isActive("/pos/session") ? "text-blue-400" : loggedIn.value ? "text-emerald-400" : "text-gray-500 hover:text-gray-300"
           }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          <span class="text-[10px] font-semibold uppercase tracking-wide">Session</span>
+          <span class="text-[10px] font-semibold uppercase tracking-wide">
+            {loggedIn.value ? "Session" : "Login"}
+          </span>
         </a>
       </nav>
     </div>

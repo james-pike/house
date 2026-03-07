@@ -181,6 +181,7 @@ export default component$(() => {
             quantity: newQty.value,
             category_id: newCategoryId.value || undefined,
             size: newSize.value || undefined,
+            brand: upcData.value?.brand || undefined,
           }),
         }
       );

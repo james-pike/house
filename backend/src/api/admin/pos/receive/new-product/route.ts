@@ -106,7 +106,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   // Strip color from handle so different colors of the same product share one listing
   const baseTitle = title.replace(/\s*-\s*[^-]+$/, "") // "FR Force Shirt - Dark Navy" → "FR Force Shirt"
   const handle = baseTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
-  const generatedSku = sku || (barcode ? `SKU-${barcode}` : `SKU-${Date.now()}`)
+  // Use barcode (UPC) as SKU since it's unique per variant; fall back to sku+size/color or timestamp
+  const generatedSku = barcode || (sku ? `${sku}-${[size, color, width].filter(Boolean).join("-") || Date.now()}` : `SKU-${Date.now()}`)
 
   // Check if a product with this handle already exists — if so, add a variant
   {

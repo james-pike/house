@@ -109,15 +109,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const generatedSku = sku || (barcode ? `SKU-${barcode}` : `SKU-${Date.now()}`)
 
   // Check if a product with this handle already exists — if so, add a variant
-  try {
-    const productService = req.scope.resolve(Modules.PRODUCT)
-    const [existing] = await productService.listProducts(
-      { handle },
-      { select: ["id", "title"], relations: ["options", "options.values"] }
-    )
+  {
+    let existingProducts: any[] = []
+    try {
+      const result = await query.graph({
+        entity: "product",
+        fields: ["id", "title", "options.*", "options.values.*"],
+        filters: { handle },
+      })
+      existingProducts = result.data || []
+    } catch {
+      // handle lookup failed — fall through to create new product
+    }
 
-    if (existing) {
-      const product = existing
+    if (existingProducts.length > 0) {
+      const product = existingProducts[0]
+      const productService = req.scope.resolve(Modules.PRODUCT)
 
       // Build variant options from size and/or color
       const variantOptions: Record<string, string> = {}
@@ -204,7 +211,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         variant_added: true,
       })
     }
-  } catch { /* no existing product — create new */ }
+  }
 
   try {
     // Build options array from size and color

@@ -87,16 +87,138 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     shippingProfileId = profiles?.[0]?.id
   } catch { /* optional */ }
 
-  const handle = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+  // Strip color from handle so different colors of the same product share one listing
+  const baseTitle = title.replace(/\s*-\s*[^-]+$/, "") // "FR Force Shirt - Dark Navy" → "FR Force Shirt"
+  const handle = baseTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
   const generatedSku = sku || (barcode ? `SKU-${barcode}` : `SKU-${Date.now()}`)
 
+  // Check if a product with this handle already exists — if so, add a variant
   try {
+    const { data: existing } = await query.graph({
+      entity: "product",
+      fields: ["id", "title", "options.*"],
+      filters: { handle },
+    })
+
+    if (existing?.length > 0) {
+      const product = existing[0]
+      const productService = req.scope.resolve(Modules.PRODUCT)
+
+      // Build variant options from size and/or color
+      const variantOptions: Record<string, string> = {}
+      const variantTitleParts: string[] = []
+
+      if (size) {
+        variantOptions["Size"] = size
+        variantTitleParts.push(size)
+        // Ensure Size option exists on product
+        const sizeOpt = product.options?.find((o: any) => o.title === "Size")
+        if (!sizeOpt) {
+          const defaultOpt = product.options?.find((o: any) => o.title === "Default")
+          if (defaultOpt) {
+            await productService.updateProductOptions(defaultOpt.id, { title: "Size" })
+          } else {
+            await productService.createProductOptions({ product_id: product.id, title: "Size", values: [size] } as any)
+          }
+        }
+      }
+
+      if (color) {
+        variantOptions["Color"] = color
+        variantTitleParts.push(color)
+        // Ensure Color option exists on product
+        const colorOpt = product.options?.find((o: any) => o.title === "Color")
+        if (!colorOpt) {
+          await productService.createProductOptions({ product_id: product.id, title: "Color", values: [color] } as any)
+        }
+      }
+
+      if (Object.keys(variantOptions).length === 0) {
+        variantOptions["Default"] = "Default"
+        variantTitleParts.push("Default")
+      }
+
+      const { createProductVariantsWorkflow } = await import("@medusajs/medusa/core-flows")
+      const { result: variantResult } = await createProductVariantsWorkflow(req.scope).run({
+        input: {
+          product_variants: [{
+            product_id: product.id,
+            title: variantTitleParts.join(" / "),
+            sku: generatedSku,
+            barcode: barcode || undefined,
+            options: variantOptions,
+            manage_inventory: true,
+            prices: [{ amount: price, currency_code: cc }],
+          }],
+        },
+      })
+
+      const variant = variantResult[0]
+
+      // Set inventory
+      try {
+        const { data: variantData } = await query.graph({
+          entity: "product_variant",
+          fields: ["inventory_items.inventory.id"],
+          filters: { id: variant.id },
+        })
+        const inventoryItemId = variantData?.[0]?.inventory_items?.[0]?.inventory?.id
+        if (inventoryItemId && quantity > 0) {
+          await createInventoryLevelsWorkflow(req.scope).run({
+            input: {
+              inventory_levels: [{
+                inventory_item_id: inventoryItemId,
+                location_id: location_id!,
+                stocked_quantity: quantity,
+              }],
+            },
+          })
+        }
+      } catch (e: any) {
+        return res.status(201).json({
+          product: { id: product.id, title: product.title, handle, variant_id: variant.id, sku: generatedSku, barcode: barcode || null },
+          price, currency_code: cc, quantity_stocked: 0, location_id,
+          variant_added: true,
+          warning: `Variant added but inventory failed: ${e.message}`,
+        })
+      }
+
+      return res.status(201).json({
+        product: { id: product.id, title: product.title, handle, variant_id: variant.id, sku: generatedSku, barcode: barcode || null },
+        price, currency_code: cc, quantity_stocked: quantity || 0, location_id,
+        variant_added: true,
+      })
+    }
+  } catch { /* no existing product — create new */ }
+
+  try {
+    // Build options array from size and color
+    const productOptions: { title: string; values: string[] }[] = []
+    const variantOptions: Record<string, string> = {}
+    const variantTitleParts: string[] = []
+
+    if (size) {
+      productOptions.push({ title: "Size", values: [size] })
+      variantOptions["Size"] = size
+      variantTitleParts.push(size)
+    }
+    if (color) {
+      productOptions.push({ title: "Color", values: [color] })
+      variantOptions["Color"] = color
+      variantTitleParts.push(color)
+    }
+    if (productOptions.length === 0) {
+      productOptions.push({ title: "Default", values: ["Default"] })
+      variantOptions["Default"] = "Default"
+      variantTitleParts.push("Default")
+    }
+
     // Use the Medusa workflow for atomic product + price + sales channel creation
     const { result } = await createProductsWorkflow(req.scope).run({
       input: {
         products: [
           {
-            title,
+            title: baseTitle,
             handle,
             subtitle: brand || undefined,
             description: [brand, color, material_number].filter(Boolean).join(" · ") || undefined,
@@ -109,15 +231,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             },
             category_ids: category_id ? [category_id] : undefined,
             ...(shippingProfileId ? { shipping_profile_id: shippingProfileId } : {}),
-            options: size
-              ? [{ title: "Size", values: [size] }]
-              : [{ title: "Default", values: ["Default"] }],
+            options: productOptions,
             variants: [
               {
-                title: size || "Default",
+                title: variantTitleParts.join(" / "),
                 sku: generatedSku,
                 barcode: barcode || undefined,
-                options: size ? { Size: size } : { Default: "Default" },
+                options: variantOptions,
                 manage_inventory: true,
                 prices: [
                   {

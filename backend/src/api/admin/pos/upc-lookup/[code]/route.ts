@@ -13,6 +13,7 @@ interface UpcEntry {
   size: string
   width: string
   wholesale_price: number
+  map_price?: number
 }
 
 let lookup: Record<string, UpcEntry> | null = null
@@ -57,7 +58,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       ...entry,
       category_id,
       suggested_title,
-      suggested_price_cents: Math.round(entry.wholesale_price * 100),
+      suggested_price_cents: Math.round(((entry.map_price && entry.map_price > 0) ? entry.map_price : entry.wholesale_price) * 100),
     },
   })
 }

@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // ── Timberland PRO ──────────────────────────────────────────────────────
 const tblPath = path.resolve(
   __dirname,
-  "../../../storefront/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
+  "../../../pos/public/Copy of 10193767_TBL_ELASTIC_PRO_CA_FTWAPPACC_SP_AO_EN.xlsm"
 )
 
 const tblCategoryMap = {
@@ -86,8 +86,8 @@ function parseTimberland(lookup) {
 
 // ── Carhartt ────────────────────────────────────────────────────────────
 const carharttPaths = [
-  path.resolve(__dirname, "../../../storefront/public/S26 UPC List US 2.25.26.xlsx"),
-  path.resolve(__dirname, "../../../storefront/public/carhartt.xlsx"),
+  path.resolve(__dirname, "../../../pos/public/S26 UPC List US 2.25.26.xlsx"),
+  path.resolve(__dirname, "../../../pos/public/carhartt.xlsx"),
 ]
 
 function carharttCategory(row) {
@@ -188,7 +188,7 @@ function parseCarhartt(lookup) {
 // ── Blundstone ──────────────────────────────────────────────────────────
 const blundstonePath = path.resolve(
   __dirname,
-  "../../../storefront/public/Blundstone.xlsx"
+  "../../../pos/public/Blundstone.xlsx"
 )
 
 function parseBlundstone(lookup) {
@@ -240,7 +240,7 @@ function parseBlundstone(lookup) {
 // ── Redback ─────────────────────────────────────────────────────────────
 const redbackPath = path.resolve(
   __dirname,
-  "../../../storefront/public/REDBACK MASTER UPC CANADA CODES 2026.xlsx"
+  "../../../pos/public/REDBACK MASTER UPC CANADA CODES 2026.xlsx"
 )
 
 function parseRedback(lookup) {

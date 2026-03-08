@@ -1,0 +1,633 @@
+import { component$, Slot, useSignal, useVisibleTask$, useTask$, $, useOnDocument } from "@builder.io/qwik";
+import { isServer } from "@builder.io/qwik/build";
+import { Link, useLocation, routeLoader$ } from "@builder.io/qwik-city";
+import { Modal } from "@qwik-ui/headless";
+import { getCart, removeFromCart, updateCartLines, formatPrice, predictiveSearch, warmCollectionCache } from "~/lib/medusa";
+import type { ShopifyCart, ShopifyProduct } from "~/lib/medusa";
+
+// Warm the collection cache on the first server request
+export const useWarmCache = routeLoader$(() => {
+  warmCollectionCache();
+  return null;
+});
+
+export default component$(() => {
+  useWarmCache();
+  const loc = useLocation();
+  const darkMode = useSignal(false);
+  const cartCount = useSignal(1);
+  const cartOpen = useSignal(false);
+  const cartData = useSignal<ShopifyCart | null>(null);
+  const cartLoading = useSignal(false);
+
+  useVisibleTask$(() => {
+    // Measure header and set CSS variable for sticky offsets
+    const header = document.getElementById("site-header");
+    if (header) {
+      const h = header.offsetHeight;
+      document.documentElement.style.setProperty("--header-h", `${h}px`);
+    }
+
+    // Sync signal with current state (inline script in <head> already applied the class)
+    darkMode.value = document.documentElement.classList.contains("dark");
+    // Load cart count
+    const count = localStorage.getItem("cart_count");
+    if (count) cartCount.value = parseInt(count, 10);
+
+    // Listen for cart updates from product pages
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "cart_count" && e.newValue) {
+        cartCount.value = parseInt(e.newValue, 10);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  });
+
+  // Fetch cart data from Shopify when drawer opens
+  useTask$(async ({ track }) => {
+    const isOpen = track(() => cartOpen.value);
+    if (isServer || !isOpen) return;
+
+    const cartId = localStorage.getItem("cart_id");
+    if (!cartId) return;
+
+    cartLoading.value = true;
+    try {
+      const cart = await getCart(cartId);
+      cartData.value = cart;
+      if (cart) {
+        cartCount.value = cart.totalQuantity;
+        localStorage.setItem("cart_count", String(cart.totalQuantity));
+      }
+    } catch (err) {
+      console.error("Failed to load cart:", err);
+    } finally {
+      cartLoading.value = false;
+    }
+  });
+
+  const removeLineItem = $(async (lineId: string) => {
+    const cartId = localStorage.getItem("cart_id");
+    if (!cartId) return;
+    try {
+      const cart = await removeFromCart(cartId, [lineId]);
+      cartData.value = cart;
+      cartCount.value = cart.totalQuantity;
+      localStorage.setItem("cart_count", String(cart.totalQuantity));
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+    }
+  });
+
+  const updateLineQuantity = $(async (lineId: string, quantity: number) => {
+    const cartId = localStorage.getItem("cart_id");
+    if (!cartId) return;
+    try {
+      let cart;
+      if (quantity <= 0) {
+        cart = await removeFromCart(cartId, [lineId]);
+      } else {
+        cart = await updateCartLines(cartId, [{ id: lineId, quantity }]);
+      }
+      cartData.value = cart;
+      cartCount.value = cart.totalQuantity;
+      localStorage.setItem("cart_count", String(cart.totalQuantity));
+    } catch (err) {
+      console.error("Failed to update quantity:", err);
+    }
+  });
+
+  // Search
+  const searchQuery = useSignal("");
+  const searchResults = useSignal<ShopifyProduct[]>([]);
+  const searchOpen = useSignal(false);
+  const searchExpanded = useSignal(false);
+  const searchLoading = useSignal(false);
+  const searchTimeout = useSignal<ReturnType<typeof setTimeout> | null>(null);
+
+  const doSearch = $((query: string) => {
+    if (searchTimeout.value) clearTimeout(searchTimeout.value);
+    if (!query.trim()) {
+      searchResults.value = [];
+      searchOpen.value = false;
+      return;
+    }
+    searchLoading.value = true;
+    searchOpen.value = true;
+    searchTimeout.value = setTimeout(async () => {
+      try {
+        const results = await predictiveSearch(query.trim());
+        searchResults.value = results;
+      } catch (err) {
+        console.error("Search failed:", err);
+      } finally {
+        searchLoading.value = false;
+      }
+    }, 300);
+  });
+
+  const toggleDarkMode = $(() => {
+    const isDark = document.documentElement.classList.toggle("dark");
+    darkMode.value = isDark;
+    localStorage.setItem("darkMode", String(isDark));
+  });
+
+  // Click-outside to close search dropdown
+  useOnDocument(
+    "click",
+    $((e: Event) => {
+      if (!searchOpen.value) return;
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-search-container]")) {
+        searchOpen.value = false;
+        if (!searchQuery.value.trim()) searchExpanded.value = false;
+      }
+    }),
+  );
+
+  return (
+    <div class="min-h-screen bg-gray-100 dark:bg-black">
+    <div class="bg-white dark:bg-[#121212] max-w-site mx-auto">
+      {/* Announcement Bar */}
+      <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden">
+        <div class="flex items-center justify-between">
+          <div class="overflow-hidden flex-1 mr-4">
+            <div class="announcement-scroll flex whitespace-nowrap">
+              <span class="inline-block px-8">
+                <span class="text-primary font-bold">WE ARE OPEN</span> &mdash; 595 West Hunt Club Road, Nepean, ON &bull; Mon-Sat &bull; 613-224-6804
+              </span>
+              <span class="inline-block px-8">
+                <span class="text-primary font-bold">SALE</span> &mdash; Save 25% on all ______ products &bull; Use code <span class="text-primary font-bold">SALE25</span>
+              </span>
+              <span class="inline-block px-8">
+                <span class="text-primary font-bold">WE ARE OPEN</span> &mdash; 595 West Hunt Club Road, Nepean, ON &bull; Mon-Sat &bull; 613-224-6804
+              </span>
+              <span class="inline-block px-8">
+                <span class="text-primary font-bold">SALE</span> &mdash; Save 25% on all ______ products &bull; Use code <span class="text-primary font-bold">SALE25</span>
+              </span>
+            </div>
+          </div>
+          <nav class="hidden md:flex items-center gap-5 flex-shrink-0">
+            <Link href="/about/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">ABOUT</Link>
+            <Link href="/faq/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">FAQ</Link>
+            <Link href="/contact/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">CONTACT</Link>
+          </nav>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header id="site-header" class="bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4">
+        <div class="py-1 md:py-1 flex items-center justify-between">
+          <Link href="/" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
+            <img
+              src="/logo.png"
+              alt="The Safety House"
+              width="210"
+              height="60"
+              class="object-contain w-[220px] md:w-[280px] dark:invert"
+            />
+            <img
+              src="/flag.webp"
+              alt=""
+              width="32"
+              height="32"
+              class="w-8 h-8 md:w-9 md:h-9 object-contain"
+            />
+          </Link>
+
+          {/* Desktop nav */}
+          <nav class="hidden md:flex items-center gap-1.5 lg:gap-2.5">
+            <Link href="/collections/work-wear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/work-wear/' ? 'nav-link-active' : ''}`}>Work Wear</Link>
+            <Link href="/collections/safety-footwear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/safety-footwear/' ? 'nav-link-active' : ''}`}>Safety Footwear</Link>
+            <Link href="/collections/safety-supplies/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/safety-supplies/' ? 'nav-link-active' : ''}`}>Safety Supplies</Link>
+            <Link href="/collections/flame-resistant/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/flame-resistant/' ? 'nav-link-active' : ''}`}>Flame Resistant</Link>
+            <Link href="/collections/casual-wear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/casual-wear/' ? 'nav-link-active' : ''}`}>Casual Wear</Link>
+          </nav>
+
+          <div class="flex items-center gap-1">
+            {/* Desktop search */}
+            <div class="hidden md:block relative" data-search-container>
+              {searchExpanded.value ? (
+                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e] animate-fade-in">
+                  <svg class="w-4 h-4 ml-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    class="w-[180px] px-2 py-2 text-sm bg-transparent border-none outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400"
+                    value={searchQuery.value}
+                    autoFocus
+                    onInput$={(_, el) => {
+                      searchQuery.value = el.value;
+                      doSearch(el.value);
+                    }}
+                    onFocus$={() => {
+                      if (searchQuery.value.trim()) searchOpen.value = true;
+                    }}
+                    onBlur$={() => {
+                      if (!searchQuery.value.trim()) {
+                        searchExpanded.value = false;
+                      }
+                    }}
+                    onKeyDown$={(e) => {
+                      if (e.key === "Escape") {
+                        searchQuery.value = "";
+                        searchOpen.value = false;
+                        searchExpanded.value = false;
+                      }
+                      if (e.key === "Enter" && searchQuery.value.trim()) {
+                        searchOpen.value = false;
+                        searchExpanded.value = false;
+                        window.location.href = `/search/?q=${encodeURIComponent(searchQuery.value.trim())}`;
+                      }
+                    }}
+                  />
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  class="flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#1e1e1e] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  onClick$={() => { searchExpanded.value = true; }}
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                  </svg>
+                </button>
+              )}
+              {searchOpen.value && (
+                <div class="absolute top-full right-0 mt-1 w-[360px] bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-[400px] overflow-y-auto">
+                  {searchLoading.value ? (
+                    <div class="flex items-center justify-center py-6">
+                      <div class="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                    </div>
+                  ) : searchResults.value.length === 0 ? (
+                    <p class="text-sm text-gray-500 text-center py-6">No results found</p>
+                  ) : (
+                    <>
+                      {searchResults.value.map((product) => (
+                        <a
+                          key={product.id}
+                          href={`/product/${product.handle}/`}
+                          class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                          onClick$={() => { searchOpen.value = false; }}
+                        >
+                          {product.featuredImage ? (
+                            <img src={product.featuredImage.url} alt="" width={40} height={40} class="w-10 h-10 rounded-md object-cover bg-gray-100 dark:bg-gray-800 flex-shrink-0" />
+                          ) : (
+                            <div class="w-10 h-10 rounded-md bg-gray-100 dark:bg-gray-800 flex-shrink-0" />
+                          )}
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate">{product.title}</p>
+                            <p class="text-xs text-primary font-semibold">{formatPrice(product.priceRange.minVariantPrice)}</p>
+                          </div>
+                        </a>
+                      ))}
+                      <a
+                        href={`/search/?q=${encodeURIComponent(searchQuery.value.trim())}`}
+                        class="block text-center text-sm text-primary font-medium py-3 border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        onClick$={() => { searchOpen.value = false; }}
+                      >
+                        View all results
+                      </a>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile search icon */}
+            <a
+              href="/search/"
+              class="md:hidden flex items-center justify-center w-10 h-10 text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
+              aria-label="Search"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </a>
+
+            {/* Cart button + drawer */}
+            <Modal.Root bind:show={cartOpen}>
+              <Modal.Trigger
+                class="relative flex items-center justify-center w-10 h-10 bg-transparent border-none text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
+                aria-label="Open cart"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                {cartCount.value > 0 && (
+                  <span class="absolute -top-0.5 -right-0.5 bg-primary text-white text-[10px] font-bold rounded-full w-[18px] h-[18px] flex items-center justify-center leading-none">
+                    {cartCount.value}
+                  </span>
+                )}
+              </Modal.Trigger>
+              <Modal.Panel class="cart-sheet">
+                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h2 class="text-lg font-bold">Your Cart</h2>
+                  <Modal.Close class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-dark dark:hover:text-white bg-transparent border-none text-xl">
+                    &times;
+                  </Modal.Close>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4">
+                  {cartLoading.value ? (
+                    <div class="flex items-center justify-center py-12">
+                      <div class="w-6 h-6 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                    </div>
+                  ) : !cartData.value || cartData.value.lines.edges.length === 0 ? (
+                    <div class="text-center py-12">
+                      <svg class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                      </svg>
+                      <p class="text-gray-500 dark:text-gray-400 text-sm">Your cart is empty</p>
+                      <Modal.Close class="bg-transparent border-none p-0 mt-4">
+                        <Link href="/" class="inline-flex items-center justify-center py-2.5 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors">
+                          Continue Shopping
+                        </Link>
+                      </Modal.Close>
+                    </div>
+                  ) : (
+                    <div class="flex flex-col gap-4">
+                      {cartData.value.lines.edges.map((edge) => {
+                        const line = edge.node;
+                        const product = line.merchandise.product;
+                        return (
+                          <div key={line.id} class="flex gap-3">
+                            {product.featuredImage ? (
+                              <Link href={`/product/${product.handle}/`} class="flex-shrink-0">
+                                <img
+                                  src={product.featuredImage.url}
+                                  alt={product.featuredImage.altText || product.title}
+                                  width={72}
+                                  height={72}
+                                  class="w-[72px] h-[72px] rounded-lg object-cover border border-gray-200 dark:border-gray-700"
+                                />
+                              </Link>
+                            ) : (
+                              <div class="w-[72px] h-[72px] rounded-lg bg-gray-100 dark:bg-gray-800 flex-shrink-0" />
+                            )}
+                            <div class="flex-1 min-w-0">
+                              <Link href={`/product/${product.handle}/`} class="text-sm font-semibold leading-snug hover:text-primary transition-colors line-clamp-2">
+                                {product.title}
+                              </Link>
+                              {line.merchandise.title !== "Default Title" && (
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{line.merchandise.title}</p>
+                              )}
+                              <div class="flex items-center justify-between mt-1.5">
+                                <div class="flex items-center gap-1.5">
+                                  <button
+                                    type="button"
+                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                                    aria-label="Decrease quantity"
+                                    onClick$={() => updateLineQuantity(line.id, line.quantity - 1)}
+                                  >
+                                    -
+                                  </button>
+                                  <span class="text-sm font-medium w-6 text-center">{line.quantity}</span>
+                                  <button
+                                    type="button"
+                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                                    aria-label="Increase quantity"
+                                    onClick$={() => updateLineQuantity(line.id, line.quantity + 1)}
+                                  >
+                                    +
+                                  </button>
+                                  <button
+                                    type="button"
+                                    class="ml-1 text-gray-400 hover:text-red-500 transition-colors bg-transparent border-none p-0"
+                                    aria-label="Remove item"
+                                    onClick$={() => removeLineItem(line.id)}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                  </button>
+                                </div>
+                                <div class="text-right">
+                                  <span class="text-sm font-bold text-primary">
+                                    {formatPrice({
+                                      amount: String(parseFloat(line.merchandise.price.amount) * line.quantity),
+                                      currencyCode: line.merchandise.price.currencyCode,
+                                    })}
+                                  </span>
+                                  {line.quantity > 1 && (
+                                    <p class="text-[11px] text-gray-400">{line.quantity} x {formatPrice(line.merchandise.price)}</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {cartData.value && cartData.value.lines.edges.length > 0 && (
+                  <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm text-gray-500 dark:text-gray-400">Subtotal</span>
+                      <span class="text-sm font-medium">
+                        {formatPrice(cartData.value.cost.subtotalAmount)}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-sm font-semibold">Estimated Total</span>
+                      <span class="text-lg font-bold">
+                        {formatPrice(cartData.value.cost.totalAmount)}
+                      </span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-3">Taxes and shipping calculated at checkout</p>
+                    <a
+                      href={cartData.value.checkoutUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block w-full text-center py-3 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
+                    >
+                      Checkout
+                    </a>
+                  </div>
+                )}
+              </Modal.Panel>
+            </Modal.Root>
+
+            {/* Mobile hamburger menu */}
+            <Modal.Root>
+              <Modal.Trigger class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 bg-transparent border-none">
+                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
+                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
+                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
+              </Modal.Trigger>
+            <Modal.Panel class="mobile-sheet">
+              <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                  <img src="/logo.png" alt="The Safety House" width="180" height="52" class="object-contain w-[180px] dark:invert" />
+                  <img src="/flag.webp" alt="" width="32" height="32" class="w-8 h-8 object-contain" />
+                </div>
+                <Modal.Close class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-dark dark:hover:text-white bg-transparent border-none text-xl focus:outline-none">
+                  &times;
+                </Modal.Close>
+              </div>
+              <nav class="flex flex-col p-4 gap-1 overflow-y-auto">
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/about/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    About Us
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/faq/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    FAQ
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/contact/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Contact
+                  </Link>
+                </Modal.Close>
+                <div class="border-t border-gray-200 dark:border-gray-700 my-2" />
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/collections/work-wear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Work Wear
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/collections/safety-footwear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Safety Footwear
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/collections/safety-supplies/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Safety Supplies
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/collections/flame-resistant/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Flame Resistant
+                  </Link>
+                </Modal.Close>
+                <Modal.Close class="bg-transparent border-none text-left">
+                  <Link href="/collections/casual-wear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    Casual Wear
+                  </Link>
+                </Modal.Close>
+              </nav>
+              {/* Promotional Banner — connect to API later */}
+              <div class="mt-auto p-4">
+                <div class="rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary-dark text-white p-5 text-center">
+                  <p class="text-xs uppercase tracking-widest font-semibold opacity-80 mb-1">Limited Time</p>
+                  <p class="text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
+                  <p class="text-sm opacity-70">Use code <span class="font-bold opacity-100">SALE25</span> at checkout</p>
+                </div>
+              </div>
+              </Modal.Panel>
+            </Modal.Root>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <Slot />
+
+      {/* Footer */}
+      <footer class="bg-dark text-white/80">
+        <div class="pt-6 px-5 pb-4 md:pt-8 md:px-8 md:pb-5">
+          <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
+            <div>
+              <img
+                src="/logo.png"
+                alt="The Safety House"
+                width="160"
+                height="46"
+                class="object-contain w-[160px] invert mb-3"
+              />
+              <p class="text-sm leading-relaxed text-white/50 mb-4">
+                Where work and lifestyle apparel intersect. Your one stop shop
+                for quality specialized clothing, safety footwear, and in-house
+                embroidery services.
+              </p>
+            </div>
+            <div class="grid grid-cols-2 md:contents gap-8">
+              <div>
+                <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
+                  Shop
+                </h4>
+                <Link href="/collections/work-wear/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Work Wear</Link>
+                <Link href="/collections/safety-footwear/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Safety Footwear</Link>
+                <Link href="/collections/safety-supplies/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Safety Supplies</Link>
+                <Link href="/collections/flame-resistant/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Flame Resistant</Link>
+                <Link href="/collections/casual-wear/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Casual Wear</Link>
+              </div>
+              <div>
+                <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
+                  Info
+                </h4>
+                <Link href="/about/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">About Us</Link>
+                <Link href="/embroidery/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Embroidery</Link>
+                <Link href="/store-hours/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Store Hours</Link>
+                <Link href="/faq/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">FAQ</Link>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 md:contents gap-8">
+              <div>
+                <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
+                  Visit Us
+                </h4>
+                <p class="text-sm text-white/65 leading-relaxed">
+                  595 West Hunt Club Rd
+                  <br />
+                  Nepean, ON K2G 5X6
+                </p>
+              </div>
+              <div>
+                <h4 class="text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
+                  Contact
+                </h4>
+                <a href="tel:613-224-6804" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">613-224-6804</a>
+                <a href="mailto:info@safetyhouse.ca" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
+                <div class="flex items-center gap-2.5 mt-3">
+                  <a href="https://www.instagram.com/thesafetyhouse/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:bg-primary/20 hover:text-primary transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                  </a>
+                  <a href="https://www.facebook.com/thesafetyhouse/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:bg-primary/20 hover:text-primary transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  </a>
+                  <a href="mailto:info@safetyhouse.ca" aria-label="Email" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:bg-primary/20 hover:text-primary transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  </a>
+                  <a href="tel:613-224-6804" aria-label="Phone" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:bg-primary/20 hover:text-primary transition-colors">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-white/35">
+            <span>&copy; {new Date().getFullYear()} The Safety House. All rights reserved.</span>
+            <button
+              onClick$={toggleDarkMode}
+              class="text-white/50 hover:text-primary transition-colors bg-transparent border-none"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode.value ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              )}
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+    </div>
+  );
+});

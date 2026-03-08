@@ -1,9 +1,20 @@
-import { vercelEdgeAdapter } from "@builder.io/qwik-city/adapters/vercel-edge/vite";
+import { nodeServerAdapter } from "@builder.io/qwik-city/adapters/node-server/vite";
 import { extendConfig } from "@builder.io/qwik-city/vite";
 import baseConfig from "../../vite.config";
 
 export default extendConfig(baseConfig, () => {
   return {
-    plugins: [vercelEdgeAdapter()],
+    build: {
+      outDir: "server",
+      rollupOptions: {
+        input: ["src/entry.ssr.tsx", "@qwik-city-plan"],
+      },
+    },
+    plugins: [
+      nodeServerAdapter({
+        name: "vercel-node",
+        ssg: null,
+      }),
+    ],
   };
 });

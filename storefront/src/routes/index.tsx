@@ -12,7 +12,7 @@ export const useProducts = routeLoader$(async ({ env }) => {
     };
     if (key) headers["x-publishable-api-key"] = key;
 
-    const res = await fetch(`${backendUrl}/store/products?limit=100&fields=%2Bvariants.calculated_price,%2Bvariants.inventory_quantity&region_id=reg_01KJV8N6A5Y58TTVRAP5R75SC7`, {
+    const res = await fetch(`${backendUrl}/store/products?limit=24&fields=%2Bvariants.calculated_price,%2Bvariants.inventory_quantity&region_id=reg_01KJV8N6A5Y58TTVRAP5R75SC7`, {
       headers,
     });
     if (!res.ok) return [];
@@ -34,7 +34,7 @@ export default component$(() => {
           No products found. Make sure the Medusa backend is running and seeded.
         </p>
       ) : (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10">
           {products.value.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}

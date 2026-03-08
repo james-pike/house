@@ -219,6 +219,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         })
       }
 
+      // Log to permanent receive log
+      try {
+        const posModule = req.scope.resolve("pos") as any
+        await posModule.createReceiveLogs({
+          product_title: product.title,
+          variant_title: size || color || "Default",
+          sku: generatedSku,
+          barcode: barcode || null,
+          quantity_added: quantity || 0,
+          new_stock: quantity || 0,
+          received_at: new Date(),
+        })
+      } catch { /* logging is best-effort */ }
+
       return res.status(201).json({
         product: { id: product.id, title: product.title, handle, variant_id: variant.id, sku: generatedSku, barcode: barcode || null },
         price, currency_code: cc, quantity_stocked: quantity || 0, location_id,
@@ -343,6 +357,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         warning: `Product created but inventory level failed: ${e.message}`,
       })
     }
+
+    // Log to permanent receive log
+    try {
+      const posModule = req.scope.resolve("pos") as any
+      await posModule.createReceiveLogs({
+        product_title: product.title,
+        variant_title: size || color || "Default",
+        sku: generatedSku,
+        barcode: barcode || null,
+        quantity_added: quantity || 0,
+        new_stock: quantity || 0,
+        received_at: new Date(),
+      })
+    } catch { /* logging is best-effort */ }
 
     res.status(201).json({
       product: {

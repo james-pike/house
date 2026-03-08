@@ -4,12 +4,14 @@ import { PosConfigContext } from "../layout";
 import BarcodeInput from "~/components/pos/barcode-input";
 
 interface ReceivedItem {
+  id?: string;
   product_title: string;
   variant_title: string;
   sku: string;
   barcode: string;
   quantity_added: number;
   new_stock: number;
+  received_at: string;
 }
 
 export default component$(() => {
@@ -33,6 +35,18 @@ export default component$(() => {
           categories.value = data.categories || [];
         }
       } catch (e) { console.error("Failed to load categories:", e); }
+
+      // Load persistent receive log
+      try {
+        const res = await fetch(`${posConfig.backendUrl}/admin/pos/receive-log`, {
+          headers: { Authorization: `Bearer ${savedToken}` },
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          received.splice(0, received.length, ...(data.entries || []));
+        }
+      } catch (e) { console.error("Failed to load receive log:", e); }
     }
   });
 
@@ -53,7 +67,7 @@ export default component$(() => {
   const newCategoryId = useSignal("");
   const newSize = useSignal("");
 
-  // History of received items this session
+  // Persistent history of all received items (loaded from server)
   const received = useStore<ReceivedItem[]>([]);
   const showLog = useSignal(false);
 
@@ -142,6 +156,7 @@ export default component$(() => {
         barcode: data.variant.barcode || "",
         quantity_added: data.quantity_added,
         new_stock: data.inventory_level?.stocked_quantity || 0,
+        received_at: new Date().toISOString(),
       });
 
       message.value = `+${data.quantity_added} received for ${data.variant.product_title} — now ${data.inventory_level?.stocked_quantity} in stock`;
@@ -187,7 +202,7 @@ export default component$(() => {
             width: upcData.value?.width || undefined,
             description: upcData.value?.description || undefined,
             features: upcData.value?.features || undefined,
-            care_instructions: upcData.value?.care_instructions || undefined,
+
             fabric: upcData.value?.fabric || undefined,
             fit: upcData.value?.fit || undefined,
             origin: upcData.value?.origin || undefined,
@@ -207,6 +222,7 @@ export default component$(() => {
         barcode: data.product.barcode || "",
         quantity_added: data.quantity_stocked,
         new_stock: data.quantity_stocked,
+        received_at: new Date().toISOString(),
       });
 
       message.value = `NEW: ${data.product.title}${newSize.value ? ` (${newSize.value})` : ""} created — ${data.quantity_stocked} in stock`;
@@ -221,6 +237,15 @@ export default component$(() => {
     }
     loading.value = false;
   });
+
+  const formatDate = (iso: string) => {
+    const d = new Date(iso);
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    const hours = d.getHours().toString().padStart(2, "0");
+    const mins = d.getMinutes().toString().padStart(2, "0");
+    return `${month}/${day} ${hours}:${mins}`;
+  };
 
   return (
     <div class="flex h-full relative overflow-hidden max-w-[100vw]">
@@ -553,7 +578,7 @@ export default component$(() => {
       <div class={`${showLog.value ? "fixed inset-0 z-40" : "hidden"} lg:relative lg:block lg:z-auto w-full lg:w-[340px] lg:shrink-0 bg-gray-900 border-l border-gray-800 flex flex-col overflow-hidden`}>
         <div class="p-3 border-b border-gray-800 flex items-center justify-between">
           <h2 class="font-bold text-[10px] uppercase tracking-widest text-gray-500">
-            Received ({received.length})
+            Receive Log ({received.length})
           </h2>
           <button
             class="lg:hidden text-gray-500 hover:text-white text-xs"
@@ -570,13 +595,18 @@ export default component$(() => {
           ) : (
             <div class="space-y-1.5">
               {received.map((item, i) => (
-                <div key={i} class="bg-gray-800/50 rounded-lg p-2.5">
+                <div key={item.id || i} class="bg-gray-800/50 rounded-lg p-2.5">
                   <div class="flex justify-between items-start">
                     <div class="min-w-0 flex-1">
                       <p class="text-xs font-medium truncate">{item.product_title}</p>
                       <p class="text-[10px] text-gray-500">
                         {item.sku}{item.barcode ? ` | ${item.barcode}` : ""}
                       </p>
+                      {item.received_at && (
+                        <p class="text-[9px] text-gray-600 mt-0.5">
+                          {formatDate(item.received_at)}
+                        </p>
+                      )}
                     </div>
                     <div class="text-right ml-2">
                       <p class="text-emerald-400 font-bold text-xs">+{item.quantity_added}</p>

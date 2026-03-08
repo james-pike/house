@@ -107,6 +107,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     filters: { inventory_item_id: inventoryItemId, location_id },
   })
 
+  // Log to permanent receive log
+  try {
+    const posModule = req.scope.resolve("pos") as any
+    await posModule.createReceiveLogs({
+      product_title: variantData.product?.title || "",
+      variant_title: variantData.title || "Default",
+      sku: variantData.sku || null,
+      barcode: variantData.barcode || null,
+      quantity_added: quantity,
+      new_stock: updatedLevels?.[0]?.stocked_quantity || 0,
+      received_at: new Date(),
+    })
+  } catch { /* logging is best-effort */ }
+
   res.status(200).json({
     variant: {
       id: variantData.id,

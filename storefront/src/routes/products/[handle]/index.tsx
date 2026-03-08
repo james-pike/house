@@ -1,5 +1,6 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal, useContext } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
+import { CartActionsContext } from "~/context/cart";
 
 export const useProduct = routeLoader$(async ({ params, env }) => {
   const backendUrl = env.get("MEDUSA_BACKEND_URL") || "http://localhost:9000";
@@ -25,6 +26,8 @@ export const useProduct = routeLoader$(async ({ params, env }) => {
 export default component$(() => {
   const product = useProduct();
   const selectedVariant = useSignal(0);
+  const cartActions = useContext(CartActionsContext);
+  const adding = useSignal(false);
 
   if (!product.value) {
     return (
@@ -99,6 +102,24 @@ export default component$(() => {
               </select>
             </div>
           )}
+
+          {/* Add to Cart */}
+          <button
+            class="mt-6 w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={adding.value || !(variant?.inventory_quantity > 0)}
+            onClick$={async () => {
+              if (!variant?.id) return;
+              adding.value = true;
+              await cartActions.addToCart(variant.id, 1);
+              adding.value = false;
+            }}
+          >
+            {adding.value
+              ? "Adding..."
+              : variant?.inventory_quantity > 0
+                ? "Add to Cart"
+                : "Out of Stock"}
+          </button>
 
           {/* Product details */}
           <div class="mt-6 border-t pt-4">

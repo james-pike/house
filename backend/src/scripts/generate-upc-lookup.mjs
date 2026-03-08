@@ -165,6 +165,7 @@ function parseCarharttFile(filePath, lookup) {
         map_price: parseFloat(row["MAP"]) || 0,
         description: (row["ConsumerCopyPoints"] || "").toString().trim(),
         features: (row["RetailCopyPoints"] || "").toString().trim(),
+        care_instructions: (row["CareInstructions"] || "").toString().trim(),
         fabric: (row["Fabric Content"] || "").toString().trim(),
         fit: (row["Fit Length"] || "").toString().trim(),
       }

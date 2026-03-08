@@ -202,7 +202,7 @@ export default component$(() => {
             width: upcData.value?.width || undefined,
             description: upcData.value?.description || undefined,
             features: upcData.value?.features || undefined,
-
+            care_instructions: upcData.value?.care_instructions || undefined,
             fabric: upcData.value?.fabric || undefined,
             fit: upcData.value?.fit || undefined,
             origin: upcData.value?.origin || undefined,

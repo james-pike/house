@@ -319,7 +319,6 @@ export default component$(() => {
   const heroImages = hero.images.length > 0 ? hero.images : [c.image?.url].filter(Boolean) as string[];
   const heroSlide = useSignal(0);
 
-  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {
     if (heroImages.length < 2) return;
     const id = setInterval(() => {

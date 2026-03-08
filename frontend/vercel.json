@@ -1,4 +1,4 @@
 {
-  "framework": null,
-  "cleanUrls": true
+  "buildCommand": "npm run build",
+  "framework": null
 }

@@ -570,6 +570,19 @@ export async function getCollectionByHandle(
     `/store/products?${prodParams}`,
   );
 
+  // Seed per-handle cache so product detail pages are instant
+  for (const rp of prodData.products ?? []) {
+    const handleParams = new URLSearchParams({
+      handle: rp.handle,
+      fields: PRODUCT_FIELDS,
+      region_id: regionId,
+    });
+    const handleKey = `/store/products?${handleParams}`;
+    if (cacheGet(handleKey) === undefined) {
+      cacheSet(handleKey, { products: [rp] });
+    }
+  }
+
   let products = (prodData.products ?? []).map(adaptProduct);
 
   // Sort

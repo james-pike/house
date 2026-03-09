@@ -1,5 +1,5 @@
 import { component$, useSignal, useComputed$, $, useVisibleTask$, useTask$ } from "@builder.io/qwik";
-import { routeLoader$, Link, useLocation } from "@builder.io/qwik-city";
+import { routeLoader$, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { getCollectionByHandle, formatPrice, addToCart, createCart } from "~/lib/medusa";
 import type { ShopifyProduct, ShopifyVariant } from "~/lib/medusa";
@@ -89,6 +89,7 @@ export const useCollection = routeLoader$(async (requestEvent) => {
 export default component$(() => {
   const collection = useCollection();
   const location = useLocation();
+  const nav = useNavigate();
   const currentSort = useSignal(location.url.searchParams.get("sort") || "newest");
   const gridCols = useSignal<1 | 2 | 3 | 4>(4);
 
@@ -228,6 +229,16 @@ export default component$(() => {
   });
 
   const openQuickView = $((product: ShopifyProduct) => {
+    const collectionHandle = location.params.handle;
+    const productUrl = `/product/${product.handle}/?collection=${collectionHandle}`;
+
+    // Desktop: go directly to product page
+    if (window.innerWidth >= 768) {
+      nav(productUrl);
+      return;
+    }
+
+    // Mobile: open quick view and prefetch product page
     quickViewProduct.value = product;
     qvSelectedImage.value = 0;
     qvAdded.value = false;
@@ -235,6 +246,13 @@ export default component$(() => {
     const variants = product.variants.edges.map((e) => e.node);
     const available = variants.find((v) => v.availableForSale);
     qvSelectedVariant.value = available?.id || variants[0]?.id || "";
+
+    if (!document.querySelector(`link[href="${productUrl}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = productUrl;
+      document.head.appendChild(link);
+    }
   });
 
   const qvAddToCart = $(async () => {

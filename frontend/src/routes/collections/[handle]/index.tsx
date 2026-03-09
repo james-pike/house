@@ -63,20 +63,27 @@ function sortProducts(products: ShopifyProduct[], sortValue: string): ShopifyPro
 
 export const useCollection = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
-  const collection = await getCollectionByHandle(handle);
 
-  if (!collection) {
-    requestEvent.status(404);
+  try {
+    const collection = await getCollectionByHandle(handle);
+
+    if (!collection) {
+      requestEvent.status(404);
+      return null;
+    }
+
+    // Cache at edge for 5 min, serve stale up to 1 hour while revalidating
+    requestEvent.headers.set(
+      "Cache-Control",
+      "public, s-maxage=300, stale-while-revalidate=3600",
+    );
+
+    return collection;
+  } catch (err) {
+    console.error(`[collection/${handle}] Failed to load:`, err);
+    requestEvent.status(500);
     return null;
   }
-
-  // Cache at Vercel edge for 5 min, serve stale up to 1 hour while revalidating
-  requestEvent.headers.set(
-    "Cache-Control",
-    "public, s-maxage=300, stale-while-revalidate=3600",
-  );
-
-  return collection;
 });
 
 export default component$(() => {

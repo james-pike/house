@@ -4,3 +4,4 @@ pages_build_output_dir = "dist"
 
 [vars]
 VITE_MEDUSA_BACKEND_URL = "https://house-qvr4.onrender.com"
+VITE_MEDUSA_PUBLISHABLE_KEY = "pk_8f529602f0ff9c39def967556307a957e1c19f3ff37cae959364b9b3cef47979"

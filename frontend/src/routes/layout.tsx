@@ -575,6 +575,8 @@ export default component$(() => {
                 <Link href="/embroidery/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Embroidery</Link>
                 <Link href="/store-hours/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Store Hours</Link>
                 <Link href="/faq/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">FAQ</Link>
+                <Link href="/privacy/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Privacy Policy</Link>
+                <Link href="/accessibility/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Accessibility</Link>
               </div>
             </div>
             <div class="grid grid-cols-2 md:contents gap-8">

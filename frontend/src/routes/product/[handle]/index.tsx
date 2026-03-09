@@ -219,7 +219,7 @@ export default component$(() => {
               No image
             </div>
           )}
-          <nav class="flex items-center gap-1.5 text-sm mt-4" aria-label="Breadcrumb">
+          <nav class="hidden md:flex items-center gap-1.5 text-sm mt-4" aria-label="Breadcrumb">
             <Link href="/" class="text-gray-500 dark:text-gray-400 hover:text-dark dark:hover:text-white transition-colors">
               Home
             </Link>

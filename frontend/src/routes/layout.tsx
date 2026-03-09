@@ -628,6 +628,12 @@ export default component$(() => {
         </div>
       </footer>
     </div>
+    {/* Cloudflare Web Analytics — free, privacy-friendly, no cookies */}
+    <script
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${import.meta.env.VITE_CF_ANALYTICS_TOKEN || ""}"}`}
+    />
     </div>
   );
 });

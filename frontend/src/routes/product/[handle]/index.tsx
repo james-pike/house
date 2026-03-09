@@ -246,14 +246,9 @@ export default component$(() => {
           </h1>
 
           <p class="text-2xl font-bold text-primary mb-6">
-            {formatPrice(p.priceRange.minVariantPrice)}
-            {p.priceRange.minVariantPrice.amount !==
-              p.priceRange.maxVariantPrice.amount && (
-              <span class="text-gray-500 dark:text-gray-400 font-normal text-lg">
-                {" "}
-                &ndash; {formatPrice(p.priceRange.maxVariantPrice)}
-              </span>
-            )}
+            {activeVariant
+              ? formatPrice(activeVariant.price)
+              : formatPrice(p.priceRange.minVariantPrice)}
           </p>
 
           {/* Color Swatches */}
@@ -308,34 +303,46 @@ export default component$(() => {
             </div>
           )}
 
-          {/* Variant Selector */}
-          {variants.length > 1 && (
-            <div class="mb-6">
-              <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-semibold mb-2">
-                Select Option
-              </p>
-              <div class="flex flex-wrap gap-2">
-                {variants.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick$={() => {
-                      if (v.availableForSale) selectedVariantId.value = v.id;
-                    }}
-                    class={`py-1.5 px-3.5 rounded-full border text-xs font-medium transition-all duration-200 ${
-                      !v.availableForSale
-                        ? "opacity-40 cursor-not-allowed line-through border-gray-200 dark:border-gray-700"
-                        : v.id === selectedVariantId.value
-                          ? "border-primary bg-primary/[0.08] text-primary font-semibold"
-                          : "border-gray-200 dark:border-gray-700"
-                    }`}
-                    disabled={!v.availableForSale}
-                  >
-                    {v.title} &middot; {formatPrice(v.price)}
-                  </button>
-                ))}
+          {/* Variant Selector — filtered by active color */}
+          {variants.length > 1 && (() => {
+            const filtered = activeColor
+              ? variants.filter((v) => v.title.toLowerCase().includes(activeColor.toLowerCase()))
+              : variants;
+            // Strip all color values from label to show just the size
+            const colorSet = new Set(colors.map((c) => c.toLowerCase().trim()));
+            const stripColors = (title: string) => {
+              const parts = title.split(/\s*\/\s*/);
+              const sizeOnly = parts.filter((part) => !colorSet.has(part.toLowerCase().trim()));
+              return sizeOnly.join(" / ") || title;
+            };
+            return filtered.length > 0 ? (
+              <div class="mb-6">
+                <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 font-semibold mb-2">
+                  Size
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  {filtered.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick$={() => {
+                        if (v.availableForSale) selectedVariantId.value = v.id;
+                      }}
+                      class={`py-1.5 px-3.5 rounded-full border text-xs font-medium transition-all duration-200 ${
+                        !v.availableForSale
+                          ? "opacity-40 cursor-not-allowed line-through border-gray-200 dark:border-gray-700"
+                          : v.id === selectedVariantId.value
+                            ? "border-primary bg-primary/[0.08] text-primary font-semibold"
+                            : "border-gray-200 dark:border-gray-700"
+                      }`}
+                      disabled={!v.availableForSale}
+                    >
+                      {stripColors(v.title)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null;
+          })()}
 
           {/* Add to Cart */}
           <div class="flex gap-3 items-center mb-6">

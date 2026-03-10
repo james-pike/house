@@ -10,6 +10,7 @@ import {
   addToCart,
 } from "~/lib/medusa";
 import type { ShopifyVariant } from "~/lib/medusa";
+import { getColorCss } from "~/lib/colors";
 
 export const useProduct = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
@@ -142,29 +143,6 @@ export default component$(() => {
   const colorOption = p.options.find((o) => o.name === "Color");
   const colors = colorOption?.values ?? (p.meta?.color ? [p.meta.color] : []);
 
-  // Map color names to CSS values
-  const colorMap: Record<string, string> = {
-    "black": "#1a1a1a", "dark navy": "#1b2a4a", "navy": "#1b3a5c",
-    "dark blue": "#1a3a5c", "blue": "#2563eb", "light blue": "#60a5fa",
-    "gray": "#6b7280", "grey": "#6b7280", "light gray": "#d1d5db", "light grey": "#d1d5db",
-    "dark gray": "#374151", "dark grey": "#374151", "charcoal": "#36454f",
-    "white": "#f8f8f8", "red": "#dc2626", "dark red": "#991b1b", "dark crimson": "#8b0000",
-    "brown": "#78350f", "dark brown": "#4a2512", "canyon brown": "#8b5e3c",
-    "carhartt brown": "#7a5230", "frontier brown": "#6b4423",
-    "khaki": "#c3b091", "tan": "#d2b48c", "beige": "#e8dcc8",
-    "green": "#16a34a", "dark green": "#14532d", "olive": "#556b2f",
-    "moss": "#4a5d23", "basil": "#3e6b3e",
-    "orange": "#ea580c", "blaze orange": "#ff6600", "hi-vis orange": "#ff5500",
-    "yellow": "#eab308", "hi-vis yellow": "#d4e600", "brite lime": "#c5e600",
-    "hi-vis": "#d4e600", "hi-vis green": "#76b900",
-    "pink": "#ec4899", "purple": "#7c3aed",
-    "camo": "linear-gradient(135deg,#4a5d23 25%,#6b7f3a 25%,#6b7f3a 50%,#374a20 50%,#374a20 75%,#556b2f 75%)",
-  };
-
-  const getColorCss = (name: string) => {
-    const lower = name.toLowerCase().trim();
-    return colorMap[lower] || "#9ca3af";
-  };
 
   // Find the active color from selected variant
   const activeColor = activeVariant

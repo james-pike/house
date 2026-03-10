@@ -1,5 +1,5 @@
 import { component$, useSignal, useComputed$, $, useVisibleTask$, useTask$ } from "@builder.io/qwik";
-import { routeLoader$, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { routeLoader$, Link, useLocation } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { getCollectionByHandle, formatPrice } from "~/lib/medusa";
 import type { ShopifyProduct } from "~/lib/medusa";
@@ -89,7 +89,7 @@ export const useCollection = routeLoader$(async (requestEvent) => {
 export default component$(() => {
   const collection = useCollection();
   const location = useLocation();
-  const nav = useNavigate();
+
   const currentSort = useSignal(location.url.searchParams.get("sort") || "newest");
   const gridCols = useSignal<1 | 2 | 3 | 4>(4);
 
@@ -223,11 +223,6 @@ export default component$(() => {
     }
   });
 
-  const openQuickView = $((product: ShopifyProduct) => {
-    const collectionHandle = location.params.handle;
-    const productUrl = `/product/${product.handle}/?collection=${collectionHandle}`;
-    nav(productUrl);
-  });
 
   const filteredProducts = useComputed$(() => {
     const sorted = sortProducts(allProducts.value, currentSort.value);
@@ -943,10 +938,10 @@ export default component$(() => {
                       : "grid-cols-2 lg:grid-cols-4"
               }`}>
                 {displayedProducts.value.map((product: ShopifyProduct) => (
-                  <div
+                  <Link
                     key={product.id}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col cursor-pointer"
-                    onClick$={() => openQuickView(product)}
+                    href={`/product/${product.handle}/?collection=${c.handle}`}
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     <div class="relative overflow-hidden">
                       {product.featuredImage ? (
@@ -1002,7 +997,7 @@ export default component$(() => {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

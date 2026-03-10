@@ -507,7 +507,7 @@ export default component$(() => {
         <div class="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
           <h2 class="text-xl font-bold mb-5">You May Also Like</h2>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {p._related.slice(0, 8).map((item) => (
+            {p._related.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
                 href={`/product/${item.handle}/${col ? `?collection=${col.handle}` : ""}`}

@@ -208,6 +208,7 @@ export default component$(() => {
             origin: upcData.value?.origin || undefined,
             fr: upcData.value?.fr || undefined,
             hi_vis: upcData.value?.hi_vis || undefined,
+            tags: upcData.value?.tags || undefined,
           }),
         }
       );

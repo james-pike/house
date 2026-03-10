@@ -245,6 +245,20 @@ export default component$(() => {
             {p.title}
           </h1>
 
+          {/* Tags / Badges */}
+          {p.meta?.tags && p.meta.tags.length > 0 && (
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              {p.meta.tags.map((tag) => (
+                <span
+                  key={tag}
+                  class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
           <p class="text-2xl font-bold text-primary mb-6">
             {activeVariant
               ? formatPrice(activeVariant.price)

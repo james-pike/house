@@ -178,6 +178,7 @@ export interface ProductMeta {
   origin?: string;
   fr?: boolean;
   hi_vis?: boolean;
+  tags?: string[];
 }
 
 export interface ShopifyProduct {

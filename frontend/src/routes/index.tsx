@@ -31,31 +31,23 @@ export default component$(() => {
     },
   ];
 
-  const brandsRow1 = [
+  const brands = [
     { name: "Carhartt", img: "/brands/carhart.png", url: "https://www.carhartt.com" },
     { name: "Timberland Pro", img: "/brands/timberland-pro.png", url: "https://www.timberland.com/timberlandpro" },
     { name: "Blakl\u00e4der", img: "/brands/blaklader.png", url: "https://www.blaklader.com" },
-    { name: "Stormtech", img: "/brands/stormtech-logo.png", url: "https://www.stormtech.ca" },
     { name: "Pioneer", img: "/brands/pioneer.png", url: "https://www.pioneerprotective.com" },
     { name: "Viking", img: "/brands/viking_work_wear.png", url: "https://www.viking.ca" },
     { name: "Big Bill", img: "/brands/big_bill_workwear.png", url: "https://www.bigbill.com" },
     { name: "Dickies", img: "/brands/dickies_workwear_ottawa.png", url: "https://www.dickies.ca" },
     { name: "Tough Duck", img: "/brands/TOUGHDUCK.png", url: "https://www.toughduck.com" },
-    { name: "Red Kap", img: "/brands/redkap.png", url: "https://www.redkap.com" },
-    { name: "Rasco", img: "/brands/rasco.png", url: "https://www.rfrasco.com" },
-  ];
-  const brandsRow2 = [
-    { name: "Baffin", img: "/brands/baffin.png", url: "https://www.bfreinc.com/baffin" },
     { name: "Blundstone", img: "/brands/blunstone_logo.png", url: "https://www.blundstone.ca" },
-    { name: "Canada West", img: "/brands/canada-west-boots-logo-1.png", url: "https://www.canadawestboots.com" },
-    { name: "Irish Setter", img: "/brands/irish-setter.png", url: "https://www.irishsetterboots.com" },
-    { name: "JB Goodhue", img: "/brands/jb-goodhue.png", url: "https://www.jbgoodhue.com" },
     { name: "Keen", img: "/brands/keen.png", url: "https://www.keenfootwear.com" },
-    { name: "Muck", img: "/brands/muck.png", url: "https://www.muckbootcompany.com" },
-    { name: "Redback", img: "/brands/redback.png", url: "https://www.redbackboots.com" },
     { name: "Red Wing", img: "/brands/red-wing-shoes.png", url: "https://www.redwingshoes.com" },
+    { name: "Baffin", img: "/brands/baffin.png", url: "https://www.bfreinc.com/baffin" },
+    { name: "Canada West", img: "/brands/canada-west-boots-logo-1.png", url: "https://www.canadawestboots.com" },
     { name: "Royer", img: "/brands/royer.png", url: "https://www.royer.com" },
-    { name: "STC", img: "/brands/stc.png", url: "https://www.stcfootwear.com" },
+    { name: "Rasco", img: "/brands/rasco.png", url: "https://www.rfrasco.com" },
+    { name: "JB Goodhue", img: "/brands/jb-goodhue.png", url: "https://www.jbgoodhue.com" },
   ];
 
   const expandedBrand = useSignal<string | null>(null);
@@ -199,15 +191,18 @@ export default component$(() => {
 
       {/* Brands */}
       <div
-        class="bg-white dark:bg-[#1e1e1e] py-8 md:py-10 px-4 md:px-8 text-center"
+        class="bg-white dark:bg-[#1e1e1e] py-4 md:py-6 px-4 md:px-8 text-center"
         onMouseLeave$={() => { expandedBrand.value = null; }}
       >
-        <div class="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 md:gap-x-4 md:gap-y-3 relative">
-          {brandsRow1.map((brand) => (
+        <p class="text-sm md:text-base uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold mb-3">
+          Trusted Brands We Carry
+        </p>
+        <div class="flex flex-wrap justify-center items-center gap-x-0.5 gap-y-0 md:gap-x-1 md:gap-y-0 relative">
+          {brands.map((brand) => (
             <div key={brand.name} class="relative" style={expandedBrand.value === brand.name ? { zIndex: 50 } : { zIndex: 1 }}>
               <button
                 type="button"
-                class={`bg-transparent border-none p-2 rounded-lg transition-all duration-200 cursor-pointer ${expandedBrand.value === brand.name ? "" : "hover:scale-110"}`}
+                class={`bg-transparent border-none p-1 md:p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${expandedBrand.value === brand.name ? "" : "hover:scale-110"}`}
                 onMouseEnter$={() => { expandedBrand.value = brand.name; }}
                 aria-label={brand.name}
               >
@@ -216,60 +211,7 @@ export default component$(() => {
                   alt={brand.name}
                   width={120}
                   height={48}
-                  class="h-8 md:h-10 w-auto object-contain relative z-10"
-                />
-              </button>
-              {expandedBrand.value === brand.name && (
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[280px] bg-white dark:bg-[#252525] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col items-center py-5 px-4 gap-3">
-                  <img
-                    src={brand.img}
-                    alt={brand.name}
-                    width={160}
-                    height={64}
-                    class="h-10 md:h-12 w-auto object-contain"
-                  />
-                  <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Quality workwear and safety gear trusted across Canada.
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <Link
-                      href={`/search/?q=${encodeURIComponent(brand.name)}`}
-                      class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
-                    >
-                      Shop {brand.name}
-                    </Link>
-                    {brand.url && (
-                      <a
-                        href={brand.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        Visit Site
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-          <p class="w-full text-sm md:text-lg uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold py-2">
-            Trusted Brands We Carry
-          </p>
-          {brandsRow2.map((brand) => (
-            <div key={brand.name} class="relative" style={expandedBrand.value === brand.name ? { zIndex: 50 } : { zIndex: 1 }}>
-              <button
-                type="button"
-                class={`bg-transparent border-none p-2 rounded-lg transition-all duration-200 cursor-pointer ${expandedBrand.value === brand.name ? "" : "hover:scale-110"}`}
-                onMouseEnter$={() => { expandedBrand.value = brand.name; }}
-                aria-label={brand.name}
-              >
-                <img
-                  src={brand.img}
-                  alt={brand.name}
-                  width={120}
-                  height={48}
-                  class="h-8 md:h-10 w-auto object-contain relative z-10"
+                  class="h-7 md:h-9 w-auto object-contain relative z-10"
                 />
               </button>
               {expandedBrand.value === brand.name && (

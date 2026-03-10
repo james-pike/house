@@ -267,6 +267,7 @@ export default component$(() => {
   const hero = heroData[c.handle] || { images: [] };
   const heroImages = hero.images.length > 0 ? hero.images : [c.image?.url].filter(Boolean) as string[];
   const heroSlide = useSignal(0);
+  const heroTouchStartX = useSignal(0);
 
   useVisibleTask$(({ cleanup }) => {
     if (heroImages.length < 2) return;
@@ -619,7 +620,23 @@ export default component$(() => {
   return (
     <>
       {/* Hero */}
-      <div class="relative text-white h-[200px] md:h-[260px] text-center overflow-hidden flex flex-col items-center justify-center">
+      <div
+        class="relative text-white h-[200px] md:h-[260px] text-center overflow-hidden flex flex-col items-center justify-center"
+        onTouchStart$={(e: TouchEvent) => {
+          heroTouchStartX.value = e.touches[0].clientX;
+        }}
+        onTouchEnd$={(e: TouchEvent) => {
+          if (heroImages.length < 2) return;
+          const diff = heroTouchStartX.value - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              heroSlide.value = (heroSlide.value + 1) % heroImages.length;
+            } else {
+              heroSlide.value = (heroSlide.value - 1 + heroImages.length) % heroImages.length;
+            }
+          }
+        }}
+      >
         {heroImages.length > 0 ? (
           heroImages.map((img, i) => (
             <img

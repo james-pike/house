@@ -34,6 +34,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     origin,
     fr,
     hi_vis,
+    tags,
   } = req.body as {
     title: string
     barcode?: string
@@ -57,6 +58,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     origin?: string
     fr?: boolean
     hi_vis?: boolean
+    tags?: string[]
   }
 
   if (!title || price == null) {
@@ -285,6 +287,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               ...(origin ? { origin } : {}),
               ...(fr ? { fr } : {}),
               ...(hi_vis ? { hi_vis } : {}),
+              ...(tags?.length ? { tags } : {}),
             },
             category_ids: category_id ? [category_id] : undefined,
             ...(shippingProfileId ? { shipping_profile_id: shippingProfileId } : {}),

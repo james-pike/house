@@ -483,7 +483,7 @@ export default component$(() => {
         </div>
       )}
 
-      {/* Size */}
+      {/* Size — commented out for now, too complex
       {sizes.value.length > 0 && (
         <div class="border-b border-gray-200 dark:border-gray-700/50">
           <button
@@ -529,6 +529,7 @@ export default component$(() => {
           )}
         </div>
       )}
+      */}
 
       {/* Color */}
       {colors.value.length > 0 && (
@@ -825,6 +826,7 @@ export default component$(() => {
                         </button>
                       </span>
                     ))}
+                    {/* Size chips — commented out for now
                     {selectedSizes.value.map((size) => (
                       <span key={`size-${size}`} class="inline-flex items-center gap-1 text-[11px] bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full pl-2 pr-1 py-0.5">
                         {size}
@@ -833,6 +835,7 @@ export default component$(() => {
                         </button>
                       </span>
                     ))}
+                    */}
                     {inStockOnly.value && (
                       <span class="inline-flex items-center gap-1 text-[11px] bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full pl-2 pr-1 py-0.5">
                         In Stock
@@ -935,6 +938,7 @@ export default component$(() => {
                     </button>
                   </span>
                 ))}
+                {/* Size chips — commented out for now
                 {selectedSizes.value.map((size) => (
                   <span key={`size-${size}`} class="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full pl-2.5 pr-1.5 py-0.5">
                     Size: {size}
@@ -943,6 +947,7 @@ export default component$(() => {
                     </button>
                   </span>
                 ))}
+                */}
                 {inStockOnly.value && (
                   <span class="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full pl-2.5 pr-1.5 py-0.5">
                     In Stock

@@ -558,18 +558,28 @@ export async function getCollectionByHandle(
   const cat = catData.product_categories?.[0];
   if (!cat) return null;
 
-  // Fetch products in this category with proper price fields
+  // Fetch ALL products in this category (paginate in batches of 100)
   const regionId = await getRegionId();
-  const prodParams = new URLSearchParams({
-    category_id: cat.id,
-    fields: PRODUCT_FIELDS,
-    region_id: regionId,
-    limit: "100",
-    offset: "0",
-  });
-  const prodData = await cachedFetch<{ products: MedusaRawProduct[] }>(
-    `/store/products?${prodParams}`,
-  );
+  const allRawProducts: MedusaRawProduct[] = [];
+  let fetchOffset = 0;
+  const BATCH = 100;
+  while (true) {
+    const prodParams = new URLSearchParams({
+      category_id: cat.id,
+      fields: PRODUCT_FIELDS,
+      region_id: regionId,
+      limit: String(BATCH),
+      offset: String(fetchOffset),
+    });
+    const prodData = await cachedFetch<{ products: MedusaRawProduct[]; count: number }>(
+      `/store/products?${prodParams}`,
+    );
+    const batch = prodData.products ?? [];
+    allRawProducts.push(...batch);
+    if (batch.length < BATCH || allRawProducts.length >= (prodData.count || Infinity)) break;
+    fetchOffset += BATCH;
+  }
+  const prodData = { products: allRawProducts };
 
   // Seed per-handle cache so product detail pages are instant
   for (const rp of prodData.products ?? []) {

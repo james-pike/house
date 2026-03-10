@@ -176,18 +176,6 @@ export default component$(() => {
     return [...typeSet].sort();
   });
 
-  const sizes = useComputed$(() => {
-    const sizeSet = new Set<string>();
-    for (const p of allProducts.value) {
-      if (!p.options) continue;
-      const sizeOpt = p.options.find((o) => o.name.toLowerCase() === "size");
-      if (sizeOpt) {
-        for (const v of sizeOpt.values) sizeSet.add(v);
-      }
-    }
-    return [...sizeSet];
-  });
-
   const colors = useComputed$(() => {
     const colorSet = new Set<string>();
     for (const p of allProducts.value) {

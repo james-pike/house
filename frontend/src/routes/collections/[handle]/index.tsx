@@ -228,6 +228,18 @@ export default component$(() => {
     inStockOnly.value = false;
   });
 
+  // Auto-close mobile filter drawer when a filter is selected
+  useTask$(({ track }) => {
+    track(() => selectedBrands.value);
+    track(() => selectedTypes.value);
+    track(() => selectedColors.value);
+    track(() => inStockOnly.value);
+    track(() => currentSort.value);
+    if (mobileFiltersOpen.value) {
+      mobileFiltersOpen.value = false;
+    }
+  });
+
   const openQuickView = $((product: ShopifyProduct) => {
     const collectionHandle = location.params.handle;
     const productUrl = `/product/${product.handle}/?collection=${collectionHandle}`;
@@ -797,7 +809,7 @@ export default component$(() => {
         {/* Product grid area */}
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
-          <div class="bg-white dark:bg-[#1a1a1a] border-b border-gray-200/60 dark:border-gray-700/40 px-4 md:px-6 py-3 sticky top-[var(--header-h)] z-20">
+          <div class="bg-white dark:bg-[#1a1a1a] border-b border-gray-200/60 dark:border-gray-700/40 px-3 md:px-6 py-1.5 md:py-3 sticky top-[var(--header-h)] z-20">
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">

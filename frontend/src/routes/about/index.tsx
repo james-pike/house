@@ -21,7 +21,7 @@ export default component$(() => {
             footwear, and in-house embroidery services.
           </p>
         </div>
-        <div class="aspect-[3/2] md:aspect-auto order-1 md:order-2">
+        <div class="aspect-[16/9] md:aspect-auto order-1 md:order-2">
           <img
             src="/TheSafetyHouse-March2023-38.jpg"
             alt="The Safety House team"

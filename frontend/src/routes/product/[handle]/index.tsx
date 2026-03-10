@@ -10,7 +10,6 @@ import {
   addToCart,
 } from "~/lib/medusa";
 import type { ShopifyVariant } from "~/lib/medusa";
-import { Carousel } from "@qwik-ui/headless";
 
 export const useProduct = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
@@ -19,7 +18,7 @@ export const useProduct = routeLoader$(async (requestEvent) => {
   const [product, collection] = await Promise.all([
     getProductByHandle(handle),
     collectionHandle
-      ? getCollectionByHandle(collectionHandle, 1)
+      ? getCollectionByHandle(collectionHandle)
       : Promise.resolve(null),
   ]);
 
@@ -28,16 +27,16 @@ export const useProduct = routeLoader$(async (requestEvent) => {
     return null;
   }
 
-  let related = await getProductRecommendations(product.id);
-
-  // Fallback: if no recommendations, use products from same collection
-  if (related.length === 0 && collectionHandle) {
-    const col = await getCollectionByHandle(collectionHandle, 12);
-    if (col) {
-      related = col.products.edges
+  // Get related products from the same collection/category
+  let related = collection
+    ? collection.products.edges
         .map((e) => e.node)
-        .filter((p) => p.handle !== handle);
-    }
+        .filter((p) => p.handle !== handle)
+    : [];
+
+  // Fallback: use generic recommendations if no collection context
+  if (related.length === 0) {
+    related = await getProductRecommendations(product.id);
   }
 
   // Cache at Vercel edge for 5 min, serve stale up to 1 hour while revalidating
@@ -507,51 +506,42 @@ export default component$(() => {
       {p._related && p._related.length > 0 && (
         <div class="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
           <h2 class="text-xl font-bold mb-5">You May Also Like</h2>
-          <Carousel.Root class="relative related-carousel" slidesPerView={2} gap={12} draggable>
-            <Carousel.Scroller class="flex">
-              {p._related.map((item) => (
-                <Carousel.Slide key={item.id} class="min-w-0">
-                  <Link
-                    href={`/product/${item.handle}/${col ? `?collection=${col.handle}` : ""}`}
-                    class="group block bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    {item.featuredImage ? (
-                      <img
-                        src={item.featuredImage.url}
-                        alt={item.featuredImage.altText || item.title}
-                        width={300}
-                        height={300}
-                        class="w-full aspect-square object-cover bg-gray-100 dark:bg-gray-800 transition-transform duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div class="w-full aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-sm">
-                        No image
-                      </div>
-                    )}
-                    <div class="p-3">
-                      {item.vendor && (
-                        <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5 block">
-                          {item.vendor}
-                        </span>
-                      )}
-                      <h3 class="text-sm font-semibold leading-snug line-clamp-2 mb-1">
-                        {item.title}
-                      </h3>
-                      <span class="text-sm font-bold text-primary">
-                        {formatPrice(item.priceRange.minVariantPrice)}
-                      </span>
-                    </div>
-                  </Link>
-                </Carousel.Slide>
-              ))}
-            </Carousel.Scroller>
-            <Carousel.Previous class="absolute left-0 top-1/3 -translate-y-1/2 -translate-x-3 w-9 h-9 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 shadow flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors z-10">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-            </Carousel.Previous>
-            <Carousel.Next class="absolute right-0 top-1/3 -translate-y-1/2 translate-x-3 w-9 h-9 rounded-full bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 shadow flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors z-10">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-            </Carousel.Next>
-          </Carousel.Root>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {p._related.slice(0, 8).map((item) => (
+              <Link
+                key={item.id}
+                href={`/product/${item.handle}/${col ? `?collection=${col.handle}` : ""}`}
+                class="group block bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+              >
+                {item.featuredImage ? (
+                  <img
+                    src={item.featuredImage.url}
+                    alt={item.featuredImage.altText || item.title}
+                    width={300}
+                    height={300}
+                    class="w-full aspect-square object-cover bg-gray-100 dark:bg-gray-800 transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div class="w-full aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-sm">
+                    No image
+                  </div>
+                )}
+                <div class="p-3">
+                  {item.vendor && (
+                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5 block">
+                      {item.vendor}
+                    </span>
+                  )}
+                  <h3 class="text-sm font-semibold leading-snug line-clamp-2 mb-1">
+                    {item.title}
+                  </h3>
+                  <span class="text-sm font-bold text-primary">
+                    {formatPrice(item.priceRange.minVariantPrice)}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

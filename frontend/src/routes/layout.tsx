@@ -150,8 +150,9 @@ export default component$(() => {
     <div class="min-h-screen bg-gray-100 dark:bg-black">
     <div class="bg-white dark:bg-[#121212] max-w-site mx-auto">
       {/* Announcement Bar */}
-      <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden">
-        <div class="flex items-center justify-between">
+      <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden relative">
+        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M12 0h4L0 16V12zM16 12v4h-4z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+        <div class="flex items-center justify-between relative">
           <div class="overflow-hidden flex-1 mr-4">
             <div class="announcement-scroll flex whitespace-nowrap">
               <span class="inline-block px-8">

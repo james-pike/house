@@ -1,8 +1,8 @@
 import { component$, useSignal, useComputed$, $, useVisibleTask$, useTask$ } from "@builder.io/qwik";
 import { routeLoader$, Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { getCollectionByHandle, formatPrice, addToCart, createCart } from "~/lib/medusa";
-import type { ShopifyProduct, ShopifyVariant } from "~/lib/medusa";
+import { getCollectionByHandle, formatPrice } from "~/lib/medusa";
+import type { ShopifyProduct } from "~/lib/medusa";
 
 const COLOR_MAP: Record<string, string> = {
   "black": "#1a1a1a", "dark navy": "#1b2a4a", "navy": "#1b3a5c",
@@ -105,11 +105,6 @@ export default component$(() => {
   const mobileFiltersOpen = useSignal(false);
 
   // Quick view state
-  const quickViewProduct = useSignal<ShopifyProduct | null>(null);
-  const qvSelectedVariant = useSignal("");
-  const qvAdding = useSignal(false);
-  const qvAdded = useSignal(false);
-  const qvSelectedImage = useSignal(0);
 
   // Sidebar section collapse state (desktop)
   const sectionOpen = useSignal<Record<string, boolean>>({
@@ -231,52 +226,7 @@ export default component$(() => {
   const openQuickView = $((product: ShopifyProduct) => {
     const collectionHandle = location.params.handle;
     const productUrl = `/product/${product.handle}/?collection=${collectionHandle}`;
-
-    // Desktop: go directly to product page
-    if (window.innerWidth >= 768) {
-      nav(productUrl);
-      return;
-    }
-
-    // Mobile: open quick view and prefetch product page
-    quickViewProduct.value = product;
-    qvSelectedImage.value = 0;
-    qvAdded.value = false;
-    qvAdding.value = false;
-    const variants = product.variants.edges.map((e) => e.node);
-    const available = variants.find((v) => v.availableForSale);
-    qvSelectedVariant.value = available?.id || variants[0]?.id || "";
-
-    if (!document.querySelector(`link[href="${productUrl}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "prefetch";
-      link.href = productUrl;
-      document.head.appendChild(link);
-    }
-  });
-
-  const qvAddToCart = $(async () => {
-    if (!qvSelectedVariant.value || qvAdding.value) return;
-    qvAdding.value = true;
-    qvAdded.value = false;
-    try {
-      const cartId = localStorage.getItem("cart_id");
-      let cart;
-      if (cartId) {
-        cart = await addToCart(cartId, qvSelectedVariant.value, 1);
-      } else {
-        cart = await createCart(qvSelectedVariant.value, 1);
-      }
-      localStorage.setItem("cart_id", cart.id);
-      localStorage.setItem("cart_checkout_url", cart.checkoutUrl);
-      localStorage.setItem("cart_count", String(cart.totalQuantity));
-      qvAdded.value = true;
-      setTimeout(() => (qvAdded.value = false), 2500);
-    } catch (err) {
-      console.error("Add to cart failed:", err);
-    } finally {
-      qvAdding.value = false;
-    }
+    nav(productUrl);
   });
 
   const filteredProducts = useComputed$(() => {
@@ -1117,143 +1067,6 @@ export default component$(() => {
         </div>
       )}
 
-      {/* Quick View Modal */}
-      {quickViewProduct.value && (() => {
-        const qp = quickViewProduct.value!;
-        const qImages = qp.images.edges.map((e) => e.node);
-        const qVariants = qp.variants.edges.map((e) => e.node);
-        const qAnyAvailable = qVariants.some((v: ShopifyVariant) => v.availableForSale);
-        const qActiveVariant = qVariants.find((v: ShopifyVariant) => v.id === qvSelectedVariant.value);
-
-        return (
-          <div class="fixed inset-0 z-[200] flex items-center justify-center p-4">
-            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick$={() => { quickViewProduct.value = null; }} />
-            <div class="relative bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[min(90dvh,800px)] overflow-y-auto animate-fade-in">
-              {/* Close button */}
-              <button
-                type="button"
-                class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors border-none"
-                onClick$={() => { quickViewProduct.value = null; }}
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-                {/* Image */}
-                <div class="p-5">
-                  {qImages.length > 0 ? (
-                    <>
-                      <img
-                        src={qImages[qvSelectedImage.value]?.url}
-                        alt={qImages[qvSelectedImage.value]?.altText || qp.title}
-                        class="w-full rounded-xl aspect-square object-cover bg-gray-100 dark:bg-gray-800"
-                      />
-                      {qImages.length > 1 && (
-                        <div class="flex gap-1.5 mt-2 overflow-x-auto">
-                          {qImages.map((img, i) => (
-                            <button
-                              key={img.url}
-                              onClick$={() => (qvSelectedImage.value = i)}
-                              class={`w-12 h-12 rounded-lg overflow-hidden border-2 p-0 bg-transparent flex-shrink-0 transition-colors ${
-                                i === qvSelectedImage.value ? "border-primary" : "border-transparent"
-                              }`}
-                            >
-                              <img src={img.url} alt="" class="w-full h-full object-cover" />
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div class="w-full aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-sm rounded-xl">
-                      No image
-                    </div>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div class="p-5 pt-3 md:pt-5 flex flex-col">
-                  {qp.vendor && (
-                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">
-                      {qp.vendor}
-                    </span>
-                  )}
-                  <h2 class="text-xl font-extrabold tracking-tight mb-2">{qp.title}</h2>
-                  <p class="text-xl font-bold text-primary mb-4">
-                    {formatPrice(qp.priceRange.minVariantPrice)}
-                    {qp.priceRange.minVariantPrice.amount !== qp.priceRange.maxVariantPrice.amount && (
-                      <span class="text-gray-400 font-normal text-sm ml-1">
-                        &ndash; {formatPrice(qp.priceRange.maxVariantPrice)}
-                      </span>
-                    )}
-                  </p>
-
-                  {/* Availability */}
-                  {qActiveVariant && (
-                    <div class="flex items-center gap-2 mb-4">
-                      <span class={`w-2 h-2 rounded-full ${qActiveVariant.availableForSale ? "bg-green-600" : "bg-red-600"}`} />
-                      <span class={`text-sm font-semibold ${qActiveVariant.availableForSale ? "text-green-600" : "text-red-600"}`}>
-                        {qActiveVariant.availableForSale ? "In stock" : "Out of stock"}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Variant selector */}
-                  {qVariants.length > 1 && (
-                    <div class="mb-4">
-                      <p class="text-[10px] uppercase tracking-widest text-gray-500 font-semibold mb-1.5">Select Option</p>
-                      <div class="flex flex-wrap gap-1.5">
-                        {qVariants.map((v: ShopifyVariant) => (
-                          <button
-                            key={v.id}
-                            onClick$={() => { if (v.availableForSale) qvSelectedVariant.value = v.id; }}
-                            class={`py-1.5 px-3 rounded-full border text-xs font-medium transition-all ${
-                              !v.availableForSale
-                                ? "opacity-40 cursor-not-allowed line-through border-gray-200 dark:border-gray-700"
-                                : v.id === qvSelectedVariant.value
-                                  ? "border-primary bg-primary/[0.08] text-primary font-semibold"
-                                  : "border-gray-200 dark:border-gray-700"
-                            }`}
-                            disabled={!v.availableForSale}
-                          >
-                            {v.title} &middot; {formatPrice(v.price)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Add to cart */}
-                  <button
-                    class={`w-full py-3 px-6 text-sm font-semibold rounded-lg border-none transition-all mb-3 ${
-                      qAnyAvailable
-                        ? "bg-primary text-white hover:bg-primary-dark"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                    onClick$={qvAddToCart}
-                    disabled={!qAnyAvailable || qvAdding.value}
-                  >
-                    {qvAdding.value ? "Adding..." : qvAdded.value ? "Added to Cart!" : qAnyAvailable ? "Add to Cart" : "Sold Out"}
-                  </button>
-
-                  {/* Description */}
-                  {qp.description && (
-                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4">{qp.description}</p>
-                  )}
-
-                  {/* Full details link */}
-                  <Link
-                    href={`/product/${qp.handle}/?collection=${c.handle}`}
-                    class="text-sm font-medium text-primary hover:underline mt-auto"
-                  >
-                    View Full Details &rarr;
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
     </>
   );
 });

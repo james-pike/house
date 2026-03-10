@@ -185,7 +185,7 @@ export default component$(() => {
               alt="The Safety House"
               width="210"
               height="60"
-              class="object-contain w-[220px] md:w-[280px] dark:invert"
+              class="object-contain w-[190px] md:w-[250px] dark:invert"
             />
             <img
               src="/flag.webp"
@@ -198,11 +198,20 @@ export default component$(() => {
 
           {/* Desktop nav */}
           <nav class="hidden md:flex items-center gap-1.5 lg:gap-2.5">
-            <Link href="/collections/work-wear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/work-wear/' ? 'nav-link-active' : ''}`}>Work Wear</Link>
-            <Link href="/collections/safety-footwear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/safety-footwear/' ? 'nav-link-active' : ''}`}>Safety Footwear</Link>
-            <Link href="/collections/safety-supplies/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/safety-supplies/' ? 'nav-link-active' : ''}`}>Safety Supplies</Link>
-            <Link href="/collections/flame-resistant/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/flame-resistant/' ? 'nav-link-active' : ''}`}>Flame Resistant</Link>
-            <Link href="/collections/casual-wear/" class={`nav-link pattern-stripes ${loc.url.pathname === '/collections/casual-wear/' ? 'nav-link-active' : ''}`}>Casual Wear</Link>
+            {[
+              { href: "/collections/work-wear/", handle: "work-wear", label: "Work Wear" },
+              { href: "/collections/safety-footwear/", handle: "safety-footwear", label: "Safety Footwear" },
+              { href: "/collections/safety-supplies/", handle: "safety-supplies", label: "Safety Supplies" },
+              { href: "/collections/flame-resistant/", handle: "flame-resistant", label: "Flame Resistant" },
+              { href: "/collections/casual-wear/", handle: "casual-wear", label: "Casual Wear" },
+            ].map((item) => {
+              const isActive = loc.url.pathname === item.href
+                || loc.url.pathname.startsWith(`/collections/${item.handle}/`)
+                || loc.url.searchParams.get("collection") === item.handle;
+              return (
+                <Link key={item.handle} href={item.href} class={`nav-link pattern-stripes ${isActive ? "nav-link-active" : ""}`}>{item.label}</Link>
+              );
+            })}
           </nav>
 
           <div class="flex items-center gap-1">
@@ -495,31 +504,24 @@ export default component$(() => {
                   </Link>
                 </Modal.Close>
                 <div class="border-t border-gray-200 dark:border-gray-700 my-2" />
-                <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/collections/work-wear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                    Work Wear
-                  </Link>
-                </Modal.Close>
-                <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/collections/safety-footwear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                    Safety Footwear
-                  </Link>
-                </Modal.Close>
-                <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/collections/safety-supplies/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                    Safety Supplies
-                  </Link>
-                </Modal.Close>
-                <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/collections/flame-resistant/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                    Flame Resistant
-                  </Link>
-                </Modal.Close>
-                <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/collections/casual-wear/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
-                    Casual Wear
-                  </Link>
-                </Modal.Close>
+                {[
+                  { href: "/collections/work-wear/", handle: "work-wear", label: "Work Wear" },
+                  { href: "/collections/safety-footwear/", handle: "safety-footwear", label: "Safety Footwear" },
+                  { href: "/collections/safety-supplies/", handle: "safety-supplies", label: "Safety Supplies" },
+                  { href: "/collections/flame-resistant/", handle: "flame-resistant", label: "Flame Resistant" },
+                  { href: "/collections/casual-wear/", handle: "casual-wear", label: "Casual Wear" },
+                ].map((item) => {
+                  const isActive = loc.url.pathname === item.href
+                    || loc.url.pathname.startsWith(`/collections/${item.handle}/`)
+                    || loc.url.searchParams.get("collection") === item.handle;
+                  return (
+                    <Modal.Close key={item.handle} class="bg-transparent border-none text-left">
+                      <Link href={item.href} class={`block py-3 px-3 text-sm font-medium rounded-lg transition-colors pattern-stripes ${isActive ? "nav-link-active" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"}`}>
+                        {item.label}
+                      </Link>
+                    </Modal.Close>
+                  );
+                })}
               </nav>
               {/* Promotional Banner — connect to API later */}
               <div class="mt-auto p-4">

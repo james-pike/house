@@ -166,7 +166,6 @@ const COLOR_MAP: Record<string, string> = {
   "boulder": "#7a7a6d",       // warm gray
   "broadwater": "#4a7a8c",    // teal-blue
   "cascade": "#4a7d6f",       // forest teal
-  "chestnut": "#954535",      // warm reddish-brown
   "clay": "#b66a50",          // terracotta
   "coal": "#3b3b3b",          // near-black
   "cobblestone": "#8e8e82",   // warm gray
@@ -192,7 +191,7 @@ const COLOR_MAP: Record<string, string> = {
   "houghton": "#5a6a70",      // slate
   "lakeshore": "#4a7a8c",     // blue-gray
   "huron": "#5a7a8c",         // lake blue
-  "mahogany": "#4e1609",      // deep red-brown
+
   "malt": "#c9a86c",          // golden tan
   "midnight": "#191970",      // deep navy
   "morning": "#c8d0d8",       // pale gray-blue
@@ -201,7 +200,7 @@ const COLOR_MAP: Record<string, string> = {
   "natural": "#d4c9a8",       // undyed beige
   "naval": "#1b3a5c",         // navy
   "north": "#3a5a3a",         // dark green
-  "oat": "#d4c5a9",           // warm cream
+
   "peat": "#5a4a30",          // dark brown-green
   "primrose": "#e8d44d",      // yellow
   "railroad": "#1a1a3a",      // dark indigo stripe
@@ -220,8 +219,7 @@ const COLOR_MAP: Record<string, string> = {
   "wyatt": "#7a6a50",         // dusty brown
   "ocean": "#1a5276",         // deep blue
   "creek": "#5a8a6a",         // green-blue
-  "fuchsia": "#ff00ff",       // bright pink
-  "mint": "#98fb98",          // light green
+
 };
 
 // Keywords to strip when parsing compound color names

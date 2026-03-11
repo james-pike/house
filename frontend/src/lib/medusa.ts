@@ -40,21 +40,31 @@ async function medusaFetch<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = `${BACKEND_URL}${path}`;
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      "x-publishable-api-key": PUBLISHABLE_KEY,
-      ...(options.headers as Record<string, string> | undefined),
-    },
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Medusa API ${res.status}: ${text}`);
+  const doFetch = async () => {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "x-publishable-api-key": PUBLISHABLE_KEY,
+        ...(options.headers as Record<string, string> | undefined),
+      },
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Medusa API ${res.status}: ${text}`);
+    }
+    // DELETE may return 204
+    if (res.status === 204) return {} as T;
+    return res.json() as Promise<T>;
+  };
+
+  // Retry once on failure (handles Render cold starts)
+  try {
+    return await doFetch();
+  } catch (err) {
+    console.warn(`Medusa fetch retry: ${path} — ${(err as Error).message}`);
+    return doFetch();
   }
-  // DELETE may return 204
-  if (res.status === 204) return {} as T;
-  return res.json() as Promise<T>;
 }
 
 async function cachedFetch<T>(
@@ -179,6 +189,7 @@ export interface ProductMeta {
   fr?: boolean;
   hi_vis?: boolean;
   tags?: string[];
+  color_images?: Record<string, string>; // color name -> image URL
 }
 
 export interface ShopifyProduct {

@@ -16,12 +16,19 @@ export const useProduct = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
   const collectionHandle = requestEvent.url.searchParams.get("collection");
 
-  const [product, collection] = await Promise.all([
-    getProductByHandle(handle),
-    collectionHandle
-      ? getCollectionByHandle(collectionHandle)
-      : Promise.resolve(null),
-  ]);
+  let product, collection;
+  try {
+    [product, collection] = await Promise.all([
+      getProductByHandle(handle),
+      collectionHandle
+        ? getCollectionByHandle(collectionHandle)
+        : Promise.resolve(null),
+    ]);
+  } catch (err) {
+    console.error(`Product load failed for ${handle}:`, err);
+    requestEvent.status(500);
+    return null;
+  }
 
   if (!product) {
     requestEvent.status(404);
@@ -149,12 +156,21 @@ export default component$(() => {
     ? colors.find((c) => activeVariant.title.toLowerCase().includes(c.toLowerCase()))
     : colors[0];
 
-  // Select first variant matching a color
+  // Select first variant matching a color + switch to matching image
   const selectColor = $((color: string) => {
     const match = variants.find(
       (v) => v.availableForSale && v.title.toLowerCase().includes(color.toLowerCase())
     );
     if (match) selectedVariantId.value = match.id;
+
+    // Switch to color-specific image if available
+    const colorImageUrl = p.meta?.color_images?.[color];
+    if (colorImageUrl) {
+      const idx = images.findIndex((img) => img.url === colorImageUrl);
+      if (idx >= 0) {
+        selectedImage.value = idx;
+      }
+    }
   });
 
   return (
@@ -218,9 +234,14 @@ export default component$(() => {
               {p.vendor}
             </span>
           )}
-          <h1 class="text-[1.75rem] font-extrabold tracking-tight mb-3">
+          <h1 class="text-[1.75rem] font-extrabold tracking-tight mb-1">
             {p.title}
           </h1>
+          {p.meta?.material_number && (
+            <p class="text-xs text-gray-400 dark:text-gray-500 font-mono tracking-wide mb-3">
+              SKU: {p.meta.material_number}
+            </p>
+          )}
 
           {/* Tags / Badges */}
           {p.meta?.tags && p.meta.tags.length > 0 && (

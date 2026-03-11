@@ -888,7 +888,7 @@ export default component$(() => {
                   <Link
                     key={product.id}
                     href={`/product/${product.handle}/?collection=${c.handle}`}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden border border-dashed border-gray-400/40 dark:border-gray-500/25 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden border border-dashed border-gray-400/40 dark:border-gray-500/25 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.08))] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     <div class="relative overflow-hidden">
                       {product.featuredImage ? (

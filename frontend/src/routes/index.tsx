@@ -31,27 +31,6 @@ export default component$(() => {
     },
   ];
 
-  const brands = [
-    { name: "Carhartt", img: "/brands/carhart.png", url: "https://www.carhartt.com" },
-    { name: "Timberland Pro", img: "/brands/timberland-pro.png", url: "https://www.timberland.com/timberlandpro" },
-    { name: "Blakl\u00e4der", img: "/brands/blaklader.png", url: "https://www.blaklader.com" },
-    { name: "Pioneer", img: "/brands/pioneer.png", url: "https://www.pioneerprotective.com" },
-    { name: "Viking", img: "/brands/viking_work_wear.png", url: "https://www.viking.ca" },
-    { name: "Big Bill", img: "/brands/big_bill_workwear.png", url: "https://www.bigbill.com" },
-    { name: "Dickies", img: "/brands/dickies_workwear_ottawa.png", url: "https://www.dickies.ca" },
-    { name: "Tough Duck", img: "/brands/TOUGHDUCK.png", url: "https://www.toughduck.com" },
-    { name: "Blundstone", img: "/brands/blunstone_logo.png", url: "https://www.blundstone.ca" },
-    { name: "Keen", img: "/brands/keen.png", url: "https://www.keenfootwear.com" },
-    { name: "Red Wing", img: "/brands/red-wing-shoes.png", url: "https://www.redwingshoes.com" },
-    { name: "Baffin", img: "/brands/baffin.png", url: "https://www.bfreinc.com/baffin" },
-    { name: "Canada West", img: "/brands/canada-west-boots-logo-1.png", url: "https://www.canadawestboots.com" },
-    { name: "Royer", img: "/brands/royer.png", url: "https://www.royer.com" },
-    { name: "Rasco", img: "/brands/rasco.png", url: "https://www.rfrasco.com" },
-    { name: "JB Goodhue", img: "/brands/jb-goodhue.png", url: "https://www.jbgoodhue.com" },
-  ];
-
-  const expandedBrand = useSignal<string | null>(null);
-
   const currentSlide = useSignal(0);
   const paused = useSignal(false);
   const touchStartX = useSignal(0);
@@ -196,26 +175,26 @@ export default component$(() => {
       </section>
 
       {/* Categories */}
-      <section id="products" class="px-0 bg-[#111] dark:bg-black p-1.5">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-1.5">
+      <section id="products" class="px-0 bg-gray-200 dark:bg-neutral-900 p-px">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-px">
           {categories.map((cat) => (
             <Link
               key={cat.name}
               href={`/collections/${cat.handle}/`}
-              class="group relative overflow-hidden aspect-[4/3] md:aspect-[4/3] flex items-end transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+              class="group relative overflow-hidden aspect-[4/3] md:aspect-[4/3] flex items-end"
             >
               <img
                 src={cat.img}
                 alt={cat.name}
                 width={520}
                 height={390}
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                class="absolute inset-0 w-full h-full object-cover"
               />
               <div class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/25" />
               {/* Edge vignette — fades card edges into the page background, removed on hover */}
               <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none transition-opacity duration-300 group-hover:opacity-0" />
               {/* Stitch border — all 4 sides, overlaid on top */}
-              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10" />
+              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
               {/* Corner tick marks — short registration-style dashes */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
@@ -243,75 +222,21 @@ export default component$(() => {
       </section>
 
       {/* Brands */}
-      <div
-        class="relative bg-white dark:bg-[#1e1e1e] py-4 md:py-6 px-4 md:px-8 text-center stitch-line-h stitch-line-h-bottom stitch-dark"
-        onMouseLeave$={() => { expandedBrand.value = null; }}
-      >
-        <p class="text-sm md:text-base uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold mb-3">
+      <div class="relative bg-white dark:bg-[#1e1e1e] py-4 md:py-6 px-4 md:px-8 text-center stitch-line-h stitch-line-h-bottom stitch-dark">
+        <p class="text-sm md:text-base uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold mb-1">
           Trusted Brands We Carry
         </p>
-        <div class="flex flex-wrap justify-center items-center gap-x-0.5 gap-y-0 md:gap-x-1 md:gap-y-0 relative">
-          {brands.map((brand) => (
-            <div key={brand.name} class="relative" style={expandedBrand.value === brand.name ? { zIndex: 50 } : { zIndex: 1 }}>
-              <button
-                type="button"
-                class={`bg-transparent border-none p-1 md:p-1.5 rounded-lg transition-all duration-200 cursor-pointer ${expandedBrand.value === brand.name ? "" : "hover:scale-110"}`}
-                onMouseEnter$={() => { expandedBrand.value = brand.name; }}
-                aria-label={brand.name}
-              >
-                <img
-                  src={brand.img}
-                  alt={brand.name}
-                  width={120}
-                  height={48}
-                  class="h-7 md:h-9 w-auto object-contain relative z-10"
-                />
-              </button>
-              {expandedBrand.value === brand.name && (
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[280px] bg-white dark:bg-[#252525] rounded-xl shadow-2xl border border-warm flex flex-col items-center py-5 px-4 gap-3">
-                  <img
-                    src={brand.img}
-                    alt={brand.name}
-                    width={160}
-                    height={64}
-                    class="h-10 md:h-12 w-auto object-contain"
-                  />
-                  <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Quality workwear and safety gear trusted across Canada.
-                  </p>
-                  <div class="flex gap-2 w-full">
-                    <Link
-                      href={`/search/?q=${encodeURIComponent(brand.name)}`}
-                      class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
-                    >
-                      Shop {brand.name}
-                    </Link>
-                    {brand.url && (
-                      <a
-                        href={brand.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold rounded-lg border border-warm-strong text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        Visit Site
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Under construction</p>
       </div>
 
       {/* Value Props */}
-      <section class="px-0 bg-[#111] dark:bg-black p-1.5">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-1.5">
+      <section class="px-0 bg-gray-200 dark:bg-neutral-900 p-px">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-px">
           {([
             {
               img: "/footwear.jpg",
               title: "CSA Certified Quality",
-              desc: "Premium CSA footwear and workwear from Canada's most trusted brands.",
+              desc: "Premium CSA footwear and workwear from trusted brands.",
               icon: (
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -322,7 +247,7 @@ export default component$(() => {
             {
               img: "/embroidery.jpg",
               title: "Custom Embroidery",
-              desc: "In-house embroidery and transfer services. Budget-conscious personalization for your team.",
+              desc: "In-house embroidery and transfer services for your team.",
               icon: (
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
@@ -334,7 +259,7 @@ export default component$(() => {
             {
               img: "/hero.jpg",
               title: "Decades of Expertise",
-              desc: "Years of successful apparel market experience with superior sourcing across Canada.",
+              desc: "Decades of apparel expertise with superior sourcing across Canada.",
               icon: (
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -356,7 +281,7 @@ export default component$(() => {
               <div class="absolute inset-0 bg-black/60" />
               <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none" />
               {/* Stitch border — all 4 sides, overlaid on top */}
-              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10" />
+              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
               {/* Stitch corner brackets */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
                 <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />

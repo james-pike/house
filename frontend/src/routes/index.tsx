@@ -77,18 +77,24 @@ export default component$(() => {
       badge: "Canada's Safety Experts",
       title: <>Where Work &amp;<br />Lifestyle Apparel<br /><em class="not-italic text-primary">Intersect</em></>,
       description: "Your one-stop shop for quality workwear, CSA safety footwear, and in-house embroidery services in Ottawa.",
+      cta: { label: "Shop Collections", href: "/#products" },
+      align: "left" as const,
     },
     {
       image: "/footwear.jpg",
       badge: "CSA Approved",
-      title: <>Safety Footwear<br />Built to<br /><em class="not-italic text-primary">Protect</em></>,
+      title: <>Safety Footwear<br />Built to <em class="not-italic text-primary">Protect</em></>,
       description: "CSA-approved boots and shoes from trusted brands like Timberland Pro, Red Wing, and Blundstone.",
+      cta: { label: "Shop Footwear", href: "/collections/safety-footwear/" },
+      align: "center" as const,
     },
     {
       image: "/embroidery.jpg",
       badge: "In-House Embroidery",
-      title: <>Custom<br />Decoration for<br />Your <em class="not-italic text-primary">Team</em></>,
+      title: <>Custom Decoration<br />for Your <em class="not-italic text-primary">Team</em></>,
       description: "Timely, budget-conscious embroidery and transfer services for your company, school, or organization.",
+      cta: { label: "Learn More", href: "/about/" },
+      align: "center" as const,
     },
   ];
 
@@ -116,6 +122,8 @@ export default component$(() => {
           <div
             key={i}
             class={`text-white overflow-hidden transition-opacity duration-700 ease-in-out flex items-center ${
+              slide.align === "center" ? "justify-center" : ""
+            } ${
               i === 0 ? "relative h-[340px] md:h-[clamp(340px,45vw,520px)]" : "absolute top-0 left-0 w-full h-full"
             } ${currentSlide.value === i ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             aria-hidden={currentSlide.value !== i}
@@ -127,27 +135,44 @@ export default component$(() => {
               height={600}
               class="absolute inset-0 w-full h-full object-cover"
             />
-            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+            <div class={`absolute inset-0 ${
+              slide.align === "center"
+                ? "bg-black/50"
+                : "bg-gradient-to-r from-black/70 via-black/40 to-transparent"
+            }`} />
             <div class="absolute inset-0 shadow-[inset_0_0_60px_20px_rgba(0,0,0,0.6)] pointer-events-none" />
-            {/* Stitch corner accents — overshoot past the corner */}
-            <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-10 h-10 md:w-14 md:h-14 pointer-events-none z-10 overflow-visible" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-              <line x1="-8" y1="1" x2="60" y2="1" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-              <line x1="1" y1="-8" x2="1" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+            {/* Stitch corner accents — subtle, matching border stitch scale */}
+            <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+              <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
             </svg>
-            <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-10 h-10 md:w-14 md:h-14 pointer-events-none z-10 overflow-visible" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-              <line x1="0" y1="59" x2="68" y2="59" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-              <line x1="59" y1="0" x2="59" y2="68" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+            <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+              <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
             </svg>
-            <div class="relative z-10 px-6 md:px-12 max-w-xl">
+            <div class={`relative z-10 max-w-2xl ${
+              slide.align === "center"
+                ? "mx-auto px-6 md:px-12 text-center"
+                : "px-8 md:px-16"
+            }`}>
               <div class="inline-block bg-primary/15 text-primary py-1 px-3 rounded-full text-[0.65rem] md:text-xs font-bold tracking-widest uppercase mb-2 border border-white/20">
                 {slide.badge}
               </div>
-              <h2 class="text-[clamp(1.75rem,4.5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
+              <h2 class="text-[clamp(2rem,5vw,4rem)] font-extrabold leading-[1.05] tracking-tight mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                 {slide.title}
               </h2>
-              <p class="text-[clamp(0.8rem,1.2vw,1rem)] text-white/60 max-w-[400px] leading-relaxed">
+              <p class={`text-[clamp(0.85rem,1.3vw,1.05rem)] text-white/60 leading-relaxed mb-4 ${
+                slide.align === "center" ? "max-w-[480px] mx-auto" : "max-w-[420px]"
+              }`}>
                 {slide.description}
               </p>
+              <Link
+                href={slide.cta.href}
+                class="inline-flex items-center gap-2 py-2.5 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
+              >
+                {slide.cta.label}
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </Link>
             </div>
           </div>
         ))}
@@ -171,13 +196,13 @@ export default component$(() => {
       </section>
 
       {/* Categories */}
-      <section id="products" class="px-0 pt-1 pb-1">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-1">
+      <section id="products" class="px-0 bg-[#111] dark:bg-black p-1.5">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-1.5">
           {categories.map((cat) => (
             <Link
               key={cat.name}
               href={`/collections/${cat.handle}/`}
-              class="group relative rounded overflow-hidden aspect-[4/3] md:aspect-[4/3] flex items-end transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+              class="group relative overflow-hidden aspect-[4/3] md:aspect-[4/3] flex items-end transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
             >
               <img
                 src={cat.img}
@@ -189,16 +214,26 @@ export default component$(() => {
               <div class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/25" />
               {/* Edge vignette — fades card edges into the page background, removed on hover */}
               <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none transition-opacity duration-300 group-hover:opacity-0" />
-              {/* Stitch corners */}
-              <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+              {/* Stitch border — all 4 sides, overlaid on top */}
+              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10" />
+              {/* Corner tick marks — short registration-style dashes */}
+              <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
               </svg>
-              <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+              <svg class="absolute top-3 right-3 md:top-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
               </svg>
-              <div class="relative z-10 text-left self-end w-full px-4 pb-4">
+              <svg class="absolute bottom-3 left-3 md:bottom-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+              </svg>
+              <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+              </svg>
+              <div class="relative z-10 text-left self-end w-full px-6 md:px-8 pb-5 md:pb-6">
                 <h3 class="text-white text-2xl font-bold">{cat.name}</h3>
                 <p class="text-white/60 text-sm mt-0.5">{cat.desc}</p>
               </div>
@@ -270,13 +305,13 @@ export default component$(() => {
       </div>
 
       {/* Value Props */}
-      <section class="px-0 pb-1">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-1">
+      <section class="px-0 bg-[#111] dark:bg-black p-1.5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-1.5">
           {([
             {
               img: "/footwear.jpg",
               title: "CSA Certified Quality",
-              desc: "Premium CSA-approved footwear and workwear from Canada's most trusted brands.",
+              desc: "Premium CSA footwear and workwear from Canada's most trusted brands.",
               icon: (
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -310,7 +345,7 @@ export default component$(() => {
               ),
             },
           ] as const).map((card) => (
-            <div key={card.title} class="relative overflow-hidden rounded aspect-[4/3] md:aspect-[3/2] flex items-center justify-center text-center">
+            <div key={card.title} class="relative overflow-hidden aspect-[4/3] md:aspect-[16/9] flex items-center justify-center text-center">
               <img
                 src={card.img}
                 alt=""
@@ -320,14 +355,16 @@ export default component$(() => {
               />
               <div class="absolute inset-0 bg-black/60" />
               <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none" />
-              {/* Stitch corners */}
+              {/* Stitch border — all 4 sides, overlaid on top */}
+              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10" />
+              {/* Stitch corner brackets */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
               </svg>
               <div class="relative z-10 px-6 flex flex-col items-center">
                 <div class="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm text-primary flex items-center justify-center mb-4 border border-white/20">

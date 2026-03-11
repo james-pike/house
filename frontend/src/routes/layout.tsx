@@ -485,7 +485,7 @@ export default component$(() => {
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
               </Modal.Trigger>
-            <Modal.Panel class="mobile-sheet">
+            <Modal.Panel class="mobile-sheet stitch-border stitch-dark">
               <div class="flex items-center justify-between p-4 border-b border-warm">
                 <div class="flex items-center gap-2">
                   <img src="/logo.png" alt="The Safety House" width="180" height="52" class="object-contain w-[180px] dark:invert" />
@@ -535,14 +535,14 @@ export default component$(() => {
               <div class="mt-auto p-4">
                 <div class="relative rounded-xl overflow-hidden bg-[#1a1a1a] text-white p-5 text-center">
                   <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.15'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
-                  {/* Stitch corners */}
-                  <svg class="absolute top-2.5 left-2.5 w-8 h-8 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                  {/* Stitch corners — subtle */}
+                  <svg class="absolute top-2.5 left-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
                   </svg>
-                  <svg class="absolute bottom-2.5 right-2.5 w-8 h-8 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
-                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                  <svg class="absolute bottom-2.5 right-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
                   </svg>
                   <p class="relative text-xs uppercase tracking-widest font-semibold text-primary mb-1">Limited Time</p>
                   <p class="relative text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
@@ -559,18 +559,18 @@ export default component$(() => {
       <Slot />
 
       {/* Footer */}
-      <footer class="bg-dark text-white/80 relative stitch-line-h stitch-light">
-        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M12 0h4L0 16V12zM16 12v4h-4z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+      <footer class="bg-dark text-white/80 relative stitch-line-h stitch-line-h-bottom stitch-light">
+        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23ffffff' fill-opacity='0.03' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E")` }} />
         <div class="pt-6 px-5 pb-4 md:pt-8 md:px-8 md:pb-5">
           <div class="relative grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
-            <svg class="absolute -top-2 -right-3 pointer-events-none overflow-visible" width="50" height="50" viewBox="0 0 50 50" fill="none" aria-hidden="true">
-              <line x1="0" y1="1" x2="56" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
-              <line x1="49" y1="-6" x2="49" y2="50" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+            <svg class="absolute -top-2 -right-3 pointer-events-none overflow-visible" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <line x1="0" y1="1" x2="46" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+              <line x1="39" y1="-6" x2="39" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
             </svg>
             <div class="relative">
-              <svg class="absolute -top-2 -left-3 pointer-events-none overflow-visible" width="50" height="50" viewBox="0 0 50 50" fill="none" aria-hidden="true">
-                <line x1="-6" y1="1" x2="50" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
-                <line x1="1" y1="-6" x2="1" y2="50" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+              <svg class="absolute -top-2 -left-3 pointer-events-none overflow-visible" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
               </svg>
               <img
                 src="/logo.png"
@@ -641,9 +641,9 @@ export default component$(() => {
             </div>
           </div>
           <div class="relative pt-4 flex items-center text-xs text-white/35 stitch-line-h stitch-light">
-            <span>&copy; {new Date().getFullYear()} The Safety House. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} The Safety House.</span>
             <span class="ml-auto flex items-center gap-3 mr-3">
-              <Link href="/privacy/" class="hover:text-primary transition-colors">Privacy</Link>
+              <Link href="/privacy/" class="hover:text-primary transition-colors"><span class="md:hidden">Privacy</span><span class="hidden md:inline">Privacy Policy</span></Link>
               <Link href="/accessibility/" class="hover:text-primary transition-colors">Accessibility</Link>
             </span>
             <button

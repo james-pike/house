@@ -1,30 +1,30 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 
-// Topstitch L-corners — resembles running thread stitch on workwear
+// Topstitch L-corners — subtle running thread stitch on workwear
 const StitchCorners = component$(() => (
   <>
     {/* Top-left L-stitch — lines extend past the corner like real thread */}
     <svg
       class="absolute top-5 left-5 md:top-7 md:left-7 pointer-events-none overflow-visible"
-      width="60" height="60"
-      viewBox="0 0 60 60"
+      width="40" height="40"
+      viewBox="0 0 40 40"
       fill="none"
       aria-hidden="true"
     >
-      <line x1="-8" y1="1" x2="60" y2="1" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-      <line x1="1" y1="-8" x2="1" y2="60" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+      <line x1="-6" y1="1" x2="40" y2="1" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+      <line x1="1" y1="-6" x2="1" y2="40" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
     </svg>
     {/* Bottom-right L-stitch */}
     <svg
       class="absolute bottom-5 right-5 md:bottom-7 md:right-7 pointer-events-none overflow-visible"
-      width="60" height="60"
-      viewBox="0 0 60 60"
+      width="40" height="40"
+      viewBox="0 0 40 40"
       fill="none"
       aria-hidden="true"
     >
-      <line x1="0" y1="59" x2="68" y2="59" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-      <line x1="59" y1="0" x2="59" y2="68" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+      <line x1="0" y1="39" x2="46" y2="39" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+      <line x1="39" y1="0" x2="39" y2="46" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
     </svg>
   </>
 ));

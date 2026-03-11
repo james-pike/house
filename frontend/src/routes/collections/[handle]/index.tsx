@@ -150,16 +150,6 @@ export default component$(() => {
     return [...typeSet].sort();
   });
 
-  const colors = useComputed$(() => {
-    const colorSet = new Set<string>();
-    for (const p of allProducts.value) {
-      for (const c of getProductColors(p)) {
-        if (c) colorSet.add(c);
-      }
-    }
-    return [...colorSet].sort();
-  });
-
   const priceExtent = useComputed$(() => {
     let min = Infinity, max = 0;
     for (const p of allProducts.value) {
@@ -456,58 +446,6 @@ export default component$(() => {
       )}
       */}
 
-      {/* Color */}
-      {colors.value.length > 0 && (
-        <div class="border-b border-warm">
-          <button
-            type="button"
-            class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-            onClick$={() => toggleSection("color")}
-          >
-            <span class="flex items-center gap-2">
-              Color
-              {selectedColors.value.length > 0 && (
-                <span class="bg-primary text-white text-[10px] font-bold rounded-full w-[18px] h-[18px] flex items-center justify-center leading-none">
-                  {selectedColors.value.length}
-                </span>
-              )}
-            </span>
-            <svg class={`w-3.5 h-3.5 transition-transform duration-200 ${sectionOpen.value.color ? "" : "-rotate-90"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-          </button>
-          {sectionOpen.value.color && (
-            <div class="pb-3">
-              <div class="flex flex-wrap gap-2 px-1">
-                {colors.value.map((color) => {
-                  const css = getColorCss(color);
-                  const isGradient = css.startsWith("linear");
-                  const isSelected = selectedColors.value.includes(color);
-                  return (
-                    <button
-                      key={color}
-                      type="button"
-                      title={color}
-                      class={`w-7 h-7 rounded-full border-2 transition-all ${
-                        isSelected
-                          ? "border-primary ring-2 ring-primary/30 scale-110"
-                          : "border-warm-strong hover:scale-110"
-                      }`}
-                      style={isGradient ? { background: css } : { backgroundColor: css }}
-                      onClick$={() => {
-                        const current = [...selectedColors.value];
-                        const idx = current.indexOf(color);
-                        if (idx >= 0) current.splice(idx, 1);
-                        else current.push(color);
-                        selectedColors.value = current;
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Price Range */}
       <div class="border-b border-warm">
         <button
@@ -656,14 +594,14 @@ export default component$(() => {
         {heroImages.length === 0 && (
           <div class="absolute inset-0 bg-gradient-to-br from-dark to-[#2d2d2d]" />
         )}
-        {/* Stitch corner accents — overshoot past the corner */}
-        <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-12 h-12 md:w-16 md:h-16 pointer-events-none z-10 overflow-visible" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-          <line x1="-8" y1="1" x2="60" y2="1" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-          <line x1="1" y1="-8" x2="1" y2="60" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+        {/* Stitch corner accents — subtle, matching border stitch scale */}
+        <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
         </svg>
-        <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-12 h-12 md:w-16 md:h-16 pointer-events-none z-10 overflow-visible" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-          <line x1="0" y1="59" x2="68" y2="59" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
-          <line x1="59" y1="0" x2="59" y2="68" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="4 3.5" stroke-linecap="round" />
+        <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
         </svg>
         <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold tracking-tight mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
@@ -950,7 +888,7 @@ export default component$(() => {
                   <Link
                     key={product.id}
                     href={`/product/${product.handle}/?collection=${c.handle}`}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden border border-warm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden border border-dashed border-gray-400/40 dark:border-gray-500/25 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     <div class="relative overflow-hidden">
                       {product.featuredImage ? (

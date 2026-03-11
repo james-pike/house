@@ -13,6 +13,10 @@ export default {
           DEFAULT: "#1b1b1b",
           soft: "#2a2a2a",
         },
+        warm: {
+          DEFAULT: "var(--border-warm)",
+          strong: "var(--border-warm-strong)",
+        },
       },
       fontFamily: {
         sans: [

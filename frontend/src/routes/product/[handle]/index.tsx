@@ -167,7 +167,7 @@ export default component$(() => {
               <img
                 src={images[selectedImage.value]?.url}
                 alt={images[selectedImage.value]?.altText || p.title}
-                class="w-full rounded-xl aspect-square object-cover border border-gray-200 dark:border-gray-700"
+                class="w-full rounded-xl aspect-square object-cover border border-warm"
               />
               {images.length > 1 && (
                 <div class="flex gap-2 mt-3 overflow-x-auto">
@@ -228,7 +228,7 @@ export default component$(() => {
               {p.meta.tags.map((tag) => (
                 <span
                   key={tag}
-                  class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700"
+                  class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-warm"
                 >
                   {tag}
                 </span>
@@ -262,7 +262,7 @@ export default component$(() => {
                       class={`w-8 h-8 rounded-sm border-2 transition-all duration-150 ${
                         isActive
                           ? "border-gray-900 dark:border-white scale-110 shadow-md"
-                          : "border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400"
+                          : "border-warm-strong hover:border-warm-strong"
                       }`}
                       style={isGradient ? { background: css } : { backgroundColor: css }}
                     />
@@ -320,10 +320,10 @@ export default component$(() => {
                       }}
                       class={`py-1.5 px-3.5 rounded-full border text-xs font-medium transition-all duration-200 ${
                         !v.availableForSale
-                          ? "opacity-40 cursor-not-allowed line-through border-gray-200 dark:border-gray-700"
+                          ? "opacity-40 cursor-not-allowed line-through border-warm"
                           : v.id === selectedVariantId.value
                             ? "border-primary bg-primary/[0.08] text-primary font-semibold"
-                            : "border-gray-200 dark:border-gray-700"
+                            : "border-warm"
                       }`}
                       disabled={!v.availableForSale}
                     >
@@ -373,7 +373,7 @@ export default component$(() => {
 
           {/* Description & Details */}
           {(p.description || p.meta?.features) && (
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-2 space-y-5">
+            <div class="relative pt-6 mt-2 space-y-5 stitch-line-h stitch-dark">
               {p.description && (
                 <p class="text-[#444] dark:text-gray-300 leading-relaxed text-[0.925rem]">{p.description}</p>
               )}
@@ -482,14 +482,14 @@ export default component$(() => {
 
       {/* Related Products */}
       {p._related && p._related.length > 0 && (
-        <div class="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
+        <div class="relative mt-12 pt-8 stitch-line-h stitch-dark">
           <h2 class="text-xl font-bold mb-5">You May Also Like</h2>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {p._related.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
                 href={`/product/${item.handle}/${col ? `?collection=${col.handle}` : ""}`}
-                class="group block bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                class="group block bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-warm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
               >
                 {item.featuredImage ? (
                   <img
@@ -504,6 +504,12 @@ export default component$(() => {
                     No image
                   </div>
                 )}
+                {/* Stitch seam */}
+                <div class="relative h-0">
+                  <svg class="absolute left-0 right-0 -top-px w-full h-px overflow-visible pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
+                    <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="4 3" stroke-linecap="round" />
+                  </svg>
+                </div>
                 <div class="p-3">
                   {item.vendor && (
                     <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-0.5 block">

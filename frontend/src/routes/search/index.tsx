@@ -50,7 +50,7 @@ export default component$(() => {
               window.location.href = `/search/?q=${encodeURIComponent(searchInput.value.trim())}`;
             }
           }}
-          class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e]"
+          class="flex items-center border border-warm-strong rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e]"
         >
           <svg class="w-5 h-5 ml-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" />
@@ -93,7 +93,7 @@ export default component$(() => {
                   <Link
                     key={product.id}
                     href={`/product/${product.handle}/`}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-warm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     {product.featuredImage ? (
                       <img
@@ -129,7 +129,7 @@ export default component$(() => {
                 <div class="text-center mt-8">
                   <button
                     type="button"
-                    class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                    class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-lg border border-warm-strong bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
                     disabled={loadingMore.value}
                     onClick$={loadMore}
                   >

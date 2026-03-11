@@ -6,6 +6,12 @@
   html {
     font-size: 17px;
     --header-h: 52px;
+    --border-warm: #e5e7eb;
+    --border-warm-strong: #d1d5db;
+  }
+  .dark {
+    --border-warm: #374151;
+    --border-warm-strong: #4b5563;
   }
 
   body {
@@ -169,4 +175,53 @@
 }
 .animate-fade-in {
   animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* ── Stitch design system ── */
+/* Horizontal stitch line — use as a border replacement */
+.stitch-line-h {
+  position: relative;
+}
+.stitch-line-h::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  border-top: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+}
+
+/* Bottom variant */
+.stitch-line-h-bottom::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  border-top: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+}
+
+/* Vertical stitch line */
+.stitch-line-v::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-left: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+}
+
+/* Light stitch for dark backgrounds */
+.stitch-light {
+  --stitch-color: rgba(255, 255, 255, 0.10);
+}
+/* Stitch for light backgrounds */
+.stitch-dark {
+  --stitch-color: rgba(107, 114, 128, 0.15);
+}
+.dark .stitch-dark {
+  --stitch-color: rgba(156, 163, 175, 0.10);
 }

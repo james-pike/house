@@ -77,7 +77,7 @@ export default component$(() => {
 
       {/* Divider */}
       <div class="px-8">
-        <div class="border-t border-gray-200 dark:border-gray-800" />
+        <div class="border-t border-warm" />
       </div>
 
       {/* Hours — text left, visual right */}
@@ -100,10 +100,10 @@ export default component$(() => {
                   ["Sunday", "Closed"],
                 ].map(([day, hours]) => (
                   <tr key={day}>
-                    <td class="py-2.5 text-[0.95rem] border-b border-gray-200 dark:border-gray-700 font-semibold text-dark dark:text-white">
+                    <td class="py-2.5 text-[0.95rem] border-b border-warm font-semibold text-dark dark:text-white">
                       {day}
                     </td>
-                    <td class="py-2.5 text-[0.95rem] text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 text-right">
+                    <td class="py-2.5 text-[0.95rem] text-gray-500 dark:text-gray-400 border-b border-warm text-right">
                       {hours}
                     </td>
                   </tr>

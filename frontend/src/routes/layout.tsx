@@ -148,9 +148,16 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-gray-100 dark:bg-black">
-    <div class="bg-white dark:bg-[#121212] max-w-site mx-auto">
+    <div class="bg-white dark:bg-[#121212] max-w-site mx-auto relative">
+      {/* Vertical stitch seams along container edges */}
+      <svg class="absolute left-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="5 4" stroke-linecap="round" />
+      </svg>
+      <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="5 4" stroke-linecap="round" />
+      </svg>
       {/* Announcement Bar */}
-      <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden relative">
+      <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden relative stitch-line-h-bottom stitch-light">
         <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M12 0h4L0 16V12zM16 12v4h-4z'/%3E%3C/g%3E%3C/svg%3E")` }} />
         <div class="flex items-center justify-between relative">
           <div class="overflow-hidden flex-1 mr-4">
@@ -178,7 +185,7 @@ export default component$(() => {
       </div>
 
       {/* Header */}
-      <header id="site-header" class="bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-700 sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4">
+      <header id="site-header" class="bg-white dark:bg-[#1e1e1e] sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4 stitch-line-h-bottom stitch-dark">
         <div class="py-1 md:py-1 flex items-center justify-between">
           <Link href="/" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
             <img
@@ -219,7 +226,7 @@ export default component$(() => {
             {/* Desktop search */}
             <div class="hidden md:block relative" data-search-container>
               {searchExpanded.value ? (
-                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e] animate-fade-in">
+                <div class="flex items-center border border-warm-strong rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e] animate-fade-in">
                   <svg class="w-4 h-4 ml-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.35-4.35" />
@@ -259,7 +266,7 @@ export default component$(() => {
               ) : (
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#1e1e1e] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  class="flex items-center justify-center w-9 h-9 border border-warm-strong rounded-lg bg-white dark:bg-[#1e1e1e] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
                   onClick$={() => { searchExpanded.value = true; }}
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,7 +276,7 @@ export default component$(() => {
                 </button>
               )}
               {searchOpen.value && (
-                <div class="absolute top-full right-0 mt-1 w-[360px] bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-[400px] overflow-y-auto">
+                <div class="absolute top-full right-0 mt-1 w-[360px] bg-white dark:bg-[#1e1e1e] border border-warm rounded-lg shadow-xl z-50 max-h-[400px] overflow-y-auto">
                   {searchLoading.value ? (
                     <div class="flex items-center justify-center py-6">
                       <div class="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
@@ -298,7 +305,7 @@ export default component$(() => {
                       ))}
                       <a
                         href={`/search/?q=${encodeURIComponent(searchQuery.value.trim())}`}
-                        class="block text-center text-sm text-primary font-medium py-3 border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        class="block text-center text-sm text-primary font-medium py-3 border-t border-warm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                         onClick$={() => { searchOpen.value = false; }}
                       >
                         View all results
@@ -339,7 +346,7 @@ export default component$(() => {
                 )}
               </Modal.Trigger>
               <Modal.Panel class="cart-sheet">
-                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between p-4 border-b border-warm">
                   <h2 class="text-lg font-bold">Your Cart</h2>
                   <Modal.Close class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-dark dark:hover:text-white bg-transparent border-none text-xl">
                     &times;
@@ -379,7 +386,7 @@ export default component$(() => {
                                   alt={product.featuredImage.altText || product.title}
                                   width={72}
                                   height={72}
-                                  class="w-[72px] h-[72px] rounded-lg object-cover border border-gray-200 dark:border-gray-700"
+                                  class="w-[72px] h-[72px] rounded-lg object-cover border border-warm"
                                 />
                               </Link>
                             ) : (
@@ -396,7 +403,7 @@ export default component$(() => {
                                 <div class="flex items-center gap-1.5">
                                   <button
                                     type="button"
-                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-warm-strong bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
                                     aria-label="Decrease quantity"
                                     onClick$={() => updateLineQuantity(line.id, line.quantity - 1)}
                                   >
@@ -405,7 +412,7 @@ export default component$(() => {
                                   <span class="text-sm font-medium w-6 text-center">{line.quantity}</span>
                                   <button
                                     type="button"
-                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                                    class="w-7 h-7 flex items-center justify-center rounded-md border border-warm-strong bg-white dark:bg-[#1e1e1e] text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
                                     aria-label="Increase quantity"
                                     onClick$={() => updateLineQuantity(line.id, line.quantity + 1)}
                                   >
@@ -444,7 +451,7 @@ export default component$(() => {
                 </div>
 
                 {cartData.value && cartData.value.lines.edges.length > 0 && (
-                  <div class="border-t border-gray-200 dark:border-gray-700 p-4">
+                  <div class="border-t border-warm p-4">
                     <div class="flex items-center justify-between mb-1">
                       <span class="text-sm text-gray-500 dark:text-gray-400">Subtotal</span>
                       <span class="text-sm font-medium">
@@ -479,7 +486,7 @@ export default component$(() => {
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
               </Modal.Trigger>
             <Modal.Panel class="mobile-sheet">
-              <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <div class="flex items-center justify-between p-4 border-b border-warm">
                 <div class="flex items-center gap-2">
                   <img src="/logo.png" alt="The Safety House" width="180" height="52" class="object-contain w-[180px] dark:invert" />
                   <img src="/flag.webp" alt="" width="32" height="32" class="w-8 h-8 object-contain" />
@@ -507,7 +514,7 @@ export default component$(() => {
                     </Modal.Close>
                   );
                 })}
-                <div class="border-t border-gray-200 dark:border-gray-700 my-2" />
+                <div class="border-t border-warm my-2" />
                 <Modal.Close class="bg-transparent border-none text-left">
                   <Link href="/about/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
                     About Us
@@ -528,6 +535,15 @@ export default component$(() => {
               <div class="mt-auto p-4">
                 <div class="relative rounded-xl overflow-hidden bg-[#1a1a1a] text-white p-5 text-center">
                   <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.15'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+                  {/* Stitch corners */}
+                  <svg class="absolute top-2.5 left-2.5 w-8 h-8 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                  </svg>
+                  <svg class="absolute bottom-2.5 right-2.5 w-8 h-8 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.15)" stroke-width="1" stroke-dasharray="3 2.5" stroke-linecap="round" />
+                  </svg>
                   <p class="relative text-xs uppercase tracking-widest font-semibold text-primary mb-1">Limited Time</p>
                   <p class="relative text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
                   <p class="relative text-sm text-white/60">Use code <span class="font-bold text-primary">SALE25</span> at checkout</p>
@@ -543,11 +559,19 @@ export default component$(() => {
       <Slot />
 
       {/* Footer */}
-      <footer class="bg-dark text-white/80 relative">
+      <footer class="bg-dark text-white/80 relative stitch-line-h stitch-light">
         <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M12 0h4L0 16V12zM16 12v4h-4z'/%3E%3C/g%3E%3C/svg%3E")` }} />
         <div class="pt-6 px-5 pb-4 md:pt-8 md:px-8 md:pb-5">
-          <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
-            <div>
+          <div class="relative grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
+            <svg class="absolute -top-2 -right-3 pointer-events-none overflow-visible" width="50" height="50" viewBox="0 0 50 50" fill="none" aria-hidden="true">
+              <line x1="0" y1="1" x2="56" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+              <line x1="49" y1="-6" x2="49" y2="50" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+            </svg>
+            <div class="relative">
+              <svg class="absolute -top-2 -left-3 pointer-events-none overflow-visible" width="50" height="50" viewBox="0 0 50 50" fill="none" aria-hidden="true">
+                <line x1="-6" y1="1" x2="50" y2="1" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+                <line x1="1" y1="-6" x2="1" y2="50" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+              </svg>
               <img
                 src="/logo.png"
                 alt="The Safety House"
@@ -580,8 +604,6 @@ export default component$(() => {
                 <Link href="/embroidery/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Embroidery</Link>
                 <Link href="/store-hours/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Store Hours</Link>
                 <Link href="/faq/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">FAQ</Link>
-                <Link href="/privacy/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Privacy Policy</Link>
-                <Link href="/accessibility/" class="block text-sm text-white/65 py-0.5 transition-colors hover:text-primary">Accessibility</Link>
               </div>
             </div>
             <div class="grid grid-cols-2 md:contents gap-8">
@@ -618,8 +640,12 @@ export default component$(() => {
               </div>
             </div>
           </div>
-          <div class="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-white/35">
+          <div class="relative pt-4 flex items-center text-xs text-white/35 stitch-line-h stitch-light">
             <span>&copy; {new Date().getFullYear()} The Safety House. All rights reserved.</span>
+            <span class="ml-auto flex items-center gap-3 mr-3">
+              <Link href="/privacy/" class="hover:text-primary transition-colors">Privacy</Link>
+              <Link href="/accessibility/" class="hover:text-primary transition-colors">Accessibility</Link>
+            </span>
             <button
               onClick$={toggleDarkMode}
               class="text-white/50 hover:text-primary transition-colors bg-transparent border-none"

@@ -91,7 +91,7 @@ export default component$(() => {
             {faqs.map((faq, i) => (
               <div
                 key={faq.q}
-                class="bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm"
+                class="bg-white dark:bg-[#1e1e1e] border border-warm rounded-xl overflow-hidden transition-shadow duration-200 hover:shadow-sm"
               >
                 <button
                   onClick$={() => toggle(i)}

@@ -67,6 +67,9 @@
     opacity: 0.6;
   }
   .nav-link-active {
+    color: #1a1a1a !important;
+  }
+  .dark .nav-link-active {
     color: #ffffff !important;
   }
   .nav-link-active::after {
@@ -78,6 +81,9 @@
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at center, transparent 30%, black 80%);
   }
   .nav-link-active.pattern-stripes {
+    background-color: rgba(230, 168, 23, 0.15);
+  }
+  .dark .nav-link-active.pattern-stripes {
     background-color: rgba(27, 27, 27, 0.7);
   }
   .stripe-active {
@@ -189,8 +195,8 @@
   right: 0;
   top: 0;
   height: 0;
-  border-top: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.10));
+  border-top: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Bottom variant */
@@ -201,8 +207,8 @@
   right: 0;
   bottom: 0;
   height: 0;
-  border-top: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.10));
+  border-top: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Vertical stitch line */
@@ -213,24 +219,26 @@
   bottom: 0;
   left: 0;
   width: 0;
-  border-left: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(1px 0 1px rgba(0, 0, 0, 0.10));
+  border-left: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+  filter: drop-shadow(1px 0 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Full stitched border — all 4 sides */
 .stitch-border {
-  border: 1px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.10));
+  border: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
+  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Light stitch for dark backgrounds */
 .stitch-light {
   --stitch-color: rgba(255, 255, 255, 0.10);
 }
-/* Stitch for light backgrounds */
+/* Stitch for light backgrounds — white thread with visible shadow */
 .stitch-dark {
-  --stitch-color: rgba(107, 114, 128, 0.15);
+  --stitch-color: rgba(255, 255, 255, 0.9);
+  --stitch-shadow: rgba(0, 0, 0, 0.12);
 }
 .dark .stitch-dark {
   --stitch-color: rgba(156, 163, 175, 0.10);
+  --stitch-shadow: rgba(0, 0, 0, 0.10);
 }

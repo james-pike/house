@@ -559,7 +559,7 @@ export default component$(() => {
     <>
       {/* Hero */}
       <div
-        class="relative text-white h-[200px] md:h-[260px] text-center overflow-hidden flex flex-col items-center justify-center"
+        class="relative text-white h-[180px] md:h-[234px] text-center overflow-hidden flex flex-col items-center justify-center"
         onTouchStart$={(e: TouchEvent) => {
           heroTouchStartX.value = e.touches[0].clientX;
         }}
@@ -632,7 +632,7 @@ export default component$(() => {
       {/* Main layout: sidebar + grid */}
       <div class="flex">
         {/* Desktop sidebar */}
-        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-white dark:bg-[#161616] sticky top-[var(--header-h)] self-start max-h-[calc(100dvh-var(--header-h))] overflow-y-auto relative">
+        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[var(--header-h)] self-start max-h-[calc(100dvh-var(--header-h))] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
@@ -689,7 +689,7 @@ export default component$(() => {
         {/* Product grid area */}
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
-          <div class="bg-white dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-3 sticky top-[var(--header-h)] z-20 relative stitch-line-h-bottom stitch-dark">
+          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-3 sticky top-[var(--header-h)] z-20 relative stitch-line-h-bottom stitch-dark">
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">
@@ -981,7 +981,7 @@ export default component$(() => {
       {mobileFiltersOpen.value && (
         <div class="fixed inset-0 z-50 lg:hidden">
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick$={() => { mobileFiltersOpen.value = false; }} />
-          <div class="absolute right-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-white dark:bg-[#161616] shadow-2xl flex flex-col animate-slide-in">
+          <div class="absolute right-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-gray-50 dark:bg-[#161616] shadow-2xl flex flex-col animate-slide-in">
             <div class="flex items-center justify-between p-4 border-b border-warm">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">

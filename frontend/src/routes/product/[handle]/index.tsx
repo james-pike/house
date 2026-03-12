@@ -234,14 +234,9 @@ export default component$(() => {
               {p.vendor}
             </span>
           )}
-          <h1 class="text-[1.75rem] font-extrabold tracking-tight mb-1">
+          <h1 class="text-[1.75rem] font-extrabold tracking-tight mb-3">
             {p.title}
           </h1>
-          {p.meta?.material_number && (
-            <p class="text-xs text-gray-400 dark:text-gray-500 font-mono tracking-wide mb-3">
-              SKU: {p.meta.material_number}
-            </p>
-          )}
 
           {/* Tags / Badges */}
           {p.meta?.tags && p.meta.tags.length > 0 && (
@@ -415,9 +410,15 @@ export default component$(() => {
               )}
 
               {/* Specs */}
-              {(p.meta?.fabric || p.meta?.fit || p.meta?.origin) && (
+              {(p.meta?.fabric || p.meta?.fit || p.meta?.origin || p.meta?.material_number) && (
                 <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                  {p.meta.fabric && (
+                  {p.meta?.material_number && (
+                    <>
+                      <span class="text-gray-500 dark:text-gray-400">SKU</span>
+                      <span class="text-gray-900 dark:text-white font-mono text-xs">{p.meta.material_number}</span>
+                    </>
+                  )}
+                  {p.meta?.fabric && (
                     <>
                       <span class="text-gray-500 dark:text-gray-400">Material</span>
                       <span class="text-gray-900 dark:text-white">{p.meta.fabric}</span>

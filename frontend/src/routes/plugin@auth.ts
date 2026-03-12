@@ -1,7 +1,7 @@
 import type { RequestHandler } from "@builder.io/qwik-city";
 
 const USERNAME = "admin";
-const PASSWORD = "Melissa";
+const PASSWORD = "SafetyHouse";
 
 export const onRequest: RequestHandler = async ({ request, send }) => {
 

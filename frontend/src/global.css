@@ -35,10 +35,28 @@
 
 @layer components {
   .nav-link {
-    @apply text-sm md:text-base font-medium text-gray-500 transition-colors duration-200 relative dark:text-gray-400 md:uppercase md:tracking-wide;
+    @apply text-sm md:text-base font-medium text-gray-500 transition-colors duration-200 relative dark:text-gray-400 md:uppercase md:tracking-normal;
   }
   .nav-link:hover {
     @apply text-[#1a1a1a] dark:text-white;
+  }
+  .nav-stitch-box {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px);
+    background-size: 100% 1px, 1px 100%, 1px 100%;
+    background-position: top, left, right;
+    background-repeat: repeat-x, repeat-y, repeat-y;
+  }
+  .dark .nav-stitch-box {
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px);
+    background-size: 100% 1px, 1px 100%, 1px 100%;
+    background-position: top, left, right;
+    background-repeat: repeat-x, repeat-y, repeat-y;
   }
   .nav-link::after {
     content: "";
@@ -49,8 +67,8 @@
   }
   .nav-link.pattern-stripes {
     position: relative;
-    padding: 0.2rem 0.6rem;
-    border-radius: 0.25rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0;
     overflow: hidden;
   }
   .nav-link.pattern-stripes::before {
@@ -75,16 +93,37 @@
   .nav-link-active::after {
     @apply w-full;
   }
+  /* --- Stitched box active nav (commented out for reference) ---
+  .nav-link-active.pattern-stripes {
+    overflow: visible;
+  }
+  .nav-link-active.pattern-stripes::before {
+    opacity: 0;
+  }
+  .nav-link-active.pattern-stripes::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+    border-radius: 0.25rem;
+    pointer-events: none;
+  }
+  .dark .nav-link-active.pattern-stripes::after {
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  --- end stitched box active nav --- */
+
   .nav-link-active.pattern-stripes::before {
     opacity: 1;
     mask-image: radial-gradient(ellipse 90% 70% at center, transparent 30%, black 80%);
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at center, transparent 30%, black 80%);
   }
   .nav-link-active.pattern-stripes {
-    background-color: rgba(230, 168, 23, 0.15);
+    background-color: rgba(230, 168, 23, 0.08);
   }
   .dark .nav-link-active.pattern-stripes {
-    background-color: rgba(27, 27, 27, 0.7);
+    background-color: rgba(230, 168, 23, 0.04);
   }
   .stripe-active {
     position: relative;
@@ -194,9 +233,9 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 0;
-  border-top: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Bottom variant */
@@ -206,9 +245,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 0;
-  border-top: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Vertical stitch line */
@@ -218,27 +257,73 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: 0;
-  border-left: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(1px 0 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  width: 1px;
+  background: repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  filter: drop-shadow(1px 0 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
 /* Full stitched border — all 4 sides */
 .stitch-border {
-  border: 1.5px dashed var(--stitch-color, rgba(107, 114, 128, 0.15));
-  filter: drop-shadow(0 1px 2px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  border: none;
+  background-image:
+    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: top, bottom, left, right;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+}
+
+/* Fine stitch overlay — replaces inline border-dashed on cards */
+.stitch-box-overlay {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: top, bottom, left, right;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+/* Stitch overlay for light backgrounds (product cards, about panels) */
+.stitch-box-overlay-dark {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: top, bottom, left, right;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
+}
+.dark .stitch-box-overlay-dark {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: top, bottom, left, right;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
 }
 
 /* Light stitch for dark backgrounds */
 .stitch-light {
-  --stitch-color: rgba(255, 255, 255, 0.10);
+  --stitch-color: rgba(255, 255, 255, 0.12);
+  --stitch-shadow: rgba(0, 0, 0, 0.15);
 }
-/* Stitch for light backgrounds — white thread with visible shadow */
+/* Stitch for light backgrounds */
 .stitch-dark {
-  --stitch-color: rgba(255, 255, 255, 0.9);
-  --stitch-shadow: rgba(0, 0, 0, 0.12);
+  --stitch-color: rgba(255, 255, 255, 0.18);
+  --stitch-shadow: rgba(0, 0, 0, 0.25);
 }
 .dark .stitch-dark {
-  --stitch-color: rgba(156, 163, 175, 0.10);
-  --stitch-shadow: rgba(0, 0, 0, 0.10);
+  --stitch-color: rgba(255, 255, 255, 0.18);
+  --stitch-shadow: rgba(0, 0, 0, 0.25);
 }

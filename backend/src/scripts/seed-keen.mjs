@@ -57,7 +57,9 @@ for (const styleNum of styles) {
           ? Math.round(entry.wholesale_price * 100)
           : 5000
 
-      const suggested_title = entry.color ? `${entry.title} - ${entry.color}` : entry.title
+      // Don't append color to title — the receive endpoint handles color as a
+      // separate field. Title should be the clean product name only.
+      const suggested_title = entry.title
 
       const body = {
         title: suggested_title,

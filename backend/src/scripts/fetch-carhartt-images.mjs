@@ -20,8 +20,8 @@ import sharp from "sharp";
 
 // ── Vault session (update before each run) ──
 const VAULT_BASE = "https://carhartt-vault.esko-saas.com";
-const VAULT_SESSION = "last_login_group=36; JSESSIONID=33613AAAAD27A3BF5CBBEE2B4018EF1F";
-const VAULT_XSRF = "16244FFD7EFDE86C2A996509587E48B4";
+const VAULT_SESSION = "last_login_group=36; JSESSIONID=A01F4459225937B74D7463F29F2DC2B1";
+const VAULT_XSRF = "4D4363FD5CD787541C4C125A7058A585";
 
 // ── Cloudflare R2 ──
 const R2_ACCOUNT_ID = "d3d227d74f04b6b9762fe5f6585fa7f8";

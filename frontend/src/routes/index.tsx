@@ -24,10 +24,10 @@ export default component$(() => {
       img: "/flame-resistant-clothing.jpg",
     },
 {
-      name: "Casual Wear",
-      handle: "school-wear",
-      desc: "Everyday and casual apparel",
-      img: "/schoolwear.jpg",
+      name: "Safety Supplies",
+      handle: "safety-supplies",
+      desc: "Essential safety equipment and PPE",
+      img: "/safety-supplies.jpg",
     },
   ];
 
@@ -37,7 +37,7 @@ export default component$(() => {
 
   // Auto-advance through all slides once, then stop on slide 0
   useVisibleTask$(({ cleanup }) => {
-    const lastIndex = 2;
+    const lastIndex = 3;
     const id = setInterval(() => {
       if (paused.value) return;
       if (currentSlide.value < lastIndex) {
@@ -55,17 +55,29 @@ export default component$(() => {
       image: "/hero.jpg",
       badge: "Canada's Safety Experts",
       title: <>Where Work &amp;<br />Lifestyle Apparel<br /><em class="not-italic text-primary">Intersect</em></>,
-      description: "Your one-stop shop for quality workwear, CSA safety footwear, and in-house embroidery services in Ottawa.",
-      cta: { label: "Shop Collections", href: "/#products" },
-      align: "left" as const,
+      description: "Your one-stop shop for quality workwear, CSA safety footwear, and in-house embroidery services.",
+      cta: null,
+      align: "center" as const,
+      objectPos: "",
     },
     {
       image: "/footwear.jpg",
       badge: "CSA Approved",
       title: <>Safety Footwear<br />Built to <em class="not-italic text-primary">Protect</em></>,
-      description: "CSA-approved boots and shoes from trusted brands like Timberland Pro, Red Wing, and Blundstone.",
+      description: "CSA-approved boots and shoes from trusted brands.",
       cta: { label: "Shop Footwear", href: "/collections/safety-footwear/" },
       align: "center" as const,
+      objectPos: "95% 12%",
+      scale: 1.15,
+    },
+    {
+      image: "/flame-resistant-clothing-ottawa.jpg",
+      badge: "FR Certified",
+      title: <>Flame Resistant<br />Built for <em class="not-italic text-primary">Safety</em></>,
+      description: "Certified FR clothing to keep you protected on the job.",
+      cta: { label: "Shop Flame Resistant", href: "/collections/flame-resistant/" },
+      align: "center" as const,
+      objectPos: "",
     },
     {
       image: "/embroidery.jpg",
@@ -74,6 +86,7 @@ export default component$(() => {
       description: "Timely, budget-conscious embroidery and transfer services for your company, school, or organization.",
       cta: { label: "Learn More", href: "/about/" },
       align: "center" as const,
+      objectPos: "",
     },
   ];
 
@@ -81,7 +94,7 @@ export default component$(() => {
     <>
       {/* Hero Carousel */}
       <section
-        class="relative overflow-hidden"
+        class="relative overflow-hidden mt-px stitch-line-h-bottom stitch-light"
         onMouseEnter$={() => { paused.value = true; }}
         onMouseLeave$={() => { paused.value = false; }}
         onTouchStart$={(e: TouchEvent) => { touchStartX.value = e.touches[0].clientX; }}
@@ -97,13 +110,15 @@ export default component$(() => {
           }
         }}
       >
+        {/* Stitch border — all 4 sides */}
+        <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-20 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
         {heroSlides.map((slide, i) => (
           <div
             key={i}
             class={`text-white overflow-hidden transition-opacity duration-700 ease-in-out flex items-center ${
               slide.align === "center" ? "justify-center" : ""
             } ${
-              i === 0 ? "relative h-[340px] md:h-[clamp(340px,45vw,520px)]" : "absolute top-0 left-0 w-full h-full"
+              i === 0 ? "relative h-[306px] md:h-[clamp(306px,40.5vw,468px)]" : "absolute top-0 left-0 w-full h-full"
             } ${currentSlide.value === i ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             aria-hidden={currentSlide.value !== i}
           >
@@ -112,6 +127,10 @@ export default component$(() => {
               alt=""
               width={1400}
               height={600}
+              style={{
+                ...(slide.objectPos ? { objectPosition: slide.objectPos } : {}),
+                ...('scale' in slide && slide.scale ? { transform: `scale(${slide.scale})` } : {}),
+              }}
               class="absolute inset-0 w-full h-full object-cover"
             />
             <div class={`absolute inset-0 ${
@@ -119,15 +138,15 @@ export default component$(() => {
                 ? "bg-black/50"
                 : "bg-gradient-to-r from-black/70 via-black/40 to-transparent"
             }`} />
-            <div class="absolute inset-0 shadow-[inset_0_0_60px_20px_rgba(0,0,0,0.6)] pointer-events-none" />
+            <div class="absolute inset-0 shadow-[inset_0_0_60px_20px_rgba(0,0,0,0.3)] pointer-events-none" />
             {/* Stitch corner accents — subtle, matching border stitch scale */}
-            <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-              <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+            <svg class="absolute top-4 left-4 md:top-6 md:left-6 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+              <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
             </svg>
-            <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-              <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+            <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+              <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
             </svg>
             <div class={`relative z-10 max-w-2xl ${
               slide.align === "center"
@@ -140,11 +159,12 @@ export default component$(() => {
               <h2 class="text-[clamp(2rem,5vw,4rem)] font-extrabold leading-[1.05] tracking-tight mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                 {slide.title}
               </h2>
-              <p class={`text-[clamp(0.85rem,1.3vw,1.05rem)] text-white/60 leading-relaxed mb-4 ${
-                slide.align === "center" ? "max-w-[480px] mx-auto" : "max-w-[420px]"
+              <p class={`text-[clamp(1.05rem,1.8vw,1.35rem)] text-white/80 leading-relaxed mb-4 ${
+                slide.align === "center" ? "max-w-[600px] mx-auto" : "max-w-[520px]"
               }`}>
                 {slide.description}
               </p>
+              {slide.cta && (
               <Link
                 href={slide.cta.href}
                 class="inline-flex items-center gap-2 py-2.5 px-6 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors"
@@ -152,6 +172,7 @@ export default component$(() => {
                 {slide.cta.label}
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
               </Link>
+              )}
             </div>
           </div>
         ))}
@@ -190,31 +211,37 @@ export default component$(() => {
                 height={390}
                 class="absolute inset-0 w-full h-full object-cover"
               />
-              <div class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/25" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/15 transition-opacity duration-300 group-hover:opacity-70" />
               {/* Edge vignette — fades card edges into the page background, removed on hover */}
-              <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none transition-opacity duration-300 group-hover:opacity-0" />
+              <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.25)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.4)] pointer-events-none transition-opacity duration-300 group-hover:opacity-0" />
               {/* Stitch border — all 4 sides, overlaid on top */}
-              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+              <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
               {/* Corner tick marks — short registration-style dashes */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
               <svg class="absolute top-3 right-3 md:top-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 left-3 md:bottom-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.10)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
               <div class="relative z-10 text-left self-end w-full px-6 md:px-8 pb-5 md:pb-6">
+                <div class="bg-black/30 backdrop-blur-[2px] rounded-md px-3 py-2 inline-block">
                 <h3 class="text-white text-2xl font-bold">{cat.name}</h3>
-                <p class="text-white/60 text-sm mt-0.5">{cat.desc}</p>
+                <p class="text-white/95 text-xs mt-0.5 line-clamp-1">{cat.desc}</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 mt-1.5 text-sm font-semibold text-primary max-h-0 opacity-0 group-hover:max-h-20 group-hover:opacity-100 transition-all duration-300 overflow-hidden">
+                  Shop {cat.name}
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                </span>
               </div>
             </Link>
           ))}
@@ -222,11 +249,12 @@ export default component$(() => {
       </section>
 
       {/* Brands */}
-      <div class="relative bg-white dark:bg-[#1e1e1e] py-4 md:py-6 px-4 md:px-8 text-center stitch-line-h stitch-line-h-bottom stitch-dark">
-        <p class="text-sm md:text-base uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold mb-1">
+      <div class="relative bg-white dark:bg-[#1e1e1e] py-12 md:py-16 px-4 md:px-8 text-center stitch-line-h stitch-line-h-bottom stitch-dark overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cline x1='0' y1='16' x2='16' y2='0' stroke='%23000000' stroke-opacity='0.04' stroke-width='0.8' stroke-dasharray='1.5 1.5' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
+        <p class="relative text-sm md:text-base uppercase tracking-[0.15em] text-gray-400 dark:text-gray-500 font-bold mb-1">
           Trusted Brands We Carry
         </p>
-        <p class="text-xs text-gray-400 dark:text-gray-500">Under construction</p>
+        <p class="relative text-xs text-gray-400 dark:text-gray-500">Under construction</p>
       </div>
 
       {/* Value Props */}
@@ -235,6 +263,7 @@ export default component$(() => {
           {([
             {
               img: "/footwear.jpg",
+              objectPos: "center 80%",
               title: "CSA Certified Quality",
               desc: "Premium CSA footwear and workwear from trusted brands.",
               icon: (
@@ -270,33 +299,36 @@ export default component$(() => {
               ),
             },
           ] as const).map((card) => (
-            <div key={card.title} class="relative overflow-hidden aspect-[4/3] md:aspect-[16/9] flex items-center justify-center text-center">
+            <div key={card.title} class="relative overflow-hidden py-6 md:py-8 px-6 md:px-8 flex items-center">
               <img
                 src={card.img}
                 alt=""
                 width={600}
                 height={400}
+                style={'objectPos' in card && card.objectPos ? { objectPosition: card.objectPos } : undefined}
                 class="absolute inset-0 w-full h-full object-cover"
               />
               <div class="absolute inset-0 bg-black/60" />
-              <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.5)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.8)] pointer-events-none" />
+              <div class="absolute inset-0 shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.25)] dark:shadow-[inset_0_0_50px_15px_rgba(0,0,0,0.4)] pointer-events-none" />
               {/* Stitch border — all 4 sides, overlaid on top */}
-              <div class="absolute inset-0 border border-dashed border-white/[0.10] pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+              <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
               {/* Stitch corner brackets */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-                <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+                <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
               </svg>
-              <div class="relative z-10 px-6 flex flex-col items-center">
-                <div class="w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm text-primary flex items-center justify-center mb-4 border border-white/20">
+              <div class="relative z-10 flex items-center gap-5">
+                <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm text-primary flex items-center justify-center flex-shrink-0 border border-white/20">
                   {card.icon}
                 </div>
-                <h3 class="text-white text-xl font-bold mb-2 tracking-tight">{card.title}</h3>
-                <p class="text-white/60 text-sm leading-relaxed max-w-[280px]">{card.desc}</p>
+                <div>
+                  <h3 class="text-white text-lg font-bold tracking-tight">{card.title}</h3>
+                  <p class="text-white/60 text-sm leading-relaxed mt-0.5">{card.desc}</p>
+                </div>
               </div>
             </div>
           ))}

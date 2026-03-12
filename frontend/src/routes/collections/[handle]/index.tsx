@@ -244,18 +244,18 @@ export default component$(() => {
   });
 
   // Hero
-  const heroData: Record<string, { subtitle?: string; images: string[]; objectPos?: string }> = {
-    "work-wear": { subtitle: "Durable workwear built for the toughest jobs.", images: ["/workwear.jpg", "/carharrt-work-wear-ottawa.jpg", "/work-wear.jpg"], objectPos: "center 30%" },
+  const heroData: Record<string, { subtitle?: string; images: { src: string; pos?: string }[]; objectPos?: string }> = {
+    "work-wear": { subtitle: "Durable workwear built for the toughest jobs.", images: [{ src: "/workwear.jpg" }, { src: "/carharrt-work-wear-ottawa.jpg", pos: "center 10%" }, { src: "/work-wear.jpg" }], objectPos: "center 30%" },
     "safety-footwear": {
       subtitle: "CSA-approved boots and shoes from trusted brands.",
-      images: ["/footwear-hero.jpg", "/footwear.jpg", "/work_boots_ottawa.png"],
+      images: [{ src: "/footwear-hero.jpg" }, { src: "/footwear.jpg" }, { src: "/work_boots_ottawa.png" }],
     },
-    "flame-resistant": { subtitle: "Certified FR clothing to keep you protected on the job.", images: ["/flame-resistant-clothing.jpg", "/flame-resistant-clothing-ottawa.jpg", "/flame-resistant-clothing-ottawa.png"] },
-    "safety-supplies": { subtitle: "Gloves, eyewear, hard hats and everything in between.", images: ["/safety-supplies.jpg", "/safety_clothing_ottawa.png", "/TheSafetyHouse-March2023-37.jpg"], objectPos: "center 45%" },
-    "casual-wear": { subtitle: "Uniforms and essentials for the school year.", images: ["/schoolwear.jpg", "/personalized_swag_ottawa.png", "/TheSafetyHouse-March2023-38.jpg"] },
+    "flame-resistant": { subtitle: "Certified FR clothing to keep you protected on the job.", images: [{ src: "/flame-resistant-clothing.jpg" }, { src: "/flame-resistant-clothing-ottawa.jpg", pos: "center 15%" }, { src: "/flame-resistant-clothing-ottawa.png" }] },
+    "safety-supplies": { subtitle: "Gloves, eyewear, hard hats and everything in between.", images: [{ src: "/safety-supplies.jpg" }, { src: "/safety_clothing_ottawa.png", pos: "center 15%" }, { src: "/TheSafetyHouse-March2023-37.jpg" }], objectPos: "center 45%" },
+    "casual-wear": { subtitle: "Uniforms and essentials for the school year.", images: [{ src: "/schoolwear.jpg" }, { src: "/personalized_swag_ottawa.png", pos: "center 15%" }, { src: "/TheSafetyHouse-March2023-38.jpg" }] },
   };
   const hero = heroData[c.handle] || { images: [] };
-  const heroImages = hero.images.length > 0 ? hero.images : [c.image?.url].filter(Boolean) as string[];
+  const heroImages = hero.images.length > 0 ? hero.images : [{ src: c.image?.url || "" }].filter(img => img.src);
   const heroSlide = useSignal(0);
   const heroTouchStartX = useSignal(0);
 
@@ -271,7 +271,7 @@ export default component$(() => {
   const FilterContent = () => (
     <div class="space-y-0.5">
       {/* Sort */}
-      <div class="border-b border-warm">
+      <div class="stitch-line-h-bottom stitch-dark">
         <button
           type="button"
           class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -310,7 +310,7 @@ export default component$(() => {
 
       {/* Brand */}
       {brands.value.length > 0 && (
-        <div class="border-b border-warm">
+        <div class="stitch-line-h-bottom stitch-dark">
           <button
             type="button"
             class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -355,7 +355,7 @@ export default component$(() => {
 
       {/* Product Type */}
       {productTypes.value.length > 0 && (
-        <div class="border-b border-warm">
+        <div class="stitch-line-h-bottom stitch-dark">
           <button
             type="button"
             class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -400,7 +400,7 @@ export default component$(() => {
 
       {/* Size — commented out for now, too complex
       {sizes.value.length > 0 && (
-        <div class="border-b border-warm">
+        <div class="stitch-line-h-bottom stitch-dark">
           <button
             type="button"
             class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -423,10 +423,10 @@ export default component$(() => {
                   <button
                     key={size}
                     type="button"
-                    class={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-150 ${
+                    class={`px-3 py-1.5 rounded-none text-xs font-medium transition-all duration-150 ${
                       selectedSizes.value.includes(size)
-                        ? "border-primary bg-primary/10 text-primary font-semibold"
-                        : "border-warm text-gray-600 dark:text-gray-400 hover:border-warm-strong"
+                        ? "stitch-box-overlay-dark bg-primary/10 text-primary font-semibold"
+                        : "stitch-box-overlay-dark text-gray-600 dark:text-gray-400"
                     }`}
                     onClick$={() => {
                       const current = [...selectedSizes.value];
@@ -447,7 +447,7 @@ export default component$(() => {
       */}
 
       {/* Price Range */}
-      <div class="border-b border-warm">
+      <div class="stitch-line-h-bottom stitch-dark">
         <button
           type="button"
           class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -470,7 +470,7 @@ export default component$(() => {
                 <label class="text-[10px] text-gray-500 uppercase">Min</label>
                 <input
                   type="number"
-                  class="w-full px-2 py-1.5 rounded-lg border border-warm bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white"
+                  class="w-full px-2 py-1.5 rounded-none stitch-box-overlay-dark bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white"
                   placeholder={`$${priceExtent.value[0]}`}
                   value={priceRange.value[0] || ""}
                   onInput$={(e) => {
@@ -485,7 +485,7 @@ export default component$(() => {
                 <label class="text-[10px] text-gray-500 uppercase">Max</label>
                 <input
                   type="number"
-                  class="w-full px-2 py-1.5 rounded-lg border border-warm bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white"
+                  class="w-full px-2 py-1.5 rounded-none stitch-box-overlay-dark bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white"
                   placeholder={`$${priceExtent.value[1]}`}
                   value={priceRange.value[1] || ""}
                   onInput$={(e) => {
@@ -545,7 +545,7 @@ export default component$(() => {
         <div class="pt-3">
           <button
             type="button"
-            class="w-full py-2.5 px-4 text-sm font-medium text-gray-600 dark:text-gray-400 border border-warm rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all"
+            class="w-full py-2.5 px-4 text-sm font-medium text-gray-600 dark:text-gray-400 stitch-box-overlay-dark rounded-none hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all"
             onClick$={clearAllFilters}
           >
             Clear all filters ({activeFilterCount.value})
@@ -559,7 +559,7 @@ export default component$(() => {
     <>
       {/* Hero */}
       <div
-        class="relative text-white h-[180px] md:h-[234px] text-center overflow-hidden flex flex-col items-center justify-center"
+        class="relative text-white py-16 text-center overflow-hidden flex flex-col items-center justify-center"
         onTouchStart$={(e: TouchEvent) => {
           heroTouchStartX.value = e.touches[0].clientX;
         }}
@@ -576,18 +576,21 @@ export default component$(() => {
         }}
       >
         {heroImages.length > 0 ? (
-          heroImages.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt={c.image?.altText || ""}
-              width={1400}
-              height={600}
-              fetchPriority={i === 0 ? "high" : "auto"}
-              style={hero.objectPos ? { objectPosition: hero.objectPos } : undefined}
-              class={`absolute inset-0 w-full h-full object-cover ${hero.objectPos ? '' : 'object-[center_19.5%]'} transition-opacity duration-1000 ease-in-out ${heroSlide.value === i ? "opacity-100" : "opacity-0"}`}
-            />
-          ))
+          heroImages.map((img, i) => {
+            const pos = img.pos || hero.objectPos;
+            return (
+              <img
+                key={i}
+                src={img.src}
+                alt={c.image?.altText || ""}
+                width={1400}
+                height={600}
+                fetchPriority={i === 0 ? "high" : "auto"}
+                style={pos ? { objectPosition: pos } : undefined}
+                class={`absolute inset-0 w-full h-full object-cover ${pos ? '' : 'object-[center_19.5%]'} transition-opacity duration-1000 ease-in-out ${heroSlide.value === i ? "opacity-100" : "opacity-0"}`}
+              />
+            );
+          })
         ) : null}
         <div class="absolute inset-0 bg-gradient-to-br from-dark/60 to-[#2d2d2d]/50" />
         <div class="absolute inset-0" style="box-shadow: inset 0 0 120px 40px rgba(0,0,0,0.6);" />
@@ -596,12 +599,12 @@ export default component$(() => {
         )}
         {/* Stitch corner accents — subtle, matching border stitch scale */}
         <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
         </svg>
         <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
-          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="2.5 2" stroke-linecap="round" />
+          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
         </svg>
         <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold tracking-tight mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
@@ -635,11 +638,11 @@ export default component$(() => {
         <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[var(--header-h)] self-start max-h-[calc(100dvh-var(--header-h))] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
-            <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="4 3.5" stroke-linecap="round" />
+            <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
           </svg>
           <div class="p-5">
             {/* Sidebar header */}
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-warm">
+            <div class="flex items-center justify-between mb-4 pb-3 stitch-line-h-bottom stitch-dark">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
@@ -655,7 +658,7 @@ export default component$(() => {
                   </span>
                 )}
               </div>
-              <div class="flex items-center border border-warm rounded-lg overflow-hidden">
+              <div class="flex items-center stitch-box-overlay-dark rounded-none overflow-hidden">
                 {([3, 4] as const).map((cols) => (
                   <button
                     key={cols}
@@ -749,7 +752,7 @@ export default component$(() => {
                 </span>
 
                 {/* Collection search (desktop) */}
-                <div class="hidden md:flex items-center border border-warm-strong rounded-lg overflow-hidden bg-white dark:bg-[#1e1e1e]">
+                <div class="hidden md:flex items-center stitch-box-overlay-dark rounded-none overflow-hidden bg-white dark:bg-[#1e1e1e]">
                   <svg class="w-3.5 h-3.5 ml-2.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.35-4.35" />
@@ -773,7 +776,7 @@ export default component$(() => {
                 </div>
 
                 {/* Mobile grid toggle */}
-                <div class="md:hidden flex items-center border border-warm rounded-lg overflow-hidden">
+                <div class="md:hidden flex items-center stitch-box-overlay-dark rounded-none overflow-hidden">
                   {([1, 2] as const).map((cols) => (
                     <button
                       key={cols}
@@ -793,7 +796,7 @@ export default component$(() => {
                 {/* Mobile filter button */}
                 <button
                   type="button"
-                  class="lg:hidden flex items-center gap-1.5 text-xs font-semibold border border-warm rounded-lg px-3 py-1.5 bg-white dark:bg-[#1e1e1e] text-gray-700 dark:text-gray-300 hover:border-warm-strong transition-colors"
+                  class="lg:hidden flex items-center gap-1.5 text-xs font-semibold stitch-box-overlay-dark rounded-none px-3 py-1.5 bg-white dark:bg-[#1e1e1e] text-gray-700 dark:text-gray-300 transition-colors"
                   onClick$={() => { mobileFiltersOpen.value = true; }}
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -888,7 +891,7 @@ export default component$(() => {
                   <Link
                     key={product.id}
                     href={`/product/${product.handle}/?collection=${c.handle}`}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden border border-dashed border-gray-400/40 dark:border-gray-500/25 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.08))] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden stitch-box-overlay-dark transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     <div class="relative overflow-hidden">
                       {product.featuredImage ? (
@@ -913,7 +916,7 @@ export default component$(() => {
                     {/* Stitch seam between image and info */}
                     <div class="relative h-0">
                       <svg class="absolute left-0 right-0 -top-px w-full h-px overflow-visible pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
-                        <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.12)" stroke-width="1" stroke-dasharray="4 3" stroke-linecap="round" />
+                        <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
                       </svg>
                     </div>
                     <div class="p-4 px-5 flex-1 flex flex-col">
@@ -961,7 +964,7 @@ export default component$(() => {
                 <div class="flex-1" />
                 <button
                   type="button"
-                  class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-lg border border-warm-strong bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-none stitch-box-overlay-dark bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   onClick$={loadMore}
                 >
                   Load More
@@ -982,7 +985,7 @@ export default component$(() => {
         <div class="fixed inset-0 z-50 lg:hidden">
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick$={() => { mobileFiltersOpen.value = false; }} />
           <div class="absolute right-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-gray-50 dark:bg-[#161616] shadow-2xl flex flex-col animate-slide-in">
-            <div class="flex items-center justify-between p-4 border-b border-warm">
+            <div class="flex items-center justify-between p-4 stitch-line-h-bottom stitch-dark">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
@@ -1002,7 +1005,7 @@ export default component$(() => {
             <div class="flex-1 overflow-y-auto p-4">
               <FilterContent />
             </div>
-            <div class="p-4 border-t border-warm">
+            <div class="p-4 stitch-line-h stitch-dark">
               <button
                 type="button"
                 class="w-full py-3 px-4 text-sm font-semibold bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"

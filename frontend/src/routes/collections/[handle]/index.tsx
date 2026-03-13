@@ -300,7 +300,7 @@ export default component$(() => {
   const FilterContent = () => (
     <div class="space-y-0.5">
       {/* Sort */}
-      <div class="stitch-line-h-bottom stitch-dark">
+      <div class="relative stitch-line-h-bottom stitch-dark">
         <button
           type="button"
           class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -339,7 +339,7 @@ export default component$(() => {
 
       {/* Brand */}
       {brands.value.length > 0 && (
-        <div class="stitch-line-h-bottom stitch-dark">
+        <div class="relative stitch-line-h-bottom stitch-dark">
           <button
             type="button"
             class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -384,7 +384,7 @@ export default component$(() => {
 
       {/* Product Type */}
       {productTypes.value.length > 0 && (
-        <div class="stitch-line-h-bottom stitch-dark">
+        <div class="relative stitch-line-h-bottom stitch-dark">
           <button
             type="button"
             class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -476,7 +476,7 @@ export default component$(() => {
       */}
 
       {/* Price Range */}
-      <div class="stitch-line-h-bottom stitch-dark">
+      <div class="relative stitch-line-h-bottom stitch-dark">
         <button
           type="button"
           class="w-full flex items-center justify-between py-3 px-1 text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -671,7 +671,7 @@ export default component$(() => {
           </svg>
           <div class="p-5">
             {/* Sidebar header */}
-            <div class="flex items-center justify-between mb-4 pb-3 stitch-line-h-bottom stitch-dark">
+            <div class="flex items-center justify-between mb-4 pb-3 relative stitch-line-h-bottom stitch-dark">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
@@ -1018,7 +1018,7 @@ export default component$(() => {
         <div class="fixed inset-0 z-50 lg:hidden">
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick$={() => { mobileFiltersOpen.value = false; }} />
           <div class="absolute right-0 top-0 bottom-0 w-[320px] max-w-[85vw] bg-gray-50 dark:bg-[#161616] shadow-2xl flex flex-col animate-slide-in">
-            <div class="flex items-center justify-between p-4 stitch-line-h-bottom stitch-dark">
+            <div class="flex items-center justify-between p-4 relative stitch-line-h-bottom stitch-dark">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
@@ -1038,7 +1038,7 @@ export default component$(() => {
             <div class="flex-1 overflow-y-auto p-4">
               <FilterContent />
             </div>
-            <div class="p-4 stitch-line-h stitch-dark">
+            <div class="p-4 relative stitch-line-h stitch-dark">
               <button
                 type="button"
                 class="w-full py-3 px-4 text-sm font-semibold bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"

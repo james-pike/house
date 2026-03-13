@@ -1,9 +1,15 @@
 import { component$, useSignal, useComputed$, $, useVisibleTask$, useTask$ } from "@builder.io/qwik";
-import { routeLoader$, Link, useLocation } from "@builder.io/qwik-city";
+import { routeLoader$, Link, useLocation, server$ } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { getCollectionByHandle, getCollectionProducts, formatPrice } from "~/lib/medusa";
 import type { ShopifyProduct } from "~/lib/medusa";
 import { getColorCss } from "~/lib/colors";
+
+// Server-side function for loading more products (avoids CORS issues on client)
+const fetchMoreProducts = server$(async (handle: string, first: number, cursor?: string) => {
+  const result = await getCollectionProducts(handle, first, cursor);
+  return result;
+});
 
 function getProductColors(product: ShopifyProduct): string[] {
   const colorOpt = product.options.find((o) => o.name === "Color");
@@ -149,7 +155,7 @@ export default component$(() => {
     if (serverHasMore.value && !loadingMore.value) {
       loadingMore.value = true;
       try {
-        const result = await getCollectionProducts(
+        const result = await fetchMoreProducts(
           c.handle,
           20,
           serverCursor.value || undefined,

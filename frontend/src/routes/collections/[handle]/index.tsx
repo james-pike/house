@@ -594,7 +594,7 @@ export default component$(() => {
     <>
       {/* Hero */}
       <div
-        class="relative text-white py-16 text-center overflow-hidden flex flex-col items-center justify-center"
+        class="relative text-white h-[180px] md:h-auto md:py-16 text-center overflow-hidden flex flex-col items-center justify-center"
         onTouchStart$={(e: TouchEvent) => {
           heroTouchStartX.value = e.touches[0].clientX;
         }}
@@ -641,11 +641,11 @@ export default component$(() => {
           <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
-        <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold tracking-tight mb-3 px-8">{c.title}</h1>
+        <h1 class="relative z-10 text-3xl md:text-5xl font-extrabold tracking-tight mb-2 md:mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
-          <p class="relative z-10 text-white/60 text-xl max-w-[560px] mx-auto leading-relaxed">{hero.subtitle}</p>
+          <p class="relative z-10 text-white/60 text-base md:text-xl max-w-[560px] mx-auto leading-relaxed px-6 md:px-0">{hero.subtitle}</p>
         ) : (
-          c.description && <p class="relative z-10 text-white/60 text-xl max-w-[560px] mx-auto leading-relaxed">{c.description}</p>
+          c.description && <p class="relative z-10 text-white/60 text-base md:text-xl max-w-[560px] mx-auto leading-relaxed px-6 md:px-0">{c.description}</p>
         )}
         {/* Square slide indicators */}
         {heroImages.length > 1 && (

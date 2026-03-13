@@ -255,7 +255,7 @@ export default component$(() => {
     "casual-wear": { subtitle: "Uniforms and essentials for the school year.", images: [{ src: "/schoolwear.jpg" }, { src: "/personalized_swag_ottawa.png", pos: "center 15%" }, { src: "/TheSafetyHouse-March2023-38.jpg" }] },
   };
   const hero = heroData[c.handle] || { images: [] };
-  const heroImages = hero.images.length > 0 ? hero.images : [{ src: c.image?.url || "" }].filter(img => img.src);
+  const heroImages: { src: string; pos?: string }[] = hero.images.length > 0 ? hero.images : [{ src: c.image?.url || "" }].filter(img => img.src);
   const heroSlide = useSignal(0);
   const heroTouchStartX = useSignal(0);
 

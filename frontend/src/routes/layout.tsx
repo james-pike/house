@@ -262,7 +262,7 @@ export default component$(() => {
             })}
           </nav>
 
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-1 -mr-1 md:mr-0">
             {/* Desktop search */}
             <div class="hidden md:block relative" data-search-container>
               {searchExpanded.value ? (
@@ -359,10 +359,10 @@ export default component$(() => {
             {/* Mobile search icon */}
             <a
               href="/search/"
-              class="md:hidden relative flex items-center justify-center px-2.5 py-[0.45rem] stitch-box-overlay-dark rounded-none text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
+              class="md:hidden relative flex items-center justify-center w-8 h-8 stitch-box-overlay-dark rounded-none text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
               aria-label="Search"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
               </svg>
@@ -371,10 +371,10 @@ export default component$(() => {
             {/* Cart button + drawer */}
             <Modal.Root bind:show={cartOpen}>
               <Modal.Trigger
-                class="relative flex items-center justify-center px-2.5 py-[0.45rem] stitch-box-overlay-dark rounded-none bg-transparent text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
+                class="relative flex items-center justify-center w-8 h-8 md:px-2.5 md:py-[0.45rem] md:w-auto md:h-auto stitch-box-overlay-dark rounded-none bg-transparent text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
                 aria-label="Open cart"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" class="md:w-[18px] md:h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" y1="6" x2="21" y2="6" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
@@ -520,10 +520,10 @@ export default component$(() => {
 
             {/* Mobile hamburger menu */}
             <Modal.Root>
-              <Modal.Trigger class="md:hidden relative flex flex-col justify-center items-center px-2.5 py-[0.45rem] gap-1.5 stitch-box-overlay-dark rounded-none bg-transparent">
-                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
-                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
-                <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
+              <Modal.Trigger class="md:hidden relative flex flex-col justify-center items-center w-8 h-8 gap-1 stitch-box-overlay-dark rounded-none bg-transparent">
+                <span class="block w-4 h-0.5 bg-dark dark:bg-white rounded-full" />
+                <span class="block w-4 h-0.5 bg-dark dark:bg-white rounded-full" />
+                <span class="block w-4 h-0.5 bg-dark dark:bg-white rounded-full" />
               </Modal.Trigger>
             <Modal.Panel class="mobile-sheet stitch-border stitch-dark">
               {/* Light mode X-stitch texture */}
@@ -531,7 +531,7 @@ export default component$(() => {
               {/* Dark mode X-stitch texture */}
               <div class="absolute inset-0 pointer-events-none hidden dark:block" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
               <div class="stitch-v-seams stitch-dark" />
-              <div class="flex items-center justify-between p-4 relative stitch-line-h-bottom stitch-dark">
+              <div class="flex items-center justify-between px-4 py-3 relative stitch-line-h-bottom stitch-dark">
                 <div class="flex items-center gap-2">
                   <img src="/logo.png" alt="The Safety House" width="180" height="52" class="object-contain w-[180px] dark:invert" />
                   <img src="/flag.webp" alt="" width="32" height="32" class="w-8 h-8 object-contain" />
@@ -542,18 +542,19 @@ export default component$(() => {
               </div>
               <nav class="flex flex-col p-4 gap-1 overflow-y-auto">
                 {[
-                  { href: "/collections/work-wear/", handle: "work-wear", label: "Work Wear" },
-                  { href: "/collections/safety-footwear/", handle: "safety-footwear", label: "Safety Footwear" },
-                  { href: "/collections/flame-resistant/", handle: "flame-resistant", label: "Flame Resistant" },
-                  { href: "/collections/safety-supplies/", handle: "safety-supplies", label: "Safety Supplies" },
-                  { href: "/collections/casual-wear/", handle: "casual-wear", label: "Casual Wear" },
+                  { href: "/collections/work-wear/", handle: "work-wear", label: "Work Wear", icon: "M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5M14 6a6 6 0 0 1 6 6v3M4 15v-3a6 6 0 0 1 6-6M3 15h18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z" },
+                  { href: "/collections/safety-footwear/", handle: "safety-footwear", label: "Safety Footwear", icon: "M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0ZM20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0ZM16 17h4M4 13h4" },
+                  { href: "/collections/flame-resistant/", handle: "flame-resistant", label: "Flame Resistant", icon: "M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" },
+                  { href: "/collections/safety-supplies/", handle: "safety-supplies", label: "Safety Supplies", icon: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4" },
+                  { href: "/collections/casual-wear/", handle: "casual-wear", label: "Casual Wear", icon: "M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" },
                 ].map((item) => {
                   const isActive = loc.url.pathname === item.href
                     || loc.url.pathname.startsWith(`/collections/${item.handle}/`)
                     || loc.url.searchParams.get("collection") === item.handle;
                   return (
                     <Modal.Close key={item.handle} class="bg-transparent border-none text-left">
-                      <Link href={item.href} class={`block py-3 px-3 text-sm font-medium rounded-lg transition-colors pattern-stripes ${isActive ? "nav-link-active" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"}`}>
+                      <Link href={item.href} class={`flex items-center gap-3 py-3 px-3 text-sm font-medium rounded-lg transition-colors pattern-stripes ${isActive ? "nav-link-active" : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"}`}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 opacity-50"><path d={item.icon} /></svg>
                         {item.label}
                       </Link>
                     </Modal.Close>
@@ -561,34 +562,28 @@ export default component$(() => {
                 })}
                 <div class="relative my-2 stitch-line-h stitch-dark" style={{ height: '1px' }} />
                 <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/about/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Link href="/about/" class="flex items-center gap-3 py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 opacity-50"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
                     About Us
                   </Link>
                 </Modal.Close>
                 <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/faq/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Link href="/faq/" class="flex items-center gap-3 py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 opacity-50"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
                     FAQ
                   </Link>
                 </Modal.Close>
                 <Modal.Close class="bg-transparent border-none text-left">
-                  <Link href="/contact/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                  <Link href="/contact/" class="flex items-center gap-3 py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 opacity-50"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
                     Contact
                   </Link>
                 </Modal.Close>
               </nav>
               {/* Promotional Banner */}
               <div class="mt-auto p-4">
-                <div class="relative rounded-xl overflow-hidden bg-primary/10 dark:bg-[#1a1a1a] text-dark dark:text-white p-5 text-center border border-primary/20 dark:border-primary/10">
+                <div class="relative rounded-md overflow-hidden bg-primary/15 dark:bg-primary/10 text-dark dark:text-white p-5 text-center border-none stitch-box-overlay">
                   <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.12'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
-                  {/* Stitch corners */}
-                  <svg class="absolute top-2.5 left-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                  </svg>
-                  <svg class="absolute bottom-2.5 right-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                  </svg>
                   <p class="relative text-xs uppercase tracking-widest font-semibold text-primary mb-1">Limited Time</p>
                   <p class="relative text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
                   <p class="relative text-sm text-gray-600 dark:text-white/70">Use code <span class="font-bold text-primary">SALE25</span> at checkout</p>

@@ -652,7 +652,7 @@ export default component$(() => {
         </svg>
         <h1 class="relative z-10 text-3xl md:text-5xl font-extrabold tracking-tight mb-2 md:mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
-          <p class="relative z-10 text-white/60 text-base md:text-xl max-w-[560px] mx-auto leading-relaxed px-6 md:px-0">{hero.subtitle}</p>
+          <p class="relative z-10 text-white/60 text-lg md:text-2xl max-w-[560px] mx-auto leading-relaxed px-6 md:px-0">{hero.subtitle}</p>
         ) : (
           c.description && <p class="relative z-10 text-white/60 text-base md:text-xl max-w-[560px] mx-auto leading-relaxed px-6 md:px-0">{c.description}</p>
         )}

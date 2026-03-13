@@ -738,6 +738,7 @@ export default component$(() => {
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
           <div class="bg-[#ededec] dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[calc(var(--header-h)-1px)] z-20 relative stitch-line-h-bottom stitch-dark">
+            <div class="stitch-v-seams stitch-dark md:hidden" />
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">
@@ -934,7 +935,7 @@ export default component$(() => {
                   <Link
                     key={product.id}
                     href={`/product/${product.handle}/?collection=${c.handle}`}
-                    class="group bg-white dark:bg-[#1e1e1e] rounded-lg overflow-hidden stitch-box-overlay-dark transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
+                    class="group bg-white dark:bg-[#1e1e1e] rounded-md overflow-hidden stitch-box-overlay-dark transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex flex-col"
                   >
                     <div class="relative overflow-hidden">
                       {product.featuredImage ? (

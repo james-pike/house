@@ -357,16 +357,7 @@ const ProductDetail = component$<{
                     <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                 </div>
-                <h3 class="text-lg font-bold text-dark dark:text-white mb-2">Coming Soon</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">Stripe checkout integration coming soon.</p>
-                <div class="flex gap-3 justify-center">
-                  <a href="tel:613-224-6804" class="inline-flex items-center gap-1.5 py-2.5 px-5 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors">
-                    Call Us
-                  </a>
-                  <button type="button" onClick$={() => { showComingSoon.value = false; }} class="py-2.5 px-5 text-sm font-semibold rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
-                    Close
-                  </button>
-                </div>
+                <p class="text-sm font-semibold text-dark dark:text-white">Stripe integration coming soon</p>
               </div>
             </div>
           )}

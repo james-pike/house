@@ -615,7 +615,7 @@ export default component$(() => {
           <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
-        <div class="pt-9 px-4 pb-4 md:pt-11 md:px-6 md:pb-5">
+        <div class="pt-9 px-6 pb-4 md:pt-11 md:px-8 md:pb-5">
           <div class="relative grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
             <div class="relative">
               <img

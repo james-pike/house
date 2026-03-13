@@ -236,7 +236,7 @@ export default component$(() => {
               <div class="relative z-10 text-left self-end w-full px-6 md:px-8 pb-5 md:pb-6">
                 <div class="bg-black/30 backdrop-blur-[2px] rounded-md px-3 py-2 inline-block">
                 <h3 class="text-white text-2xl font-bold">{cat.name}</h3>
-                <p class="text-white/95 text-xs mt-0.5 line-clamp-1">{cat.desc}</p>
+                <p class="text-white/95 text-xs md:text-sm mt-0.5 line-clamp-1">{cat.desc}</p>
                 </div>
                 <span class="inline-flex items-center gap-1.5 mt-1.5 text-sm font-semibold text-primary max-h-0 opacity-0 group-hover:max-h-20 group-hover:opacity-100 transition-all duration-300 overflow-hidden">
                   Shop {cat.name}

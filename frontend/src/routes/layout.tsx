@@ -686,8 +686,9 @@ export default component$(() => {
                     required
                     class="flex-1 min-w-0 bg-white/10 border border-white/10 rounded-l-md px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 transition-colors"
                   />
-                  <button type="submit" class="rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/10 border-l-0 transition-colors whitespace-nowrap">
-                    Subscribe
+                  <button type="submit" class="relative overflow-hidden rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-primary/15 hover:bg-primary/25 border border-white/10 border-l-0 transition-colors whitespace-nowrap">
+                    <span class="absolute inset-0 pointer-events-none opacity-60" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.5'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")`, maskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)", WebkitMaskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)" }} />
+                    <span class="relative">Subscribe</span>
                   </button>
                 </form>
                 <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>

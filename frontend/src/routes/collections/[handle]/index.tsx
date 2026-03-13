@@ -675,9 +675,9 @@ export default component$(() => {
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           </svg>
-          <div class="p-5">
+          <div class="p-4">
             {/* Sidebar header */}
-            <div class="flex items-center justify-between mb-4 pb-3 relative stitch-line-h-bottom stitch-dark">
+            <div class="flex items-center justify-between mb-3 pb-2.5 relative stitch-line-h-bottom stitch-dark">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />

@@ -151,10 +151,10 @@ export default component$(() => {
     <div class="bg-white dark:bg-[#121212] max-w-site mx-auto relative">
       {/* Vertical stitch seams along container edges */}
       <svg class="absolute left-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
-        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.35)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
       </svg>
       <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
-        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.35)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
       </svg>
       {/* Announcement Bar */}
       <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden relative stitch-line-h-bottom stitch-light">
@@ -213,7 +213,7 @@ export default component$(() => {
       </div>
 
       {/* Header */}
-      <header id="site-header" class="bg-white dark:bg-[#1e1e1e] sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4 stitch-line-h-bottom stitch-dark">
+      <header id="site-header" class="bg-white dark:bg-[#1e1e1e] sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4 stitch-line-h stitch-line-h-bottom stitch-dark">
         <div class="stitch-v-seams stitch-dark" />
         <div class="py-1 md:py-0 flex items-center justify-between">
           <Link href="/" class="text-xl font-extrabold tracking-tight flex items-center gap-2">

@@ -65,7 +65,8 @@ export const useProduct = routeLoader$(async (requestEvent) => {
 
 // Skeleton shown during client-side navigation while product loads
 const ProductSkeleton = component$(() => (
-  <div class="px-5 md:px-8 py-6 md:py-12 animate-pulse">
+  <div class="px-5 md:px-8 py-6 md:py-12 animate-pulse relative">
+    <div class="stitch-v-seams stitch-dark" />
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
       <div>
         <div class="w-full aspect-square rounded-xl bg-gray-200 dark:bg-gray-800" />
@@ -182,7 +183,8 @@ const ProductDetail = component$<{
   });
 
   return (
-    <div class="px-5 md:px-8 py-6 md:py-12">
+    <div class="px-5 md:px-8 py-6 md:py-12 relative">
+      <div class="stitch-v-seams stitch-dark" />
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
         {/* Images */}
         <div>

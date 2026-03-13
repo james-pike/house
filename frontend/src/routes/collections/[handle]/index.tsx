@@ -594,7 +594,7 @@ export default component$(() => {
     <>
       {/* Hero */}
       <div
-        class="relative text-white h-[180px] md:h-auto md:py-16 text-center overflow-hidden flex flex-col items-center justify-center"
+        class="relative text-white h-[180px] md:h-auto md:py-16 text-center overflow-hidden flex flex-col items-center justify-center stitch-line-h-bottom"
         onTouchStart$={(e: TouchEvent) => {
           heroTouchStartX.value = e.touches[0].clientX;
         }}
@@ -632,6 +632,8 @@ export default component$(() => {
         {heroImages.length === 0 && (
           <div class="absolute inset-0 bg-gradient-to-br from-dark to-[#2d2d2d]" />
         )}
+        <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+        <div class="stitch-v-seams stitch-light" />
         {/* Stitch corner accents — subtle, matching border stitch scale */}
         <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
@@ -668,7 +670,8 @@ export default component$(() => {
       </div>
 
       {/* Main layout: sidebar + grid */}
-      <div class="flex">
+      <div class="flex relative">
+        <div class="stitch-v-seams stitch-dark" />
         {/* Desktop sidebar */}
         <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[calc(var(--header-h)-1px)] self-start max-h-[calc(100dvh-var(--header-h)+1px)] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}

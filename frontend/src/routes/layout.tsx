@@ -178,9 +178,36 @@ export default component$(() => {
             </div>
           </div>
           <nav class="hidden md:flex items-center gap-5 flex-shrink-0">
-            <Link href="/about/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">ABOUT</Link>
-            <Link href="/faq/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">FAQ</Link>
-            <Link href="/contact/" class="text-[0.8rem] font-semibold text-white/60 hover:text-primary transition-colors">CONTACT</Link>
+            {[
+              { href: "/about/", label: "ABOUT" },
+              { href: "/faq/", label: "FAQ" },
+              { href: "/contact/", label: "CONTACT" },
+            ].map((item) => {
+              const isActive = loc.url.pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  class={`text-[0.8rem] font-semibold transition-colors relative px-2 py-0.5 rounded-sm overflow-hidden ${
+                    isActive
+                      ? "text-primary"
+                      : "text-white/60 hover:text-primary"
+                  }`}
+                >
+                  {isActive && (
+                    <span
+                      class="absolute inset-0 pointer-events-none opacity-60"
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.5'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")`,
+                        maskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)",
+                        WebkitMaskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)",
+                      }}
+                    />
+                  )}
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </div>

@@ -103,15 +103,15 @@
   --- end stitched box active nav --- */
 
   .nav-link-active.pattern-stripes::before {
-    opacity: 1;
+    opacity: 0.7;
     mask-image: radial-gradient(ellipse 90% 70% at center, transparent 30%, black 80%);
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at center, transparent 30%, black 80%);
   }
   .nav-link-active.pattern-stripes {
-    background-color: rgba(230, 168, 23, 0.08);
+    background-color: rgba(230, 168, 23, 0.05);
   }
   .dark .nav-link-active.pattern-stripes {
-    background-color: rgba(230, 168, 23, 0.04);
+    background-color: rgba(230, 168, 23, 0.03);
   }
   .stripe-active {
     position: relative;

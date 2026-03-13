@@ -1,5 +1,5 @@
-import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
-import { routeLoader$, Link } from "@builder.io/qwik-city";
+import { component$, useSignal, useResource$, Resource, $, useVisibleTask$ } from "@builder.io/qwik";
+import { routeLoader$, Link, useLocation } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import {
   getProductByHandle,
@@ -9,21 +9,17 @@ import {
   createCart,
   addToCart,
 } from "~/lib/medusa";
-import type { ShopifyVariant } from "~/lib/medusa";
+import type { ShopifyVariant, ShopifyProduct } from "~/lib/medusa";
 import { getColorCss } from "~/lib/colors";
 
+// routeLoader$ only runs on SSR — provides data for initial HTML + SEO
 export const useProduct = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
   const collectionHandle = requestEvent.url.searchParams.get("collection");
 
-  let product, collection;
+  let product;
   try {
-    [product, collection] = await Promise.all([
-      getProductByHandle(handle),
-      collectionHandle
-        ? getCollectionByHandle(collectionHandle)
-        : Promise.resolve(null),
-    ]);
+    product = await getProductByHandle(handle);
   } catch (err) {
     console.error(`Product load failed for ${handle}:`, err);
     requestEvent.status(500);
@@ -35,19 +31,24 @@ export const useProduct = routeLoader$(async (requestEvent) => {
     return null;
   }
 
-  // Get related products from the same collection/category
-  let related = collection
-    ? collection.products.edges
-        .map((e) => e.node)
-        .filter((p) => p.handle !== handle)
-    : [];
-
-  // Fallback: use generic recommendations if no collection context
-  if (related.length === 0) {
-    related = await getProductRecommendations(product.id);
+  // Load related products in parallel (non-blocking for client nav)
+  let related: ShopifyProduct[] = [];
+  try {
+    if (collectionHandle) {
+      const collection = await getCollectionByHandle(collectionHandle);
+      if (collection) {
+        related = collection.products.edges
+          .map((e) => e.node)
+          .filter((p) => p.handle !== handle);
+      }
+    }
+    if (related.length === 0) {
+      related = await getProductRecommendations(product.id);
+    }
+  } catch {
+    // Related products are non-critical
   }
 
-  // Cache at Vercel edge for 5 min, serve stale up to 1 hour while revalidating
   requestEvent.headers.set(
     "Cache-Control",
     "public, s-maxage=300, stale-while-revalidate=3600",
@@ -55,61 +56,93 @@ export const useProduct = routeLoader$(async (requestEvent) => {
 
   return {
     ...product,
-    _collection: collection
-      ? { handle: collection.handle, title: collection.title }
+    _collection: collectionHandle
+      ? { handle: collectionHandle, title: "" }
       : null,
     _related: related.slice(0, 10),
   };
 });
 
-export default component$(() => {
-  const product = useProduct();
+// Skeleton shown during client-side navigation while product loads
+const ProductSkeleton = component$(() => (
+  <div class="px-5 md:px-8 py-6 md:py-12 animate-pulse">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+      <div>
+        <div class="w-full aspect-square rounded-xl bg-gray-200 dark:bg-gray-800" />
+        <div class="flex gap-2 mt-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-800" />
+          ))}
+        </div>
+      </div>
+      <div>
+        <div class="h-4 w-24 bg-gray-200 dark:bg-gray-800 rounded mb-3" />
+        <div class="h-8 w-3/4 bg-gray-200 dark:bg-gray-800 rounded mb-4" />
+        <div class="h-6 w-20 bg-gray-200 dark:bg-gray-800 rounded mb-6" />
+        <div class="flex gap-2 mb-5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} class="w-8 h-8 rounded-sm bg-gray-200 dark:bg-gray-800" />
+          ))}
+        </div>
+        <div class="flex gap-2 mb-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} class="h-9 w-16 rounded-full bg-gray-200 dark:bg-gray-800" />
+          ))}
+        </div>
+        <div class="h-12 w-44 rounded-lg bg-gray-200 dark:bg-gray-800 mb-6" />
+        <div class="space-y-2">
+          <div class="h-4 w-full bg-gray-200 dark:bg-gray-800 rounded" />
+          <div class="h-4 w-5/6 bg-gray-200 dark:bg-gray-800 rounded" />
+          <div class="h-4 w-2/3 bg-gray-200 dark:bg-gray-800 rounded" />
+        </div>
+      </div>
+    </div>
+  </div>
+));
+
+// Full product detail component
+const ProductDetail = component$<{
+  p: ShopifyProduct & {
+    _collection: { handle: string; title: string } | null;
+    _related: ShopifyProduct[];
+  };
+}>(({ p }) => {
   const selectedImage = useSignal(0);
   const selectedVariantId = useSignal("");
   const adding = useSignal(false);
   const added = useSignal(false);
   const cartCount = useSignal(0);
 
-  // Load cart count from localStorage on mount
   useVisibleTask$(() => {
     const count = localStorage.getItem("cart_count");
     if (count) cartCount.value = parseInt(count, 10);
   });
 
-  // Set default selected variant
   useVisibleTask$(({ track }) => {
-    track(() => product.value);
-    if (product.value) {
-      const variants = product.value.variants.edges.map((e) => e.node);
-      const available = variants.find((v) => v.availableForSale);
-      if (available) {
-        selectedVariantId.value = available.id;
-      }
-    }
+    track(() => p);
+    const variants = p.variants.edges.map((e) => e.node);
+    const available = variants.find((v) => v.availableForSale);
+    if (available) selectedVariantId.value = available.id;
+    selectedImage.value = 0;
   });
 
   const handleAddToCart = $(async () => {
     if (!selectedVariantId.value || adding.value) return;
-
     adding.value = true;
     added.value = false;
-
     try {
       const cartId = localStorage.getItem("cart_id");
-
       let cart;
       if (cartId) {
         cart = await addToCart(cartId, selectedVariantId.value, 1);
       } else {
         cart = await createCart(selectedVariantId.value, 1);
       }
-
       localStorage.setItem("cart_id", cart.id);
       localStorage.setItem("cart_checkout_url", cart.checkoutUrl);
       localStorage.setItem("cart_count", String(cart.totalQuantity));
       cartCount.value = cart.totalQuantity;
       added.value = true;
-
       setTimeout(() => (added.value = false), 2500);
     } catch (err) {
       console.error("Add to cart failed:", err);
@@ -118,21 +151,6 @@ export default component$(() => {
     }
   });
 
-  if (!product.value) {
-    return (
-      <div class="text-center py-24 px-8">
-        <h1 class="text-2xl font-bold mb-4">Product not found</h1>
-        <Link
-          href="/"
-          class="inline-flex items-center justify-center py-3 px-7 text-[0.9rem] font-semibold rounded-lg border-none transition-all duration-200 bg-primary text-white hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-lg"
-        >
-          Back to Shop
-        </Link>
-      </div>
-    );
-  }
-
-  const p = product.value;
   const images = p.images.edges.map((e) => e.node);
   const variants = p.variants.edges.map((e) => e.node);
   const anyAvailable = variants.some((v) => v.availableForSale);
@@ -141,35 +159,25 @@ export default component$(() => {
     return variant.availableForSale ? "In stock" : "Out of stock";
   };
 
-  // Find the currently selected variant for stock display
   const activeVariant = variants.find((v) => v.id === selectedVariantId.value);
-
   const col = p._collection;
 
-  // Extract color option values
   const colorOption = p.options.find((o) => o.name === "Color");
   const colors = colorOption?.values ?? (p.meta?.color ? [p.meta.color] : []);
 
-
-  // Find the active color from selected variant
   const activeColor = activeVariant
     ? colors.find((c) => activeVariant.title.toLowerCase().includes(c.toLowerCase()))
     : colors[0];
 
-  // Select first variant matching a color + switch to matching image
   const selectColor = $((color: string) => {
     const match = variants.find(
       (v) => v.availableForSale && v.title.toLowerCase().includes(color.toLowerCase())
     );
     if (match) selectedVariantId.value = match.id;
-
-    // Switch to color-specific image if available
     const colorImageUrl = p.meta?.color_images?.[color];
     if (colorImageUrl) {
       const idx = images.findIndex((img) => img.url === colorImageUrl);
-      if (idx >= 0) {
-        selectedImage.value = idx;
-      }
+      if (idx >= 0) selectedImage.value = idx;
     }
   });
 
@@ -220,7 +228,7 @@ export default component$(() => {
               <>
                 <span class="text-gray-400 dark:text-gray-500">/</span>
                 <Link href={`/collections/${col.handle}/`} class="text-gray-500 dark:text-gray-400 hover:text-dark dark:hover:text-white transition-colors">
-                  {col.title}
+                  {col.title || col.handle.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
                 </Link>
               </>
             )}
@@ -315,7 +323,6 @@ export default component$(() => {
             const filtered = activeColor
               ? variants.filter((v) => v.title.toLowerCase().includes(activeColor.toLowerCase()))
               : variants;
-            // Strip all color values from label to show just the size
             const colorSet = new Set(colors.map((c) => c.toLowerCase().trim()));
             const stripColors = (title: string) => {
               const parts = title.split(/\s*\/\s*/);
@@ -510,7 +517,7 @@ export default component$(() => {
             {p._related.slice(0, 4).map((item) => (
               <Link
                 key={item.id}
-                href={`/product/${item.handle}/${col ? `?collection=${col.handle}` : ""}`}
+                href={`/product/${item.handle}/${p._collection ? `?collection=${p._collection.handle}` : ""}`}
                 class="group block bg-white dark:bg-[#1e1e1e] rounded-xl overflow-hidden border border-warm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
               >
                 {item.featuredImage ? (
@@ -551,6 +558,75 @@ export default component$(() => {
         </div>
       )}
     </div>
+  );
+});
+
+export default component$(() => {
+  const ssrProduct = useProduct();
+  const loc = useLocation();
+
+  // useResource$ resolves on SSR (for SEO) but shows loading state on client-side nav
+  const productResource = useResource$(async ({ track }) => {
+    const handle = track(() => loc.params.handle);
+    const collectionHandle = track(() => loc.url.searchParams.get("collection"));
+
+    // On SSR, use the routeLoader data directly (already fetched)
+    if (ssrProduct.value && ssrProduct.value.handle === handle) {
+      return ssrProduct.value;
+    }
+
+    // Client-side navigation — fetch the product (usually cached on server)
+    const product = await getProductByHandle(handle);
+    if (!product) return null;
+
+    // Fetch related products in background
+    let related: ShopifyProduct[] = [];
+    try {
+      if (collectionHandle) {
+        const collection = await getCollectionByHandle(collectionHandle);
+        if (collection) {
+          related = collection.products.edges
+            .map((e) => e.node)
+            .filter((p) => p.handle !== handle);
+        }
+      }
+      if (related.length === 0) {
+        related = await getProductRecommendations(product.id);
+      }
+    } catch {
+      // non-critical
+    }
+
+    return {
+      ...product,
+      _collection: collectionHandle
+        ? { handle: collectionHandle, title: "" }
+        : null,
+      _related: related.slice(0, 10),
+    };
+  });
+
+  return (
+    <Resource
+      value={productResource}
+      onPending={() => <ProductSkeleton />}
+      onResolved={(p) => {
+        if (!p) {
+          return (
+            <div class="text-center py-24 px-8">
+              <h1 class="text-2xl font-bold mb-4">Product not found</h1>
+              <Link
+                href="/"
+                class="inline-flex items-center justify-center py-3 px-7 text-[0.9rem] font-semibold rounded-lg border-none transition-all duration-200 bg-primary text-white hover:bg-primary-dark hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                Back to Shop
+              </Link>
+            </div>
+          );
+        }
+        return <ProductDetail p={p as any} />;
+      }}
+    />
   );
 });
 

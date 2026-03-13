@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 
-// Topstitch L-corners — lighter on mobile, stronger on desktop
+// Topstitch L-corners for text panels — uses currentColor
 const StitchCorners = component$(() => (
   <>
     {/* Mobile — subtle */}
@@ -15,12 +15,26 @@ const StitchCorners = component$(() => (
     </svg>
     {/* Desktop — stronger with drop-shadow */}
     <svg class="absolute top-7 left-7 pointer-events-none overflow-visible hidden md:block [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.12))]" width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-      <line x1="-8" y1="1" x2="60" y2="1" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-      <line x1="1" y1="-8" x2="1" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="-8" y1="1" x2="60" y2="1" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="1" y1="-8" x2="1" y2="60" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
     <svg class="absolute bottom-7 right-7 pointer-events-none overflow-visible hidden md:block [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.12))]" width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-      <line x1="0" y1="59" x2="68" y2="59" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-      <line x1="59" y1="0" x2="59" y2="68" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="0" y1="59" x2="68" y2="59" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="59" y1="0" x2="59" y2="68" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+    </svg>
+  </>
+));
+
+// Image angle brackets — white on dark overlay, matching landing page bottom cards
+const ImageBrackets = component$(() => (
+  <>
+    <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+    </svg>
+    <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
   </>
 ));
@@ -28,7 +42,7 @@ const StitchCorners = component$(() => (
 // Subtle woven canvas texture overlay
 const canvasTexture = `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.025'%3E%3Crect x='0' y='0' width='1' height='1'/%3E%3Crect x='3' y='3' width='1' height='1'/%3E%3C/g%3E%3C/svg%3E")`;
 
-const textPanelClasses = "relative flex flex-col justify-center px-8 py-12 md:px-14 md:py-16 bg-white dark:bg-[#1e1e1e] text-[#9ca3af50] md:text-[#9ca3af70] dark:text-[#6b728035] dark:md:text-[#6b728050]";
+const textPanelClasses = "relative flex flex-col justify-center px-8 py-12 md:px-14 md:py-16 bg-white dark:bg-[#1e1e1e] text-[#9ca3af50] md:text-[#9ca3af70] dark:text-[#6b728035] dark:md:text-[#6b728050] stitch-line-h stitch-line-h-bottom stitch-dark";
 
 // Dashed stitch border — lighter on mobile, stronger on desktop
 const StitchBorder = component$(() => (
@@ -41,6 +55,7 @@ export default component$(() => {
       {/* Section 1 — Text left, image right */}
       <div class="grid grid-cols-1 md:grid-cols-2">
         <div class={`${textPanelClasses} order-2 md:order-1`}>
+          <div class="stitch-v-seams stitch-dark" />
           <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: canvasTexture }} />
           <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_-1px_2px_rgba(0,0,0,0.04)]" />
           <StitchBorder />
@@ -59,7 +74,7 @@ export default component$(() => {
             footwear, and in-house embroidery services.
           </p>
         </div>
-        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden order-1 md:order-2">
+        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden order-1 md:order-2 relative">
           <img
             src="/TheSafetyHouse-March2023-38.jpg"
             alt="The Safety House team"
@@ -67,12 +82,15 @@ export default component$(() => {
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"
           />
+          <div class="absolute inset-0 bg-black/20" />
+          <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+          <ImageBrackets />
         </div>
       </div>
 
       {/* Section 2 — Image left, text right */}
       <div class="grid grid-cols-1 md:grid-cols-2">
-        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden">
+        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden relative">
           <img
             src="/TheSafetyHouse-March2023-37.jpg"
             alt="In-house embroidery services at The Safety House"
@@ -80,8 +98,12 @@ export default component$(() => {
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"
           />
+          <div class="absolute inset-0 bg-black/20" />
+          <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+          <ImageBrackets />
         </div>
         <div class={textPanelClasses}>
+          <div class="stitch-v-seams stitch-dark" />
           <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: canvasTexture }} />
           <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_-1px_2px_rgba(0,0,0,0.04)]" />
           <StitchBorder />
@@ -105,6 +127,7 @@ export default component$(() => {
       {/* Section 3 — Text left, image right */}
       <div class="grid grid-cols-1 md:grid-cols-2">
         <div class={`${textPanelClasses} order-2 md:order-1`}>
+          <div class="stitch-v-seams stitch-dark" />
           <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: canvasTexture }} />
           <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_-1px_2px_rgba(0,0,0,0.04)]" />
           <StitchBorder />
@@ -124,7 +147,7 @@ export default component$(() => {
             what you need with personalized attention to every order.
           </p>
         </div>
-        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden order-1 md:order-2">
+        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden order-1 md:order-2 relative">
           <img
             src="/footwear.jpg"
             alt="Safety footwear at The Safety House"
@@ -132,12 +155,15 @@ export default component$(() => {
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"
           />
+          <div class="absolute inset-0 bg-black/20" />
+          <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+          <ImageBrackets />
         </div>
       </div>
 
       {/* Section 4 — Image left, text right */}
       <div class="grid grid-cols-1 md:grid-cols-2">
-        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden">
+        <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden relative">
           <img
             src="/TheSafetyHouse-March2023-37.jpg"
             alt="The Safety House storefront"
@@ -145,8 +171,12 @@ export default component$(() => {
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"
           />
+          <div class="absolute inset-0 bg-black/20" />
+          <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
+          <ImageBrackets />
         </div>
         <div class={textPanelClasses}>
+          <div class="stitch-v-seams stitch-dark" />
           <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: canvasTexture }} />
           <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_3px_rgba(0,0,0,0.06),inset_0_-1px_2px_rgba(0,0,0,0.04)]" />
           <StitchBorder />

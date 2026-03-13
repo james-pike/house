@@ -137,13 +137,15 @@ export default component$(() => {
   });
 
   const loadMore = $(async () => {
-    // If we have more loaded products to show, just bump the display count
-    if (displayCount.value + 12 <= allProducts.value.length) {
-      displayCount.value = displayCount.value + 12;
+    const nextCount = displayCount.value + 12;
+
+    // If we already have enough loaded products, just show more
+    if (nextCount <= allProducts.value.length) {
+      displayCount.value = nextCount;
       return;
     }
 
-    // Otherwise fetch next batch from the API
+    // Need to fetch more from the API first
     if (serverHasMore.value && !loadingMore.value) {
       loadingMore.value = true;
       try {
@@ -161,7 +163,9 @@ export default component$(() => {
         loadingMore.value = false;
       }
     }
-    displayCount.value = displayCount.value + 12;
+
+    // Show up to what we have, in increments of 12
+    displayCount.value = Math.min(nextCount, allProducts.value.length);
   });
 
   // Derive filter options from products
@@ -723,7 +727,7 @@ export default component$(() => {
         {/* Product grid area */}
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
-          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-3 sticky top-[var(--header-h)] z-20 relative stitch-line-h-bottom stitch-dark">
+          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[var(--header-h)] z-20 relative stitch-line-h-bottom stitch-dark">
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">

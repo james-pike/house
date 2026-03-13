@@ -245,6 +245,7 @@ export interface ShopifyCollection {
   handle: string;
   description: string;
   image: ShopifyImage | null;
+  totalProductCount: number;
   products: {
     edges: { node: ShopifyProduct }[];
     pageInfo: PageInfo;
@@ -384,6 +385,7 @@ function adaptCategory(
   cat: MedusaRawCategory,
   products: ShopifyProduct[],
   pageInfo: PageInfo,
+  totalCount = 0,
 ): ShopifyCollection {
   return {
     id: cat.id,
@@ -391,6 +393,7 @@ function adaptCategory(
     handle: cat.handle,
     description: cat.description ?? "",
     image: null,
+    totalProductCount: totalCount || products.length,
     products: {
       edges: products.map((p) => ({ node: p })),
       pageInfo,
@@ -641,7 +644,7 @@ export async function getCollectionByHandle(
   return adaptCategory(cat, products, {
     hasNextPage,
     endCursor: hasNextPage ? encodeCursor(nextOffset) : null,
-  });
+  }, totalCount);
 }
 
 export async function getCollectionProducts(

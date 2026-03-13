@@ -121,6 +121,7 @@ export default component$(() => {
   const displayCount = useSignal(12);
   const serverCursor = useSignal<string | null>(c.products.pageInfo.endCursor);
   const serverHasMore = useSignal(c.products.pageInfo.hasNextPage);
+  const serverTotalCount = useSignal(c.totalProductCount);
   const loadingMore = useSignal(false);
 
   // Re-sync products when collection changes via client-side navigation
@@ -131,6 +132,7 @@ export default component$(() => {
       displayCount.value = 12;
       serverCursor.value = col.products.pageInfo.endCursor;
       serverHasMore.value = col.products.pageInfo.hasNextPage;
+      serverTotalCount.value = col.totalProductCount;
     }
   });
 
@@ -776,8 +778,8 @@ export default component$(() => {
                 {/* Product count */}
                 <span class="hidden md:inline text-xs text-gray-400 dark:text-gray-500">
                   {activeFilterCount.value > 0
-                    ? `${filteredProducts.value.length} of ${allProducts.value.length}`
-                    : `${allProducts.value.length}`} products
+                    ? `${filteredProducts.value.length} of ${serverTotalCount.value}`
+                    : `${serverTotalCount.value}`} products
                 </span>
 
                 {/* Collection search (desktop) */}
@@ -1004,7 +1006,7 @@ export default component$(() => {
                 </button>
                 <div class="flex-1 text-right">
                   <span class="text-xs text-gray-400 dark:text-gray-500">
-                    {displayedProducts.value.length} of {filteredProducts.value.length}{serverHasMore.value ? "+" : ""} products
+                    {displayedProducts.value.length} of {serverTotalCount.value} products
                   </span>
                 </div>
               </div>

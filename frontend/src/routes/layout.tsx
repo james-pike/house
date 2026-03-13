@@ -673,7 +673,19 @@ export default component$(() => {
                 <a href="mailto:info@safetyhouse.ca" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
                 <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
-              <div class="relative">
+              {/* Contact — mobile only */}
+              <div class="relative md:hidden">
+                <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
+                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
+                  Contact
+                </h4>
+                <a href="tel:613-224-6804" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">613-224-6804</a>
+                <a href="mailto:info@safetyhouse.ca" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
+                <p class="text-xs text-white/50 tracking-wide leading-relaxed mt-2">Mon–Sat</p>
+                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
+              </div>
+              {/* Newsletter — desktop only */}
+              <div class="relative hidden md:block">
                 <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
                   <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
                   Stay Updated

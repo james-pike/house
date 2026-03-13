@@ -669,8 +669,8 @@ export default component$(() => {
                   <br />
                   Nepean, ON K2G 5X6
                 </p>
-                <a href="tel:613-224-6804" class="block text-xs text-white/50 tracking-wide py-0.5 mt-3 transition-colors hover:text-primary">613-224-6804</a>
-                <a href="mailto:info@safetyhouse.ca" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
+                <a href="tel:613-224-6804" class="hidden md:block text-xs text-white/50 tracking-wide py-0.5 mt-3 transition-colors hover:text-primary">613-224-6804</a>
+                <a href="mailto:info@safetyhouse.ca" class="hidden md:block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
                 <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
               {/* Contact — mobile only */}
@@ -681,7 +681,6 @@ export default component$(() => {
                 </h4>
                 <a href="tel:613-224-6804" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">613-224-6804</a>
                 <a href="mailto:info@safetyhouse.ca" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
-                <p class="text-xs text-white/50 tracking-wide leading-relaxed mt-2">Mon–Sat</p>
                 <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
               {/* Newsletter — desktop only */}

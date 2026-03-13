@@ -670,7 +670,7 @@ export default component$(() => {
       {/* Main layout: sidebar + grid */}
       <div class="flex">
         {/* Desktop sidebar */}
-        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[var(--header-h)] self-start max-h-[calc(100dvh-var(--header-h))] overflow-y-auto relative">
+        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[calc(var(--header-h)-1px)] self-start max-h-[calc(100dvh-var(--header-h)+1px)] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
@@ -727,7 +727,7 @@ export default component$(() => {
         {/* Product grid area */}
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
-          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[var(--header-h)] z-20 relative stitch-line-h-bottom stitch-dark">
+          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[calc(var(--header-h)-1px)] z-20 relative stitch-line-h-bottom stitch-dark">
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">

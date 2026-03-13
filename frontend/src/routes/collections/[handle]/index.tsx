@@ -599,12 +599,12 @@ export default component$(() => {
         )}
         {/* Stitch corner accents — subtle, matching border stitch scale */}
         <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
         <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
         <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold tracking-tight mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
@@ -638,7 +638,7 @@ export default component$(() => {
         <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[var(--header-h)] self-start max-h-[calc(100dvh-var(--header-h))] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
-            <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+            <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           </svg>
           <div class="p-5">
             {/* Sidebar header */}
@@ -916,7 +916,7 @@ export default component$(() => {
                     {/* Stitch seam between image and info */}
                     <div class="relative h-0">
                       <svg class="absolute left-0 right-0 -top-px w-full h-px overflow-visible pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
-                        <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                        <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                       </svg>
                     </div>
                     <div class="p-4 px-5 flex-1 flex flex-col">

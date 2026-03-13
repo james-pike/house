@@ -151,14 +151,15 @@ export default component$(() => {
     <div class="bg-white dark:bg-[#121212] max-w-site mx-auto relative">
       {/* Vertical stitch seams along container edges */}
       <svg class="absolute left-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
-        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
       </svg>
       <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-[101] hidden xl:block overflow-visible" preserveAspectRatio="none" aria-hidden="true">
-        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+        <line x1="0" y1="-8" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
       </svg>
       {/* Announcement Bar */}
       <div class="bg-dark text-white py-1 px-2 md:px-4 text-[clamp(0.6rem,0.8vw,0.8rem)] font-medium tracking-wider overflow-hidden relative stitch-line-h-bottom stitch-light">
-        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.5 1.5' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.5 1.5' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
+        <div class="stitch-v-seams stitch-light" />
+        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
         <div class="flex items-center justify-between relative">
           <div class="overflow-hidden flex-1 mr-4">
             <div class="announcement-scroll flex whitespace-nowrap">
@@ -186,6 +187,7 @@ export default component$(() => {
 
       {/* Header */}
       <header id="site-header" class="bg-white dark:bg-[#1e1e1e] sticky top-0 z-[100] shadow-sm pl-2 pr-2 md:px-4 stitch-line-h-bottom stitch-dark">
+        <div class="stitch-v-seams stitch-dark" />
         <div class="py-1 md:py-0 flex items-center justify-between">
           <Link href="/" class="text-xl font-extrabold tracking-tight flex items-center gap-2">
             <img
@@ -319,7 +321,7 @@ export default component$(() => {
             {/* Mobile search icon */}
             <a
               href="/search/"
-              class="md:hidden flex items-center justify-center w-10 h-10 text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
+              class="md:hidden relative flex items-center justify-center px-2.5 py-[0.45rem] stitch-box-overlay-dark rounded-none text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white transition-colors"
               aria-label="Search"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -480,13 +482,18 @@ export default component$(() => {
 
             {/* Mobile hamburger menu */}
             <Modal.Root>
-              <Modal.Trigger class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 bg-transparent border-none">
+              <Modal.Trigger class="md:hidden relative flex flex-col justify-center items-center px-2.5 py-[0.45rem] gap-1.5 stitch-box-overlay-dark rounded-none bg-transparent">
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
                 <span class="block w-5 h-0.5 bg-dark dark:bg-white rounded-full" />
               </Modal.Trigger>
             <Modal.Panel class="mobile-sheet stitch-border stitch-dark">
-              <div class="flex items-center justify-between p-4 border-b border-warm">
+              {/* Light mode X-stitch texture */}
+              <div class="absolute inset-0 pointer-events-none dark:hidden" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23000000' stroke-opacity='0.03' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23000000' stroke-opacity='0.03' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
+              {/* Dark mode X-stitch texture */}
+              <div class="absolute inset-0 pointer-events-none hidden dark:block" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.04' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
+              <div class="stitch-v-seams stitch-dark" />
+              <div class="flex items-center justify-between p-4 relative stitch-line-h-bottom stitch-dark">
                 <div class="flex items-center gap-2">
                   <img src="/logo.png" alt="The Safety House" width="180" height="52" class="object-contain w-[180px] dark:invert" />
                   <img src="/flag.webp" alt="" width="32" height="32" class="w-8 h-8 object-contain" />
@@ -514,7 +521,7 @@ export default component$(() => {
                     </Modal.Close>
                   );
                 })}
-                <div class="border-t border-warm my-2" />
+                <div class="relative my-2 stitch-line-h stitch-dark" style={{ height: '1px' }} />
                 <Modal.Close class="bg-transparent border-none text-left">
                   <Link href="/about/" class="block py-3 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors">
                     About Us
@@ -537,12 +544,12 @@ export default component$(() => {
                   <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.15'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
                   {/* Stitch corners — subtle */}
                   <svg class="absolute top-2.5 left-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                   </svg>
                   <svg class="absolute bottom-2.5 right-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                   </svg>
                   <p class="relative text-xs uppercase tracking-widest font-semibold text-primary mb-1">Limited Time</p>
                   <p class="relative text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
@@ -560,14 +567,15 @@ export default component$(() => {
 
       {/* Footer */}
       <footer class="bg-dark text-white/80 relative stitch-line-h stitch-line-h-bottom stitch-light">
-        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.5 1.5' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.5 1.5' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
-        <svg class="absolute top-3 right-3 md:top-4 md:right-4 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="0" y1="1" x2="46" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-          <line x1="39" y1="-6" x2="39" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+        <div class="stitch-v-seams stitch-light" />
+        <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
+        <svg class="absolute top-2 right-2 md:top-3 md:right-3 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <line x1="0" y1="1" x2="46" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="39" y1="-6" x2="39" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
-        <svg class="absolute top-3 left-3 md:top-4 md:left-4 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+        <svg class="absolute top-2 left-2 md:top-3 md:left-3 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
         <div class="pt-9 px-4 pb-4 md:pt-11 md:px-6 md:pb-5">
           <div class="relative grid grid-cols-1 xs:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] gap-8 md:gap-14 mb-6">
@@ -601,7 +609,7 @@ export default component$(() => {
             <div class="grid grid-cols-2 md:contents gap-8">
               <div class="relative">
                 <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
-                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
                   Shop
                 </h4>
                 <Link href="/collections/work-wear/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Work Wear</Link>
@@ -609,24 +617,24 @@ export default component$(() => {
                 <Link href="/collections/safety-supplies/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Safety Supplies</Link>
                 <Link href="/collections/flame-resistant/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Flame Resistant</Link>
                 <Link href="/collections/casual-wear/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Casual Wear</Link>
-                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
               <div class="relative">
                 <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
-                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
                   Info
                 </h4>
                 <Link href="/about/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">About Us</Link>
                 <Link href="/embroidery/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Embroidery</Link>
                 <Link href="/store-hours/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">Store Hours</Link>
                 <Link href="/faq/" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">FAQ</Link>
-                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
             </div>
             <div class="grid grid-cols-2 md:contents gap-8">
               <div class="relative">
                 <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
-                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
                   Visit Us
                 </h4>
                 <p class="text-xs text-white/50 tracking-wide leading-relaxed">
@@ -636,11 +644,11 @@ export default component$(() => {
                 </p>
                 <a href="tel:613-224-6804" class="block text-xs text-white/50 tracking-wide py-0.5 mt-3 transition-colors hover:text-primary">613-224-6804</a>
                 <a href="mailto:info@safetyhouse.ca" class="block text-xs text-white/50 tracking-wide py-0.5 transition-colors hover:text-primary">info@safetyhouse.ca</a>
-                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
               <div class="relative">
                 <h4 class="relative inline-block text-[0.7rem] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3 py-0.5">
-                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                  <svg class="absolute -top-0.5 -left-1.5 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="0.5" x2="12" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="0.5" y1="0" x2="0.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
                   Stay Updated
                 </h4>
                 <p class="text-xs text-white/50 tracking-wide leading-relaxed mb-3">Get updates on new arrivals and promotions.</p>
@@ -655,7 +663,7 @@ export default component$(() => {
                     Subscribe
                   </button>
                 </form>
-                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" /></svg>
+                <svg class="absolute bottom-0 right-0 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true"><line x1="0" y1="11.5" x2="12" y2="11.5" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /><line x1="11.5" y1="0" x2="11.5" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" /></svg>
               </div>
             </div>
             {/* Mailing list — mobile only, full width */}
@@ -678,12 +686,12 @@ export default component$(() => {
           <div class="relative pt-4 flex items-center text-xs text-white/35 stitch-line-h stitch-light">
             {/* Cross-ends on the stitch line — aligned with corner brackets above */}
             <svg class="absolute top-0 -left-3 -translate-y-1/2 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <line x1="6" y1="0" x2="6" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-              <line x1="0" y1="6" x2="12" y2="6" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+              <line x1="6" y1="0" x2="6" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+              <line x1="0" y1="6" x2="12" y2="6" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
             </svg>
             <svg class="absolute top-0 -right-3 -translate-y-1/2 w-2.5 h-2.5 pointer-events-none overflow-visible" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <line x1="6" y1="0" x2="6" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-              <line x1="0" y1="6" x2="12" y2="6" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+              <line x1="6" y1="0" x2="6" y2="12" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+              <line x1="0" y1="6" x2="12" y2="6" stroke="rgba(255,255,255,0.16)" stroke-width="0.6" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
             </svg>
             <span>&copy; {new Date().getFullYear()} The Safety House</span>
             <span class="ml-auto flex items-center gap-3 mr-3">

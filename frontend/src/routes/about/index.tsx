@@ -6,21 +6,21 @@ const StitchCorners = component$(() => (
   <>
     {/* Mobile — subtle */}
     <svg class="absolute top-5 left-5 w-8 h-8 pointer-events-none overflow-visible md:hidden" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <line x1="-6" y1="1" x2="40" y2="1" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-      <line x1="1" y1="-6" x2="1" y2="40" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+      <line x1="-6" y1="1" x2="40" y2="1" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="1" y1="-6" x2="1" y2="40" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
     <svg class="absolute bottom-5 right-5 w-8 h-8 pointer-events-none overflow-visible md:hidden" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <line x1="0" y1="39" x2="46" y2="39" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-      <line x1="39" y1="0" x2="39" y2="46" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+      <line x1="0" y1="39" x2="46" y2="39" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="39" y1="0" x2="39" y2="46" stroke="currentColor" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
     {/* Desktop — stronger with drop-shadow */}
     <svg class="absolute top-7 left-7 pointer-events-none overflow-visible hidden md:block [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.12))]" width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-      <line x1="-8" y1="1" x2="60" y2="1" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-      <line x1="1" y1="-8" x2="1" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+      <line x1="-8" y1="1" x2="60" y2="1" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="1" y1="-8" x2="1" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
     <svg class="absolute bottom-7 right-7 pointer-events-none overflow-visible hidden md:block [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.12))]" width="60" height="60" viewBox="0 0 60 60" fill="none" aria-hidden="true">
-      <line x1="0" y1="59" x2="68" y2="59" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
-      <line x1="59" y1="0" x2="59" y2="68" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+      <line x1="0" y1="59" x2="68" y2="59" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+      <line x1="59" y1="0" x2="59" y2="68" stroke="currentColor" stroke-width="1" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
     </svg>
   </>
 ));

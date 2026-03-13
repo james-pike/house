@@ -529,7 +529,7 @@ export default component$(() => {
                 {/* Stitch seam */}
                 <div class="relative h-0">
                   <svg class="absolute left-0 right-0 -top-px w-full h-px overflow-visible pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
-                    <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.5 1.5" stroke-linecap="round" />
+                    <line x1="0" y1="0" x2="100%" y2="0" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                   </svg>
                 </div>
                 <div class="p-3">

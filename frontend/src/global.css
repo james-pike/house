@@ -42,19 +42,19 @@
   }
   .nav-stitch-box {
     background-image:
-      repeating-linear-gradient(90deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.5px, transparent 1.5px, transparent 3px);
-    background-size: 100% 1px, 1px 100%, 1px 100%;
+      repeating-linear-gradient(90deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px);
+    background-size: 100% 0.8px, 0.8px 100%, 0.8px 100%;
     background-position: top, left, right;
     background-repeat: repeat-x, repeat-y, repeat-y;
   }
   .dark .nav-stitch-box {
     background-image:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.5px, transparent 1.5px, transparent 3px);
-    background-size: 100% 1px, 1px 100%, 1px 100%;
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px);
+    background-size: 100% 0.8px, 0.8px 100%, 0.8px 100%;
     background-position: top, left, right;
     background-repeat: repeat-x, repeat-y, repeat-y;
   }
@@ -233,8 +233,8 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 1px;
-  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  height: 0.8px;
+  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
   filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
@@ -245,32 +245,46 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 1px;
-  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  height: 0.8px;
+  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
   filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
-/* Vertical stitch line */
+/* Vertical stitch line (left side) */
 .stitch-line-v::before {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 1px;
-  background: repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.5px, transparent 1.5px, transparent 3px);
+  width: 0.8px;
+  background: repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
   filter: drop-shadow(1px 0 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+}
+
+/* Vertical stitch seams — place as a child div inside a relative parent */
+.stitch-v-seams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
+  background-size: 0.8px 100%, 0.8px 100%;
+  background-position: left, right;
+  background-repeat: repeat-y, repeat-y;
 }
 
 /* Full stitched border — all 4 sides */
 .stitch-border {
   border: none;
   background-image:
-    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.5px, transparent 1.5px, transparent 3px);
-  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px);
+  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
@@ -279,11 +293,11 @@
 /* Fine stitch overlay — replaces inline border-dashed on cards */
 .stitch-box-overlay {
   background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px);
-  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px);
+  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
@@ -292,22 +306,22 @@
 /* Stitch overlay for light backgrounds (product cards, about panels) */
 .stitch-box-overlay-dark {
   background-image:
-    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.5px, transparent 1.5px, transparent 3px);
-  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px);
+  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
 }
 .dark .stitch-box-overlay-dark {
   background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.5px, transparent 1.5px, transparent 3px);
-  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px);
+  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));

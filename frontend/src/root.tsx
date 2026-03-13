@@ -19,7 +19,7 @@ export default component$(() => {
         <script
           dangerouslySetInnerHTML={`
             try {
-              if (localStorage.getItem('darkMode') === 'true') {
+              if (localStorage.getItem('darkMode') !== 'false') {
                 document.documentElement.classList.add('dark');
               }
             } catch(e) {}

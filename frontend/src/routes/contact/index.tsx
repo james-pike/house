@@ -172,6 +172,7 @@ export default component$(() => {
           <img
             src="/TheSafetyHouse-March2023-38.jpg"
             alt="The Safety House team"
+            loading="lazy"
             width={800}
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"

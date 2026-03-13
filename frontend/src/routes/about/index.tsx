@@ -46,7 +46,7 @@ const textPanelClasses = "relative flex flex-col justify-center px-8 py-12 md:px
 
 // Dashed stitch border — lighter on mobile, stronger on desktop
 const StitchBorder = component$(() => (
-  <div class="absolute inset-3 md:inset-5 stitch-box-overlay pointer-events-none z-[1] [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.15))]" />
+  <div class="absolute inset-2 md:inset-3 stitch-box-overlay pointer-events-none z-[1] [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.15))]" />
 ));
 
 export default component$(() => {
@@ -92,8 +92,9 @@ export default component$(() => {
       <div class="grid grid-cols-1 md:grid-cols-2">
         <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden relative">
           <img
-            src="/TheSafetyHouse-March2023-37.jpg"
+            src="/bike.jpg"
             alt="In-house embroidery services at The Safety House"
+            loading="lazy"
             width={800}
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"
@@ -149,11 +150,12 @@ export default component$(() => {
         </div>
         <div class="aspect-[16/10] md:aspect-auto md:relative overflow-hidden order-1 md:order-2 relative">
           <img
-            src="/footwear.jpg"
-            alt="Safety footwear at The Safety House"
+            src="/bus.jpg"
+            alt="The Safety House community"
+            loading="lazy"
             width={800}
             height={800}
-            class="w-full h-full object-cover md:absolute md:inset-0"
+            class="w-full h-full object-cover object-[center_38%] md:absolute md:inset-0"
           />
           <div class="absolute inset-0 bg-black/20" />
           <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
@@ -167,6 +169,7 @@ export default component$(() => {
           <img
             src="/TheSafetyHouse-March2023-37.jpg"
             alt="The Safety House storefront"
+            loading="lazy"
             width={800}
             height={800}
             class="w-full h-full object-cover md:absolute md:inset-0"

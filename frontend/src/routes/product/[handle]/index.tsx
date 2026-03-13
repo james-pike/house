@@ -6,8 +6,6 @@ import {
   getCollectionByHandle,
   getProductRecommendations,
   formatPrice,
-  createCart,
-  addToCart,
 } from "~/lib/medusa";
 import type { ShopifyVariant, ShopifyProduct } from "~/lib/medusa";
 import { getColorCss } from "~/lib/colors";
@@ -110,15 +108,6 @@ const ProductDetail = component$<{
 }>(({ p }) => {
   const selectedImage = useSignal(0);
   const selectedVariantId = useSignal("");
-  const adding = useSignal(false);
-  const added = useSignal(false);
-  const cartCount = useSignal(0);
-
-  useVisibleTask$(() => {
-    const count = localStorage.getItem("cart_count");
-    if (count) cartCount.value = parseInt(count, 10);
-  });
-
   useVisibleTask$(({ track }) => {
     track(() => p);
     const variants = p.variants.edges.map((e) => e.node);
@@ -127,29 +116,11 @@ const ProductDetail = component$<{
     selectedImage.value = 0;
   });
 
-  const handleAddToCart = $(async () => {
-    if (!selectedVariantId.value || adding.value) return;
-    adding.value = true;
-    added.value = false;
-    try {
-      const cartId = localStorage.getItem("cart_id");
-      let cart;
-      if (cartId) {
-        cart = await addToCart(cartId, selectedVariantId.value, 1);
-      } else {
-        cart = await createCart(selectedVariantId.value, 1);
-      }
-      localStorage.setItem("cart_id", cart.id);
-      localStorage.setItem("cart_checkout_url", cart.checkoutUrl);
-      localStorage.setItem("cart_count", String(cart.totalQuantity));
-      cartCount.value = cart.totalQuantity;
-      added.value = true;
-      setTimeout(() => (added.value = false), 2500);
-    } catch (err) {
-      console.error("Add to cart failed:", err);
-    } finally {
-      adding.value = false;
-    }
+  const showComingSoon = useSignal(false);
+
+  const handleAddToCart = $(() => {
+    showComingSoon.value = true;
+    setTimeout(() => { showComingSoon.value = false; }, 3000);
   });
 
   const images = p.images.edges.map((e) => e.node);
@@ -369,32 +340,36 @@ const ProductDetail = component$<{
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
               onClick$={handleAddToCart}
-              disabled={!anyAvailable || adding.value}
+              disabled={!anyAvailable}
             >
-              {adding.value
-                ? "Adding..."
-                : added.value
-                  ? "Added to Cart!"
-                  : anyAvailable
-                    ? "Add to Cart"
-                    : "Sold Out"}
+              {anyAvailable ? "Add to Cart" : "Sold Out"}
             </button>
-
-            {cartCount.value > 0 && (
-              <a
-                href={
-                  typeof window !== "undefined"
-                    ? localStorage.getItem("cart_checkout_url") || "#"
-                    : "#"
-                }
-                class="inline-flex items-center justify-center py-3 px-7 text-[0.9rem] font-semibold rounded-lg border-none transition-all duration-200 bg-dark text-white hover:bg-dark-soft hover:-translate-y-0.5"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Checkout ({cartCount.value})
-              </a>
-            )}
           </div>
+
+          {/* Coming soon modal */}
+          {showComingSoon.value && (
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick$={() => { showComingSoon.value = false; }}>
+              <div class="bg-white dark:bg-[#1e1e1e] rounded-lg shadow-2xl p-8 mx-4 max-w-sm text-center stitch-box-overlay" onClick$={(e: Event) => e.stopPropagation()}>
+                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 0 1-8 0" />
+                  </svg>
+                </div>
+                <h3 class="text-lg font-bold text-dark dark:text-white mb-2">Coming Soon</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">Stripe checkout integration coming soon.</p>
+                <div class="flex gap-3 justify-center">
+                  <a href="tel:613-224-6804" class="inline-flex items-center gap-1.5 py-2.5 px-5 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors">
+                    Call Us
+                  </a>
+                  <button type="button" onClick$={() => { showComingSoon.value = false; }} class="py-2.5 px-5 text-sm font-semibold rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Description & Details */}
           {(p.description || p.meta?.features) && (

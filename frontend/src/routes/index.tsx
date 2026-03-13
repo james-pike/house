@@ -118,7 +118,7 @@ export default component$(() => {
             class={`text-white overflow-hidden transition-opacity duration-700 ease-in-out flex items-center ${
               slide.align === "center" ? "justify-center" : ""
             } ${
-              i === 0 ? "relative h-[306px] md:h-[clamp(306px,40.5vw,468px)]" : "absolute top-0 left-0 w-full h-full"
+              i === 0 ? "relative h-[400px] md:h-[clamp(380px,40.5vw,468px)]" : "absolute top-0 left-0 w-full h-full"
             } ${currentSlide.value === i ? "opacity-100 z-10" : "opacity-0 z-0"}`}
             aria-hidden={currentSlide.value !== i}
           >
@@ -153,13 +153,13 @@ export default component$(() => {
                 ? "mx-auto px-6 md:px-12 text-center"
                 : "px-8 md:px-16"
             }`}>
-              <div class="inline-block bg-primary/15 text-primary py-1 px-3 rounded-full text-[0.65rem] md:text-xs font-bold tracking-widest uppercase mb-2 border border-white/20">
+              <div class="inline-block bg-primary/15 text-primary py-1 px-3 rounded-full text-[0.65rem] md:text-xs font-bold tracking-widest uppercase mb-2 stitch-box-overlay">
                 {slide.badge}
               </div>
-              <h2 class="text-[clamp(2rem,5vw,4rem)] font-extrabold leading-[1.05] tracking-tight mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
+              <h2 class="text-[clamp(2.4rem,5vw,4rem)] font-extrabold leading-[1.05] tracking-tight mb-2 [text-shadow:0_2px_16px_rgba(0,0,0,0.5)]">
                 {slide.title}
               </h2>
-              <p class={`text-[clamp(1.05rem,1.8vw,1.35rem)] text-white/80 leading-relaxed mb-4 ${
+              <p class={`text-[clamp(1.1rem,1.8vw,1.35rem)] text-white/80 leading-relaxed mb-4 ${
                 slide.align === "center" ? "max-w-[600px] mx-auto" : "max-w-[520px]"
               }`}>
                 {slide.description}

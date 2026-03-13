@@ -34,14 +34,25 @@ export default component$(() => {
     const count = localStorage.getItem("cart_count");
     if (count) cartCount.value = parseInt(count, 10);
 
-    // Listen for cart updates from product pages
+    // Listen for cart updates from product pages (cross-tab via storage, same-tab via custom event)
     const onStorage = (e: StorageEvent) => {
       if (e.key === "cart_count" && e.newValue) {
         cartCount.value = parseInt(e.newValue, 10);
       }
     };
+    const onCartUpdated = (e: Event) => {
+      const count = (e as CustomEvent).detail?.count;
+      if (typeof count === "number") cartCount.value = count;
+    };
+    const onOpenCart = () => { cartOpen.value = true; };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    window.addEventListener("cart-updated", onCartUpdated);
+    window.addEventListener("open-cart", onOpenCart);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("cart-updated", onCartUpdated);
+      window.removeEventListener("open-cart", onOpenCart);
+    };
   });
 
   // Fetch cart data from Shopify when drawer opens
@@ -567,20 +578,20 @@ export default component$(() => {
               </nav>
               {/* Promotional Banner */}
               <div class="mt-auto p-4">
-                <div class="relative rounded-xl overflow-hidden bg-[#1a1a1a] text-white p-5 text-center">
-                  <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.15'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
-                  {/* Stitch corners — subtle */}
+                <div class="relative rounded-xl overflow-hidden bg-primary/10 dark:bg-[#1a1a1a] text-dark dark:text-white p-5 text-center border border-primary/20 dark:border-primary/10">
+                  <div class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.12'%3E%3Cpath d='M9 0h3L0 12V9zM12 9v3H9z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+                  {/* Stitch corners */}
                   <svg class="absolute top-2.5 left-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                   </svg>
                   <svg class="absolute bottom-2.5 right-2.5 w-6 h-6 pointer-events-none overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                    <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(156,163,175,0.15)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
                   </svg>
                   <p class="relative text-xs uppercase tracking-widest font-semibold text-primary mb-1">Limited Time</p>
                   <p class="relative text-lg font-bold leading-snug mb-2">Save 25% on all ______ products</p>
-                  <p class="relative text-sm text-white/60">Use code <span class="font-bold text-primary">SALE25</span> at checkout</p>
+                  <p class="relative text-sm text-gray-600 dark:text-white/70">Use code <span class="font-bold text-primary">SALE25</span> at checkout</p>
                 </div>
               </div>
               </Modal.Panel>
@@ -596,11 +607,11 @@ export default component$(() => {
       <footer class="bg-dark text-white/80 relative stitch-line-h stitch-line-h-bottom stitch-light">
         <div class="stitch-v-seams stitch-light" />
         <div class="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 7 7'%3E%3Cline x1='0' y1='7' x2='7' y2='0' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3Cline x1='0' y1='0' x2='7' y2='7' stroke='%23ffffff' stroke-opacity='0.06' stroke-width='0.8' stroke-dasharray='1.2 1.8' stroke-linecap='round'/%3E%3C/svg%3E")` }} />
-        <svg class="absolute top-2 right-2 md:top-3 md:right-3 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <svg class="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none overflow-visible z-10" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <line x1="0" y1="1" x2="46" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="39" y1="-6" x2="39" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
-        <svg class="absolute top-2 left-2 md:top-3 md:left-3 pointer-events-none overflow-visible z-10" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-8 h-8 md:w-10 md:h-10 pointer-events-none overflow-visible z-10" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
@@ -697,8 +708,8 @@ export default component$(() => {
                     required
                     class="flex-1 min-w-0 bg-white/10 border border-white/10 rounded-l-md px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 transition-colors"
                   />
-                  <button type="submit" class="relative overflow-hidden rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-primary/15 hover:bg-primary/25 border border-white/10 border-l-0 transition-colors whitespace-nowrap">
-                    <span class="absolute inset-0 pointer-events-none opacity-60" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.5'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")`, maskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)", WebkitMaskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)" }} />
+                  <button type="submit" class="relative overflow-hidden rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-primary/10 hover:bg-primary/20 border border-white/10 border-l-0 transition-colors whitespace-nowrap">
+                    <span class="absolute inset-0 pointer-events-none opacity-35" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.4'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")`, maskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)", WebkitMaskImage: "radial-gradient(ellipse 90% 70% at center, transparent 20%, black 80%)" }} />
                     <span class="relative">Subscribe</span>
                   </button>
                 </form>
@@ -715,8 +726,8 @@ export default component$(() => {
                   required
                   class="flex-1 min-w-0 bg-white/10 border border-white/10 rounded-l-md px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 transition-colors"
                 />
-                <button type="submit" class="relative overflow-hidden rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-primary/15 hover:bg-primary/25 transition-colors whitespace-nowrap">
-                  <span class="absolute inset-0 pointer-events-none opacity-80" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.8'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")` }} />
+                <button type="submit" class="relative overflow-hidden rounded-r-md px-3 py-1.5 text-xs font-semibold text-white bg-primary/10 hover:bg-primary/20 transition-colors whitespace-nowrap">
+                  <span class="absolute inset-0 pointer-events-none opacity-40" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e6a817' fill-opacity='0.4'%3E%3Cpath d='M6 0h2L0 8V6zM8 6v2H6z'/%3E%3C/g%3E%3C/svg%3E")` }} />
                   <span class="relative">Subscribe</span>
                 </button>
               </form>

@@ -289,11 +289,11 @@ export default component$(() => {
     "work-wear": { subtitle: "Durable workwear built for the toughest jobs.", images: [{ src: "/workwear.jpg" }, { src: "/carharrt-work-wear-ottawa.jpg", pos: "center 10%" }, { src: "/work-wear.jpg" }], objectPos: "center 30%" },
     "safety-footwear": {
       subtitle: "CSA-approved boots and shoes from trusted brands.",
-      images: [{ src: "/footwear-hero.jpg" }, { src: "/footwear.jpg" }, { src: "/work_boots_ottawa.png" }],
+      images: [{ src: "/footwear-hero.jpg", pos: "center 52%" }, { src: "/footwear.jpg" }],
     },
-    "flame-resistant": { subtitle: "Certified FR clothing to keep you protected on the job.", images: [{ src: "/flame-resistant-clothing.jpg" }, { src: "/flame-resistant-clothing-ottawa.jpg", pos: "center 15%" }, { src: "/flame-resistant-clothing-ottawa.png" }] },
-    "safety-supplies": { subtitle: "Gloves, eyewear, hard hats and everything in between.", images: [{ src: "/safety-supplies.jpg" }, { src: "/safety_clothing_ottawa.png", pos: "center 15%" }, { src: "/TheSafetyHouse-March2023-37.jpg" }], objectPos: "center 45%" },
-    "casual-wear": { subtitle: "Uniforms and essentials for the school year.", images: [{ src: "/schoolwear.jpg" }, { src: "/personalized_swag_ottawa.png", pos: "center 15%" }, { src: "/TheSafetyHouse-March2023-38.jpg" }] },
+    "flame-resistant": { subtitle: "Certified FR clothing to keep you protected on the job.", images: [{ src: "/flame-resistant-clothing-ottawa.jpg", pos: "center 15%" }] },
+    "safety-supplies": { subtitle: "Gloves, eyewear, hard hats and everything in between.", images: [{ src: "/safety-supplies.jpg" }, { src: "/TheSafetyHouse-March2023-37.jpg" }], objectPos: "center 45%" },
+    "casual-wear": { subtitle: "Uniforms and essentials for the school year.", images: [] },
   };
   const hero = heroData[c.handle] || { images: [] };
   const heroImages: { src: string; pos?: string }[] = hero.images.length > 0 ? hero.images : [{ src: c.image?.url || "" }].filter(img => img.src);
@@ -627,6 +627,7 @@ export default component$(() => {
                 width={1400}
                 height={600}
                 fetchPriority={i === 0 ? "high" : "auto"}
+                loading={i === 0 ? "eager" : "lazy"}
                 style={pos ? { objectPosition: pos } : undefined}
                 class={`absolute inset-0 w-full h-full object-cover ${pos ? '' : 'object-[center_19.5%]'} transition-opacity duration-1000 ease-in-out ${heroSlide.value === i ? "opacity-100" : "opacity-0"}`}
               />
@@ -641,11 +642,11 @@ export default component$(() => {
         <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
         <div class="stitch-v-seams stitch-light" />
         {/* Stitch corner accents — subtle, matching border stitch scale */}
-        <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <svg class="absolute top-4 left-4 md:top-6 md:left-6 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
-        <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
           <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
@@ -657,7 +658,7 @@ export default component$(() => {
         )}
         {/* Square slide indicators */}
         {heroImages.length > 1 && (
-          <div class="absolute bottom-3 right-4 md:right-8 z-20 flex items-center gap-1.5">
+          <div class="absolute bottom-3 right-4 md:right-6 z-20 flex items-center gap-1.5">
             {heroImages.map((_, i) => (
               <button
                 key={i}
@@ -679,7 +680,7 @@ export default component$(() => {
       <div class="flex relative">
         <div class="stitch-v-seams stitch-dark" />
         {/* Desktop sidebar */}
-        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-gray-50 dark:bg-[#161616] sticky top-[calc(var(--header-h)-1px)] self-start max-h-[calc(100dvh-var(--header-h)+1px)] overflow-y-auto relative">
+        <aside class="hidden lg:block w-[260px] xl:w-[280px] flex-shrink-0 bg-[#ededec] dark:bg-[#161616] sticky top-[calc(var(--header-h)-1px)] self-start max-h-[calc(100dvh-var(--header-h)+1px)] overflow-y-auto relative">
           {/* Vertical stitch seam on right edge */}
           <svg class="absolute right-0 top-0 bottom-0 w-px h-full pointer-events-none z-10" preserveAspectRatio="none" aria-hidden="true">
             <line x1="0" y1="0" x2="0" y2="100%" stroke="rgba(156,163,175,0.22)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
@@ -736,7 +737,7 @@ export default component$(() => {
         {/* Product grid area */}
         <div class="flex-1 min-w-0">
           {/* Toolbar */}
-          <div class="bg-gray-50 dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[calc(var(--header-h)-1px)] z-20 relative stitch-line-h-bottom stitch-dark">
+          <div class="bg-[#ededec] dark:bg-[#1a1a1a] px-3 md:px-6 py-1.5 md:py-2 sticky top-[calc(var(--header-h)-1px)] z-20 relative stitch-line-h-bottom stitch-dark">
             <div class="flex items-center justify-between">
               {/* Breadcrumbs */}
               <div class="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto">
@@ -790,9 +791,7 @@ export default component$(() => {
               <div class="flex items-center gap-3 flex-shrink-0">
                 {/* Product count */}
                 <span class="hidden md:inline text-xs text-gray-400 dark:text-gray-500">
-                  {activeFilterCount.value > 0
-                    ? `${filteredProducts.value.length} of ${serverTotalCount.value}`
-                    : `${serverTotalCount.value}`} products
+                  {displayedProducts.value.length} of {serverTotalCount.value} products
                 </span>
 
                 {/* Collection search (desktop) */}
@@ -1002,10 +1001,10 @@ export default component$(() => {
               </div>
             )}
 
-            {/* Load More button */}
-            {hasMore.value && (
-              <div class="flex items-center mt-5">
-                <div class="flex-1" />
+            {/* Load More / product count */}
+            <div class="flex items-center mt-5">
+              <div class="flex-1" />
+              {hasMore.value && (
                 <button
                   type="button"
                   class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-none stitch-box-overlay-dark bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
@@ -1017,13 +1016,13 @@ export default component$(() => {
                   ) : null}
                   {loadingMore.value ? "Loading..." : "Load More"}
                 </button>
-                <div class="flex-1 text-right">
-                  <span class="text-xs text-gray-400 dark:text-gray-500">
-                    {displayedProducts.value.length} of {serverTotalCount.value} products
-                  </span>
-                </div>
+              )}
+              <div class="flex-1 text-right">
+                <span class="text-xs text-gray-400 dark:text-gray-500">
+                  {displayedProducts.value.length} of {serverTotalCount.value} products
+                </span>
               </div>
-            )}
+            </div>
           </section>
         </div>
       </div>

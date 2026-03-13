@@ -27,7 +27,14 @@ function cacheGet<T>(key: string): T | undefined {
   return entry.data as T;
 }
 
+const MAX_CACHE_ENTRIES = 500;
+
 function cacheSet<T>(key: string, data: T, ttl = CACHE_TTL): void {
+  // Evict oldest entries if cache is too large
+  if (_cache.size >= MAX_CACHE_ENTRIES && !_cache.has(key)) {
+    const firstKey = _cache.keys().next().value;
+    if (firstKey) _cache.delete(firstKey);
+  }
   _cache.set(key, { data, expires: Date.now() + ttl });
 }
 
@@ -58,11 +65,14 @@ async function medusaFetch<T>(
     return res.json() as Promise<T>;
   };
 
-  // Retry once on failure (handles Render cold starts)
+  // Retry once on network/cold-start errors (not on 5xx overload)
   try {
     return await doFetch();
   } catch (err) {
-    console.warn(`Medusa fetch retry: ${path} — ${(err as Error).message}`);
+    const msg = (err as Error).message || "";
+    // Don't retry 502/503 — Render is overloaded
+    if (msg.includes("502") || msg.includes("503")) throw err;
+    console.warn(`Medusa fetch retry: ${path} — ${msg}`);
     return doFetch();
   }
 }
@@ -569,28 +579,21 @@ export async function getCollectionByHandle(
   const cat = catData.product_categories?.[0];
   if (!cat) return null;
 
-  // Fetch ALL products in this category (paginate in batches of 100)
+  // Fetch products in this category — limited batch, not all at once
   const regionId = await getRegionId();
-  const allRawProducts: MedusaRawProduct[] = [];
-  let fetchOffset = 0;
-  const BATCH = 100;
-  while (true) {
-    const prodParams = new URLSearchParams({
-      category_id: cat.id,
-      fields: PRODUCT_FIELDS,
-      region_id: regionId,
-      limit: String(BATCH),
-      offset: String(fetchOffset),
-    });
-    const prodData = await cachedFetch<{ products: MedusaRawProduct[]; count: number }>(
-      `/store/products?${prodParams}`,
-    );
-    const batch = prodData.products ?? [];
-    allRawProducts.push(...batch);
-    if (batch.length < BATCH || allRawProducts.length >= (prodData.count || Infinity)) break;
-    fetchOffset += BATCH;
-  }
-  const prodData = { products: allRawProducts };
+  const offset = decodeCursor(after);
+  const limit = Math.min(first, 20); // cap at 20 to avoid OOM on backend
+
+  const prodParams = new URLSearchParams({
+    category_id: cat.id,
+    fields: PRODUCT_FIELDS,
+    region_id: regionId,
+    limit: String(limit),
+    offset: String(offset),
+  });
+  const prodData = await cachedFetch<{ products: MedusaRawProduct[]; count: number }>(
+    `/store/products?${prodParams}`,
+  );
 
   // Seed per-handle cache so product detail pages are instant
   for (const rp of prodData.products ?? []) {
@@ -604,6 +607,10 @@ export async function getCollectionByHandle(
       cacheSet(handleKey, { products: [rp] });
     }
   }
+
+  const totalCount = prodData.count || 0;
+  const nextOffset = offset + limit;
+  const hasNextPage = nextOffset < totalCount;
 
   let products = (prodData.products ?? []).map(adaptProduct);
 
@@ -630,8 +637,11 @@ export async function getCollectionByHandle(
     if (reverse) products.reverse();
   }
 
-  // Return all products — pagination is handled client-side
-  return adaptCategory(cat, products, { hasNextPage: false, endCursor: null });
+  // Return paginated products — "Load More" fetches next batch from backend
+  return adaptCategory(cat, products, {
+    hasNextPage,
+    endCursor: hasNextPage ? encodeCursor(nextOffset) : null,
+  });
 }
 
 export async function getCollectionProducts(
@@ -821,15 +831,56 @@ const COLLECTION_HANDLES = [
 
 let _warmingStarted = false;
 
+async function warmCollectionLight(handle: string): Promise<void> {
+  try {
+    const catData = await cachedFetch<{
+      product_categories: MedusaRawCategory[];
+    }>(`/store/product-categories?handle=${handle}`);
+    const cat = catData.product_categories?.[0];
+    if (!cat) return;
+
+    const regionId = await getRegionId();
+    const prodParams = new URLSearchParams({
+      category_id: cat.id,
+      fields: PRODUCT_FIELDS,
+      region_id: regionId,
+      limit: "20",
+      offset: "0",
+    });
+    const prodData = await cachedFetch<{ products: MedusaRawProduct[] }>(
+      `/store/products?${prodParams}`,
+    );
+
+    // Seed per-handle cache for product detail pages
+    for (const rp of prodData.products ?? []) {
+      const handleParams = new URLSearchParams({
+        handle: rp.handle,
+        fields: PRODUCT_FIELDS,
+        region_id: regionId,
+      });
+      const handleKey = `/store/products?${handleParams}`;
+      if (cacheGet(handleKey) === undefined) {
+        cacheSet(handleKey, { products: [rp] });
+      }
+    }
+  } catch {
+    // silently ignore warming failures
+  }
+}
+
 export function warmCollectionCache(): void {
   if (_warmingStarted) return;
   _warmingStarted = true;
-  // Fire-and-forget: prefetch all collections in parallel
-  Promise.all(
-    COLLECTION_HANDLES.map((handle) =>
-      getCollectionByHandle(handle).catch(() => null),
-    ),
-  ).catch(() => {});
+  // Stagger warming: fetch 2 at a time with 500ms delay between batches
+  (async () => {
+    for (let i = 0; i < COLLECTION_HANDLES.length; i += 2) {
+      const batch = COLLECTION_HANDLES.slice(i, i + 2);
+      await Promise.all(batch.map(warmCollectionLight));
+      if (i + 2 < COLLECTION_HANDLES.length) {
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
+  })().catch(() => {});
 }
 
 export function formatPrice(price: ShopifyPrice): string {

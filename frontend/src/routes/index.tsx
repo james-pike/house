@@ -218,20 +218,20 @@ export default component$(() => {
               <div class="absolute inset-0 stitch-box-overlay pointer-events-none z-10 [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.25))]" />
               {/* Corner tick marks — short registration-style dashes */}
               <svg class="absolute top-3 left-3 md:top-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
               </svg>
               <svg class="absolute top-3 right-3 md:top-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="0" y1="1" x2="20" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 left-3 md:bottom-4 md:left-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="1" y1="0" x2="1" y2="20" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
               </svg>
               <svg class="absolute bottom-3 right-3 md:bottom-4 md:right-4 w-4 h-4 md:w-5 md:h-5 pointer-events-none z-10 overflow-visible" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.18)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="0" y1="19" x2="20" y2="19" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+                <line x1="19" y1="0" x2="19" y2="20" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
               </svg>
               <div class="relative z-10 text-left self-end w-full px-6 md:px-8 pb-5 md:pb-6">
                 <div class="bg-black/30 backdrop-blur-[2px] rounded-md px-3 py-2 inline-block">

@@ -1,7 +1,7 @@
 import { component$, useSignal, useComputed$, $, useVisibleTask$, useTask$ } from "@builder.io/qwik";
 import { routeLoader$, Link, useLocation } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { getCollectionByHandle, formatPrice } from "~/lib/medusa";
+import { getCollectionByHandle, getCollectionProducts, formatPrice } from "~/lib/medusa";
 import type { ShopifyProduct } from "~/lib/medusa";
 import { getColorCss } from "~/lib/colors";
 
@@ -44,7 +44,7 @@ export const useCollection = routeLoader$(async (requestEvent) => {
   const handle = requestEvent.params.handle;
 
   try {
-    const collection = await getCollectionByHandle(handle);
+    const collection = await getCollectionByHandle(handle, 20);
 
     if (!collection) {
       requestEvent.status(404);
@@ -116,9 +116,12 @@ export default component$(() => {
 
   const c = collection.value;
 
-  // All products loaded server-side; client-side pagination controls how many are displayed
+  // Products loaded in batches — initial batch from server, more fetched on demand
   const allProducts = useSignal<ShopifyProduct[]>(c.products.edges.map((e) => e.node));
   const displayCount = useSignal(12);
+  const serverCursor = useSignal<string | null>(c.products.pageInfo.endCursor);
+  const serverHasMore = useSignal(c.products.pageInfo.hasNextPage);
+  const loadingMore = useSignal(false);
 
   // Re-sync products when collection changes via client-side navigation
   useTask$(({ track }) => {
@@ -126,10 +129,36 @@ export default component$(() => {
     if (col) {
       allProducts.value = col.products.edges.map((e) => e.node);
       displayCount.value = 12;
+      serverCursor.value = col.products.pageInfo.endCursor;
+      serverHasMore.value = col.products.pageInfo.hasNextPage;
     }
   });
 
-  const loadMore = $(() => {
+  const loadMore = $(async () => {
+    // If we have more loaded products to show, just bump the display count
+    if (displayCount.value + 12 <= allProducts.value.length) {
+      displayCount.value = displayCount.value + 12;
+      return;
+    }
+
+    // Otherwise fetch next batch from the API
+    if (serverHasMore.value && !loadingMore.value) {
+      loadingMore.value = true;
+      try {
+        const result = await getCollectionProducts(
+          c.handle,
+          20,
+          serverCursor.value || undefined,
+        );
+        allProducts.value = [...allProducts.value, ...result.products];
+        serverCursor.value = result.pageInfo.endCursor;
+        serverHasMore.value = result.pageInfo.hasNextPage;
+      } catch (err) {
+        console.error("Failed to load more products:", err);
+      } finally {
+        loadingMore.value = false;
+      }
+    }
     displayCount.value = displayCount.value + 12;
   });
 
@@ -240,7 +269,7 @@ export default component$(() => {
   });
 
   const hasMore = useComputed$(() => {
-    return displayCount.value < filteredProducts.value.length;
+    return displayCount.value < filteredProducts.value.length || serverHasMore.value;
   });
 
   // Hero
@@ -599,12 +628,12 @@ export default component$(() => {
         )}
         {/* Stitch corner accents — subtle, matching border stitch scale */}
         <svg class="absolute top-4 left-4 md:top-6 md:left-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="-6" y1="1" x2="40" y2="1" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="1" y1="-6" x2="1" y2="40" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
         <svg class="absolute bottom-4 right-4 md:bottom-6 md:right-8 w-8 h-8 md:w-10 md:h-10 pointer-events-none z-10 overflow-visible" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
-          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="0" y1="39" x2="46" y2="39" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
+          <line x1="39" y1="0" x2="39" y2="46" stroke="rgba(255,255,255,0.16)" stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" />
         </svg>
         <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold tracking-tight mb-3 px-8">{c.title}</h1>
         {hero.subtitle ? (
@@ -964,14 +993,18 @@ export default component$(() => {
                 <div class="flex-1" />
                 <button
                   type="button"
-                  class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-none stitch-box-overlay-dark bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  class="inline-flex items-center gap-2 py-3 px-8 text-sm font-semibold rounded-none stitch-box-overlay-dark bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
                   onClick$={loadMore}
+                  disabled={loadingMore.value}
                 >
-                  Load More
+                  {loadingMore.value ? (
+                    <div class="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                  ) : null}
+                  {loadingMore.value ? "Loading..." : "Load More"}
                 </button>
                 <div class="flex-1 text-right">
                   <span class="text-xs text-gray-400 dark:text-gray-500">
-                    {displayedProducts.value.length} of {filteredProducts.value.length} products
+                    {displayedProducts.value.length} of {filteredProducts.value.length}{serverHasMore.value ? "+" : ""} products
                   </span>
                 </div>
               </div>

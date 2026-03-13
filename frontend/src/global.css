@@ -41,20 +41,8 @@
     @apply text-[#1a1a1a] dark:text-white;
   }
   .nav-stitch-box {
-    background-image:
-      repeating-linear-gradient(90deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(156,163,175,0.22) 0px, rgba(156,163,175,0.22) 1.2px, transparent 1.2px, transparent 3px);
-    background-size: 100% 0.8px, 0.8px 100%, 0.8px 100%;
-    background-position: top, left, right;
-    background-repeat: repeat-x, repeat-y, repeat-y;
-  }
-  .dark .nav-stitch-box {
-    background-image:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1.2px, transparent 1.2px, transparent 3px);
-    background-size: 100% 0.8px, 0.8px 100%, 0.8px 100%;
+    background-image: var(--stitch-h-dark), var(--stitch-v-dark), var(--stitch-v-dark);
+    background-size: 3px 1px, 1px 3px, 1px 3px;
     background-position: top, left, right;
     background-repeat: repeat-x, repeat-y, repeat-y;
   }
@@ -223,43 +211,58 @@
 }
 
 /* ── Stitch design system ── */
-/* Horizontal stitch line — use as a border replacement */
-.stitch-line-h {
-  position: relative;
+/* All stitches use SVG data URIs for consistent rounded dashes (stroke-linecap: round) */
+/* Reference: stroke-width="0.8" stroke-dasharray="1.2 1.8" stroke-linecap="round" rgba(255,255,255,0.16) */
+
+/* SVG stitch tiles — horizontal and vertical, light (for dark bg) and dark (for light bg) */
+/* Horizontal: 3px wide × 1px tall tile with a 1.2px rounded dash */
+/* Vertical: 1px wide × 3px tall tile with a 1.2px rounded dash */
+
+:root {
+  --stitch-h-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-h-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%239ca3af' stroke-opacity='0.35' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%239ca3af' stroke-opacity='0.35' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
 }
+.dark {
+  --stitch-h-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Horizontal stitch line — top border */
+.stitch-line-h { position: relative; }
 .stitch-line-h::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 0.8px;
-  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
-  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  left: 0; right: 0; top: 0;
+  height: 1px;
+  background-image: var(--stitch-h-light);
+  background-repeat: repeat-x;
+  pointer-events: none;
 }
 
 /* Bottom variant */
+.stitch-line-h-bottom { position: relative; }
 .stitch-line-h-bottom::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 0.8px;
-  background: repeating-linear-gradient(90deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
-  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background-image: var(--stitch-h-light);
+  background-repeat: repeat-x;
+  pointer-events: none;
 }
 
 /* Vertical stitch line (left side) */
+.stitch-line-v { position: relative; }
 .stitch-line-v::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 0.8px;
-  background: repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
-  filter: drop-shadow(1px 0 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
+  top: 0; bottom: 0; left: 0;
+  width: 1px;
+  background-image: var(--stitch-v-light);
+  background-repeat: repeat-y;
+  pointer-events: none;
 }
 
 /* Vertical stitch seams — place as a child div inside a relative parent */
@@ -268,10 +271,8 @@
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background-image:
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255, 255, 255, 0.18)) 0px, var(--stitch-color, rgba(255, 255, 255, 0.18)) 1.2px, transparent 1.2px, transparent 3px);
-  background-size: 0.8px 100%, 0.8px 100%;
+  background-image: var(--stitch-v-light), var(--stitch-v-light);
+  background-size: 1px 3px, 1px 3px;
   background-position: left, right;
   background-repeat: repeat-y, repeat-y;
 }
@@ -279,65 +280,38 @@
 /* Full stitched border — all 4 sides */
 .stitch-border {
   border: none;
-  background-image:
-    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(90deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, var(--stitch-color, rgba(255,255,255,0.18)) 0px, var(--stitch-color, rgba(255,255,255,0.18)) 1.2px, transparent 1.2px, transparent 3px);
-  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
+  background-image: var(--stitch-h-light), var(--stitch-h-light), var(--stitch-v-light), var(--stitch-v-light);
+  background-size: 3px 1px, 3px 1px, 1px 3px, 1px 3px;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  filter: drop-shadow(0 1px 1px var(--stitch-shadow, rgba(0, 0, 0, 0.10)));
 }
 
-/* Fine stitch overlay — replaces inline border-dashed on cards */
+/* Fine stitch overlay — for dark backgrounds */
 .stitch-box-overlay {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px);
-  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
+  background-image: var(--stitch-h-light), var(--stitch-h-light), var(--stitch-v-light), var(--stitch-v-light);
+  background-size: 3px 1px, 3px 1px, 1px 3px, 1px 3px;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
 }
 
-/* Stitch overlay for light backgrounds (product cards, about panels) */
+/* Stitch overlay for light backgrounds (product cards, buttons, inputs) */
 .stitch-box-overlay-dark {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(156,163,175,0.35) 0px, rgba(156,163,175,0.35) 1.2px, transparent 1.2px, transparent 3px);
-  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
+  background-image: var(--stitch-h-dark), var(--stitch-h-dark), var(--stitch-v-dark), var(--stitch-v-dark);
+  background-size: 3px 1px, 3px 1px, 1px 3px, 1px 3px;
   background-position: top, bottom, left, right;
   background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
-}
-.dark .stitch-box-overlay-dark {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1.2px, transparent 1.2px, transparent 3px);
-  background-size: 100% 0.8px, 100% 0.8px, 0.8px 100%, 0.8px 100%;
-  background-position: top, bottom, left, right;
-  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
 }
 
-/* Light stitch for dark backgrounds */
+/* Stitch color variants — override the SVG tile variables */
 .stitch-light {
-  --stitch-color: rgba(255, 255, 255, 0.12);
-  --stitch-shadow: rgba(0, 0, 0, 0.15);
+  --stitch-h-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
 }
-/* Stitch for light backgrounds */
 .stitch-dark {
-  --stitch-color: rgba(255, 255, 255, 0.18);
-  --stitch-shadow: rgba(0, 0, 0, 0.25);
+  --stitch-h-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%239ca3af' stroke-opacity='0.35' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%239ca3af' stroke-opacity='0.35' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 .dark .stitch-dark {
-  --stitch-color: rgba(255, 255, 255, 0.18);
-  --stitch-shadow: rgba(0, 0, 0, 0.25);
+  --stitch-h-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1' viewBox='0 0 3 1'%3E%3Cline x1='0' y1='0.5' x2='1.2' y2='0.5' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  --stitch-v-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='3' viewBox='0 0 1 3'%3E%3Cline x1='0.5' y1='0' x2='0.5' y2='1.2' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8' stroke-linecap='round'/%3E%3C/svg%3E");
 }

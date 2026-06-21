@@ -7,9 +7,12 @@ export interface PosConfig {
 
 export const PosConfigContext = createContextId<PosConfig>("pos-config");
 
-export const usePosConfig = routeLoader$(async ({ env }) => {
+export const usePosConfig = routeLoader$(async () => {
+  // Route POS browser calls through the same-origin proxy (src/routes/api)
+  // to avoid cross-origin CORS against the Medusa backend. The proxy reads
+  // MEDUSA_BACKEND_URL server-side and forwards the request.
   return {
-    backendUrl: env.get("MEDUSA_BACKEND_URL") || "http://localhost:9000",
+    backendUrl: "/api",
   };
 });
 

@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/*
+ * Text scaling for the POS on mobile + tablet viewports.
+ * The default utilities run small; on phones and tablets there is room to
+ * scale every text utility up for better visibility across the
+ * Sale / Receive / Stock tabs. Scoped to .pos-root so the storefront is
+ * unaffected. Only font-size is bumped (boxes/padding stay put) so the tight
+ * flex layouts don't break. Desktop (>1366px) keeps the original compact sizes.
+ */
+@media (max-width: 1366px) {
+  .pos-root .text-\[9px\]  { font-size: 11px; }
+  .pos-root .text-\[10px\] { font-size: 12px; }
+  .pos-root .text-\[11px\] { font-size: 13px; }
+  .pos-root .text-xs   { font-size: 0.875rem; line-height: 1.25rem; }
+  .pos-root .text-sm   { font-size: 1rem;     line-height: 1.5rem; }
+  .pos-root .text-base { font-size: 1.125rem; line-height: 1.75rem; }
+  .pos-root .text-lg   { font-size: 1.25rem;  line-height: 1.75rem; }
+}

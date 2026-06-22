@@ -26,6 +26,7 @@ export default component$(() => {
   const processing = useSignal(false);
   const error = useSignal("");
   const token = useSignal("");
+  const showCart = useSignal(false);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
@@ -68,6 +69,8 @@ export default component$(() => {
       });
     }
     error.value = "";
+    // Reveal the cart immediately so scanned items are visible on the main screen
+    showCart.value = true;
   });
 
   const removeItem = $((index: number) => {
@@ -147,13 +150,12 @@ export default component$(() => {
       showReceipt.value = true;
       items.splice(0, items.length);
       amountTendered.value = 0;
+      showCart.value = false;
     } catch (err: any) {
       error.value = `Sale failed: ${err.message}`;
     }
     processing.value = false;
   });
-
-  const showCart = useSignal(false);
 
   return (
     <div class="flex h-full relative overflow-hidden max-w-[100vw]">

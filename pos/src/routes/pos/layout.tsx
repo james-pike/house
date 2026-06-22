@@ -37,7 +37,7 @@ export default component$(() => {
   };
 
   return (
-    <div class="fixed inset-0 bg-gray-950 text-white flex flex-col overflow-hidden max-w-[100vw]">
+    <div class="pos-root fixed inset-0 bg-gray-950 text-white flex flex-col overflow-hidden max-w-[100vw]">
       {/* Content area */}
       <div class="flex-1 overflow-hidden">
         <Slot />

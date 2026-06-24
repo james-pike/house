@@ -26,7 +26,14 @@ const proxy: RequestHandler = async (event) => {
   const hasBody = method !== "GET" && method !== "HEAD";
   const body = hasBody ? await event.request.arrayBuffer() : undefined;
 
-  const res = await fetch(target, { method, headers, body });
+  // Don't follow redirects server-side — pass them to the browser instead, so
+  // flows like the QuickBooks OAuth `/quickbooks/connect` → Intuit redirect work.
+  const res = await fetch(target, { method, headers, body, redirect: "manual" });
+  const location = res.headers.get("location");
+  if (location && res.status >= 300 && res.status < 400) {
+    event.send(new Response(null, { status: res.status, headers: { location } }));
+    return;
+  }
   const payload = await res.arrayBuffer();
   const resContentType =
     res.headers.get("content-type") || "application/json";

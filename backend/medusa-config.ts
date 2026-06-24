@@ -34,5 +34,14 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/pos",
     },
+    {
+      resolve: "./src/modules/quickbooks",
+      options: {
+        clientId: process.env.QBO_CLIENT_ID,
+        clientSecret: process.env.QBO_CLIENT_SECRET,
+        redirectUri: process.env.QBO_REDIRECT_URI,
+        environment: process.env.QBO_ENVIRONMENT || "sandbox",
+      },
+    },
   ],
 })

@@ -17,6 +17,7 @@ export type QboOptions = {
 // Intuit OAuth2 + Accounting API endpoints.
 const AUTHORIZE_URL = "https://appcenter.intuit.com/connect/oauth2"
 const TOKEN_URL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer"
+const REVOKE_URL = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke"
 const SANDBOX_API = "https://sandbox-quickbooks.api.intuit.com"
 const PRODUCTION_API = "https://quickbooks.api.intuit.com"
 const SCOPE = "com.intuit.quickbooks.accounting"
@@ -240,6 +241,48 @@ class QuickbooksModuleService extends MedusaService({
       DisplayName: displayName,
     })
     return created?.Customer
+  }
+
+  // Tear down the QuickBooks connection: revoke the token with Intuit (best
+  // effort) and drop the local connection row so the POS shows "not connected".
+  // Idempotent — safe to call when nothing is connected.
+  async disconnect(): Promise<{ ok: boolean; revoked: boolean }> {
+    const conn = await this.getConnection()
+    if (!conn) {
+      return { ok: true, revoked: false }
+    }
+    let revoked = false
+    const token = conn.refresh_token || conn.access_token
+    if (token) {
+      try {
+        await this.revokeToken(token)
+        revoked = true
+      } catch {
+        // Intuit may have already invalidated it (e.g. user disconnected from
+        // the QuickBooks side); clear our copy regardless.
+      }
+    }
+    await this.deleteQboConnections(conn.id)
+    return { ok: true, revoked }
+  }
+
+  // Revoke an access or refresh token at Intuit. Uses Basic client auth.
+  private async revokeToken(token: string): Promise<void> {
+    const creds = Buffer.from(
+      `${this.options_.clientId}:${this.options_.clientSecret}`
+    ).toString("base64")
+    const res = await fetch(REVOKE_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${creds}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ token }),
+    })
+    if (!res.ok) {
+      throw new Error(`QBO token revoke ${res.status}: ${await res.text()}`)
+    }
   }
 
   // Connection summary for the status endpoint (never leaks token values).

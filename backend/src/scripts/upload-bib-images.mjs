@@ -15,7 +15,7 @@ const R2_SECRET_ACCESS_KEY = "1cf29c5411689b07a3b9bdfafa2684a820ce43c06b1fb69e2a
 const R2_BUCKET = "product-images"
 const R2_PUBLIC_URL = "https://pub-8a2192b4a4e14435b4cc7037de30a086.r2.dev"
 
-const MEDUSA_URL = "https://house-qvr4.onrender.com"
+const MEDUSA_URL = "https://house1-uita.onrender.com"
 const DOWNLOAD_DIR = "backend/data/vault-images"
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))

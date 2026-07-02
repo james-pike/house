@@ -16,7 +16,7 @@ house/
 
 | Service          | Provider         | Plan                    | URL/Notes                                    |
 |------------------|------------------|-------------------------|----------------------------------------------|
-| Backend API      | Render           | Free (cold starts)      | https://house-qvr4.onrender.com              |
+| Backend API      | Render           | Free (cold starts)      | https://house1-uita.onrender.com             |
 | Database         | Render Postgres  | Starter ($7/mo)         | Internal connection from backend              |
 | Frontend         | Cloudflare Pages | Free                    | https://house-6ml.pages.dev                  |
 | POS              | Vercel Edge      | Free                    | Internal tool                                |
@@ -31,6 +31,10 @@ house/
 - `ADMIN_CORS` — Allowed admin/POS origins
 - `AUTH_CORS` — Allowed auth origins
 - `JWT_SECRET`, `COOKIE_SECRET`
+- `QBO_CLIENT_ID` — Intuit app Client ID (developer.intuit.com → Keys & OAuth)
+- `QBO_CLIENT_SECRET` — Intuit app Client Secret
+- `QBO_REDIRECT_URI` — OAuth callback; must EXACTLY match a Redirect URI registered on the Intuit app. Production value: `https://house1-uita.onrender.com/quickbooks/callback`
+- `QBO_ENVIRONMENT` — `sandbox` while testing, `production` when live
 
 ### Frontend (Cloudflare Pages)
 **IMPORTANT:** `VITE_*` vars must be set in Cloudflare Pages dashboard as build-time env vars. `wrangler.toml [vars]` are runtime only and won't be available during SSG/SSR build.

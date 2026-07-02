@@ -3,7 +3,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const BACKEND_URL = "https://house-qvr4.onrender.com"
+const BACKEND_URL = "https://house1-uita.onrender.com"
 const CATEGORY_ID = "pcat_01KK58WFQTYD6BSH0KZGB810JG" // work-wear
 
 // Login

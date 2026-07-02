@@ -31,7 +31,7 @@ const R2_BUCKET = "product-images";
 const R2_PUBLIC_URL = "https://pub-8a2192b4a4e14435b4cc7037de30a086.r2.dev";
 
 // ── Medusa ──
-const MEDUSA_URL = "https://house-qvr4.onrender.com";
+const MEDUSA_URL = "https://house1-uita.onrender.com";
 const ADMIN_EMAIL = "admin@safetyhouse.ca";
 const ADMIN_PASS = "inventory";
 

@@ -4,7 +4,7 @@
  * Fetches products one at a time to avoid overwhelming the server.
  */
 
-const MEDUSA = "https://house-qvr4.onrender.com"
+const MEDUSA = "https://house1-uita.onrender.com"
 const R2 = "https://pub-8a2192b4a4e14435b4cc7037de30a086.r2.dev"
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 

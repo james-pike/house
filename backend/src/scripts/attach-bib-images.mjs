@@ -4,7 +4,7 @@
  * Images are already on R2 — just needs to update Medusa product records.
  */
 
-const MEDUSA_URL = "https://house-qvr4.onrender.com"
+const MEDUSA_URL = "https://house1-uita.onrender.com"
 const R2_PUBLIC_URL = "https://pub-8a2192b4a4e14435b4cc7037de30a086.r2.dev"
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 

@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://house-qvr4.onrender.com"
+const BACKEND_URL = "https://house1-uita.onrender.com"
 const CATEGORY_ID = "pcat_01KK58WFZ6R141SFVDA76GDZX0" // Safety Footwear
 
 // Login

@@ -123,14 +123,41 @@ class QuickbooksModuleService extends MedusaService({
       : 0
     // Refresh a minute early to avoid racing the expiry.
     if (!conn.access_token || now >= expiresAt - 60_000) {
-      const token = await this.tokenRequest({
-        grant_type: "refresh_token",
-        refresh_token: conn.refresh_token,
-      })
+      let token: TokenResponse
+      try {
+        token = await this.tokenRequest({
+          grant_type: "refresh_token",
+          refresh_token: conn.refresh_token,
+        })
+      } catch (e) {
+        // 400 (invalid_grant) / 401 => the refresh token is dead (expired or
+        // revoked). Clear the connection so the POS shows "not connected" and
+        // asks the user to reconnect. Transient errors (network/5xx) are
+        // rethrown untouched so we don't wipe a still-valid connection.
+        const status = (e as { status?: number }).status
+        if (status === 400 || status === 401) {
+          await this.invalidateConnection(conn.id)
+          throw new Error("QuickBooks authorization expired — please reconnect.")
+        }
+        throw e
+      }
       await this.persistToken(conn.id, token)
       return { accessToken: token.access_token, realmId: conn.realm_id }
     }
     return { accessToken: conn.access_token, realmId: conn.realm_id }
+  }
+
+  // Clear the stored tokens (keeping the row) so getStatus reports "not
+  // connected" after an auth failure, prompting the user to reconnect.
+  private async invalidateConnection(id: string): Promise<void> {
+    await this.updateQboConnections({
+      id,
+      access_token: null,
+      refresh_token: null,
+      access_expires_at: null,
+      refresh_expires_at: null,
+      auth_state: null,
+    })
   }
 
   // Authenticated call against /v3/company/{realmId}{path}. Returns parsed JSON.
@@ -146,6 +173,13 @@ class QuickbooksModuleService extends MedusaService({
         ...(init?.headers ?? {}),
       },
     })
+    // A 401 after we just supplied a fresh token means the grant was revoked
+    // server-side — clear the connection and prompt a reconnect.
+    if (res.status === 401) {
+      const conn = await this.getConnection()
+      if (conn) await this.invalidateConnection(conn.id)
+      throw new Error("QuickBooks authorization expired — please reconnect.")
+    }
     if (!res.ok) {
       throw new Error(`QBO API ${res.status}: ${await res.text()}`)
     }
@@ -338,7 +372,11 @@ class QuickbooksModuleService extends MedusaService({
       body: new URLSearchParams(params).toString(),
     })
     if (!res.ok) {
-      throw new Error(`QBO token request ${res.status}: ${await res.text()}`)
+      const err = new Error(
+        `QBO token request ${res.status}: ${await res.text()}`
+      ) as Error & { status?: number }
+      err.status = res.status
+      throw err
     }
     return res.json()
   }

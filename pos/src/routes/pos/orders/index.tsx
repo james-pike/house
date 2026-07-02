@@ -114,6 +114,9 @@ export default component$(() => {
     }
     syncing.value = false;
     await load();
+    // Re-check connection: an auth failure clears it server-side, so this flips
+    // the status strip to "not connected" and surfaces the Connect button.
+    await loadStatus();
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
